@@ -8,12 +8,9 @@ from io import StringIO
 from fastapi import UploadFile
 from schemas.flight import FlightCreate, FlightUpdate
 
-def get_flights_by_arrival(db: Session, airport: str):
-    return (
-        db.query(Flight)
-        .filter(Flight.arrival_airport == airport.upper())
-        .all()
-    )
+def get_flights(db: Session):
+    return db.query(Flight).all()
+
 
 def add_flight(db: Session, flight_in: FlightCreate):
     existing = db.query(Flight).filter(
@@ -22,7 +19,7 @@ def add_flight(db: Session, flight_in: FlightCreate):
     ).first()
 
     if existing:
-        return existing  # prevent duplicates
+        raise HTTPException(status_code=400, detail="Flight with this number and departure already exists")
 
     flight = Flight(**flight_in.model_dump())
     db.add(flight)
@@ -32,38 +29,76 @@ def add_flight(db: Session, flight_in: FlightCreate):
 
 
 def add_flights_from_csv(db: Session, file: UploadFile):
-    content = file.file.read().decode("utf-8")
+    content = file.file.read().decode("utf-8-sig")  # handle BOM
     reader = csv.DictReader(StringIO(content))
+    
+    reader.fieldnames = [h.strip() for h in reader.fieldnames]
+    print("CSV headers detected:", reader.fieldnames)  # debug
 
     added = 0
+    errors = []  # collect all errors
 
-    for row in reader:
-        scheduled_dep = datetime.fromisoformat(row["scheduled_departure"])
+    for i, row in enumerate(reader, start=2):  # start=2 because row 1 is header
+        row = {k.strip(): v.strip() if isinstance(v, str) else v for k, v in row.items()}
+
+        # Check required columns
+        required_cols = ["flight_number", "departure_airport", "arrival_airport", 
+                         "scheduled_departure", "scheduled_arrival", "airline", "status", "aircraft"]
+        missing_cols = [col for col in required_cols if not row.get(col)]
+        if missing_cols:
+            errors.append({
+                "row": i,
+                "error": f"Missing required columns: {', '.join(missing_cols)}",
+                "row_data": row
+            })
+            continue
+
+        # Parse dates
+        try:
+            scheduled_dep = datetime.strptime(row["scheduled_departure"], "%m/%d/%Y %H:%M")
+            scheduled_arr = datetime.strptime(row["scheduled_arrival"], "%m/%d/%Y %H:%M")
+        except ValueError as e:
+            errors.append({
+                "row": i,
+                "error": f"Invalid date format: {e}",
+                "row_data": row
+            })
+            continue
+
+        # Check for duplicates
         exists = db.query(Flight).filter(
             Flight.flight_number == row["flight_number"],
             Flight.scheduled_departure == scheduled_dep
         ).first()
-
         if exists:
+            errors.append({
+                "row": i,
+                "error": "Duplicate flight record",
+                "row_data": row
+            })
             continue
 
+        # Add flight
         flight = Flight(
-            flight_number=row["flight_number"].strip(),
-            departure_airport=row["departure_airport"].strip().strip(),
-            arrival_airport=row["arrival_airport"].strip().strip(),
-            # scheduled_departure=row["scheduled_departure"],
-            # scheduled_arrival=row["scheduled_arrival"],
-            scheduled_departure=datetime.fromisoformat(row["scheduled_departure"]),
-            scheduled_arrival=datetime.fromisoformat(row["scheduled_arrival"]),
-            airline=row["airline"].strip(),
-            status=row["status"].strip(),
-            aircraft=row["aircraft"].strip(),
+            flight_number=row["flight_number"],
+            departure_airport=row["departure_airport"],
+            arrival_airport=row["arrival_airport"],
+            scheduled_departure=scheduled_dep,
+            scheduled_arrival=scheduled_arr,
+            airline=row["airline"],
+            status=row["status"],
+            aircraft=row["aircraft"],
         )
+
         db.add(flight)
         added += 1
 
     db.commit()
-    return {"added_records": added}
+
+    return {
+        "added_records": added,
+        "errors": errors
+    }
 
 
 def update_flight(db: Session, flight_id: int, flight_in: FlightUpdate):

@@ -4,8 +4,8 @@ from typing import Optional
 
 class HolidayCreate(BaseModel):
     holiday_date: date
-    holiday_name: str = Field(..., min_length=2)
-    holiday_type: str = Field(..., min_length=3)
+    holiday_name: str = Field(..., min_length=1)
+    holiday_type: str = Field(..., min_length=1)
 
 class HolidayUpdate(BaseModel):
     holiday_name: Optional[str]

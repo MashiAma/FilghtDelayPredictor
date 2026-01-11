@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 # --- For creating a new user ---
 class UserCreate(BaseModel):
@@ -6,6 +7,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     phone: str | None = None
+    role: str | None = None
 
 # --- For logging in ---
 class UserLogin(BaseModel):
@@ -19,22 +21,25 @@ class UserOut(BaseModel):
     email: EmailStr
     phone: str | None = None
     role: str
-    email_alert_opt: bool
     is_active: bool
 
     class Config:
         from_attributes = True  # pydantic v2 replacement for orm_mode
 
 # --- Update profile ---
-class UpdateProfile(BaseModel):
-    full_name: str | None = None
-    phone: str | None = None
-    email_alert_opt: bool | None = None
+class UserUpdateProfile(BaseModel):
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+
+# upadte user status
+class UserUpdateStatus(BaseModel):
+    is_active: bool
 
 # --- Change password ---
 class ChangePassword(BaseModel):
     old_password: str
     new_password: str
+    confirm_new_password:str
 
 # --- Reset password ---
 class ResetPassword(BaseModel):

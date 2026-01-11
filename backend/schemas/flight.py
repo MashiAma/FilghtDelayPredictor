@@ -5,9 +5,9 @@ from datetime import datetime
 from typing import Optional
 
 class FlightCreate(BaseModel):
-    flight_number: str = Field(..., min_length=2)
-    departure_airport: str = Field(..., min_length=3, max_length=60)
-    arrival_airport: str = Field(..., min_length=3, max_length=60)
+    flight_number: str = Field(..., min_length=1)
+    departure_airport: str = Field(..., min_length=1, max_length=60)
+    arrival_airport: str = Field(..., min_length=1, max_length=60)
     scheduled_departure: datetime
     scheduled_arrival: datetime
     airline: str

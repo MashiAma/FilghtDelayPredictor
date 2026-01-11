@@ -5,28 +5,31 @@ from sqlalchemy.orm import Session
 from database.connection import get_db
 from schemas.flight import FlightCreate, FlightUpdate, FlightOut
 from services.flight_service import (
-    get_flights_by_arrival,
+    get_flights,
     add_flight,
     add_flights_from_csv,
     update_flight
 )
 from utils.csv_validator import validate_flight_csv
+from models_sql.flight import Flight
 
 router = APIRouter()
 
-@router.get("/arrival/{airport}", response_model=list[FlightOut])
-def list_flights_by_arrival(airport: str, db: Session = Depends(get_db)):
-    return get_flights_by_arrival(db, airport)
-
+@router.get("/get-All-flights", response_model=list[FlightOut])
+def list_flights(db: Session = Depends(get_db)):
+    flights = db.query(Flight).all()
+    if not flights:
+        raise HTTPException(status_code=404, detail="No flights found")
+    return flights
 
 # Add single flight (UI form)
-@router.post("/", response_model=FlightOut)
+@router.post("/add-flight", response_model=FlightOut)
 def create_flight(flight_in: FlightCreate, db: Session = Depends(get_db)):
     return add_flight(db, flight_in)
 
 
 # Bulk add flights (CSV)
-@router.post("/upload-csv")
+@router.post("/upload-flight-csv")
 def upload_flights(file: UploadFile = File(...), db: Session = Depends(get_db)):
     if not file.filename.endswith(".csv"):
         raise HTTPException(status_code=400, detail="CSV file required")
@@ -34,7 +37,7 @@ def upload_flights(file: UploadFile = File(...), db: Session = Depends(get_db)):
 
 
 # Update single flight (Admin UI)
-@router.put("/{flight_id}", response_model=FlightOut)
+@router.put("/update-flight/{flight_id}", response_model=FlightOut)
 def update_flight_record(
     flight_id: int,
     flight_in: FlightUpdate,

@@ -14,19 +14,25 @@ import {
 import '@coreui/coreui/dist/css/coreui.min.css';
 import '@coreui/icons/css/all.min.css';
 import { useNavigate } from 'react-router-dom';
-import { resetPassword } from '../../services/authService';
 import logo from './../../assets/images/logo.png';
 import resetPasswordImage from './../../assets/resetpassword.jpg';
+import { verifyAndResetPassword, resetPasswordRequest } from '../../services/authService';
+import EmailVerificationModal from "./EmailVerificationModal";
 import { toast } from 'react-toastify';
 
+
 const ResetPassword = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
+  const [step, setStep] = useState(1);
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+
+  const handleEmailSubmit = async () => {
     if (!email) {
-      toast.error('Please enter your email.');
+      toast.error("Email is required");
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,22 +40,46 @@ const ResetPassword = () => {
       toast.error('Please enter a valid email address.');
       return;
     }
-    if (!password) {
+
+    try {
+      await resetPasswordRequest(email);
+      toast.success("Verification code sent");
+      setShowVerifyModal(true);
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "User not found");
+    }
+  };
+
+  /* ---------------- Step 2: Verify Code ---------------- */
+  const handleCodeVerify = (enteredCode) => {
+    setCode(enteredCode);
+    setShowVerifyModal(false);
+    setStep(2);
+  };
+
+  /* ---------------- Step 3: Reset Password ---------------- */
+  const handleResetPassword = async () => {
+    if (!newPassword) {
       toast.error('Please enter your password.');
       return;
     }
     const passwordRegex = /^.{6,}$/;
-    if (!passwordRegex.test(password)) {
+    if (!passwordRegex.test(newPassword)) {
       toast.error('Password must be at least 6 characters long.');
       return;
     }
+
     try {
-      const res = await resetPassword({ email, password });
-      toast.success('Password reset successful!', { autoClose: 2000 });
-      navigate('/login');
+      await verifyAndResetPassword({
+        email,
+        code,
+        new_password: newPassword
+      });
+
+      toast.success("Password reset successfully");
+      navigate("/login");
     } catch (err) {
-      console.error("Reset error:", err);
-      toast.error('Password reset failed. Please try again.', { autoClose: 3000 });
+      toast.error(err.response?.data?.detail || "Invalid verification code");
     }
   };
 
@@ -94,8 +124,8 @@ const ResetPassword = () => {
                   transform: 'translateX(-50%)',
                 }}
               >
-                <h3 className="fw-bold mt-3">Welcome to Pahana Edu</h3>
-                <h5>Your trusted gateway to knowledge and imagination</h5>
+                <h3 className="fw-bold mt-3">Welcome to Sky Guard</h3>
+                {/* <h5>Your trusted gateway to knowledge and imagination</h5> */}
               </div>
 
               <div
@@ -126,45 +156,56 @@ const ResetPassword = () => {
                     <CImage src={logo} height={70} alt="Logo" />
                     <h4 className="mt-4">Reset Password</h4>
                   </div>
-                  <CForm>
-                    <CFormLabel htmlFor="email">Email</CFormLabel>
-                    <CFormInput
-                      type="email"
-                      value={email}
-                      id="email"
-                      placeholder="Email (Username)"
-                      className="mb-3"
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
+                  {step === 1 && (
+                    <CForm>
+                      <CFormLabel htmlFor="email">Email</CFormLabel>
+                      <CFormInput
+                        type="email"
+                        value={email}
+                        id="email"
+                        placeholder="Email (Username)"
+                        className="mb-3"
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
 
-                    <CFormLabel htmlFor="password">Password</CFormLabel>
-                    <CFormInput
-                      type="password"
-                      id="password"
-                      placeholder="Password"
-                      className="mb-5"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-
-                    <div className="d-grid gap-2 mb-1">
-                      <CButton style={{ backgroundColor: '#00008A', borderColor: '#00008A', color: "white", fontWeight: "bold" }} onClick={handleSubmit}>
+                      <div className="d-grid gap-2 mb-1">
+                        <CButton className="mt-4 w-100" onClick={handleEmailSubmit}>
+                          Send Verification Code
+                        </CButton>
+                      </div>
+                      <div className="text-center mb-3">
+                        <a href="/login" className="text-decoration-underline text-muted">
+                          Login?
+                        </a>
+                      </div>
+                    </CForm>
+                  )}
+                  {step === 2 && (
+                    <CForm>
+                      <CFormLabel>New Password</CFormLabel>
+                      <CFormInput
+                        type="password"
+                        placeholder="Enter new password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                      />
+                      <CButton className="mt-4 w-100" onClick={handleResetPassword}>
                         Reset Password
                       </CButton>
-                    </div>
-
-
-                    <div className="text-center mb-3">
-                      <a href="/login" className="text-decoration-underline text-muted">
-                        Login?
-                      </a>
-                    </div>
-                  </CForm>
+                    </CForm>
+                  )}
                 </CCardBody>
               </CCard>
             </CCol>
           </CCol>
         </CRow>
+        {/* Email Verification Modal */}
+        <EmailVerificationModal
+          visible={showVerifyModal}
+          email={email}
+          onVerify={handleCodeVerify}
+          onClose={() => setShowVerifyModal(false)}
+        />
       </CContainer>
     </div>
   );

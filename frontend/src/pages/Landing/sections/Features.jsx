@@ -35,7 +35,7 @@ const Features = () => {
   return (
     <Box sx={{ py: 5, backgroundColor: "background.normal" }}>
       <Container>
-        <Typography variant="h4" textAlign="center" color="text.secondary" mb={4}>
+        <Typography variant="h4" textAlign="center" color="black" mb={4}>
           Key Features
         </Typography>
 

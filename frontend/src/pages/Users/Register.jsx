@@ -1,32 +1,23 @@
 import React, { useState, useContext } from 'react'
 import {
-  CButton,
-  CCard,
-  CCardBody,
-  CCardGroup,
-  CCol,
-  CContainer,
-  CForm,
-  CFormInput,
-  CFormLabel,
-  CFormSelect,
-  CRow,
-  CImage,
-  CInputGroup, CInputGroupText,
-} from '@coreui/react'
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  CircularProgress,
+  Checkbox,
+  FormControlLabel,
+  Link
+} from "@mui/material";
 import { AuthContext } from '../../context/AuthContext';
-import registerImage from "./../../assets/images/flight-login.jpg";
-import { useNavigate, Link } from 'react-router-dom'
+import registerImage from "./../../assets/images/flight-register.webp";
+import { useNavigate } from 'react-router-dom'
 import logo from "./../../assets/images/logo.png";
-import axios from 'axios'
 import { register } from '../../services/authService';
-import CIcon from '@coreui/icons-react';
-import { cilLockLocked, cilLockUnlocked } from '@coreui/icons';
-import {
-  // cilEye,
-  cilUser,
-  // cilEyeSlash
-} from '@coreui/icons'
+import { toast } from 'react-toastify';
 
 const Register = () => {
   const { user } = useContext(AuthContext); // to check role
@@ -43,10 +34,6 @@ const Register = () => {
   });
 
   const [loading, setLoading] = useState(false)
-  const [errorMsg, setErrorMsg] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
-
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,8 +43,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setErrorMsg('')
-    setSuccessMsg('')
 
     try {
       const payload = {
@@ -73,14 +58,14 @@ const Register = () => {
       }
 
       await register(payload);
-      setSuccessMsg('Registered successfully!')
+      toast.success('Registered successfully!')
       setFormData({ fullName: '', email: '', password: '', role: '', phone: '', })
       setTimeout(() => navigate('/login'), 2000)
     } catch (err) {
       if (err.response?.data?.message) {
-        setErrorMsg(err.response.data.message)
+        toast.error(err.response.data.message)
       } else {
-        setErrorMsg('Registration failed. Try again.')
+        toast.error('Registration failed. Try again.')
       }
     } finally {
       setLoading(false)
@@ -88,234 +73,266 @@ const Register = () => {
   }
 
   return (
-    <div
-      className="d-flex align-items-center justify-content-center"
-      style={{
-        minHeight: "100vh",
-        width: "100%",
-        background: "linear-gradient(10deg, #d1d1d1ff, #ffffffff)",
-        overflow: "hidden",
-      }}
-    >
-      <CContainer fluid className="p-2 p-md-4 h-100">
-        <CRow className="justify-content-center align-items-center h-100">
-          <CCol
-            xs={12}
-            md={10}
-            className="d-flex flex-column flex-md-row p-0 rounded-4 overflow-hidden shadow-lg"
-            style={{
-              backgroundColor: "#202020ff",
-              minHeight: "70vh",
+    <>
+      <Box
+        sx={{
+          minHeight: "100vh",
+          width: "100%",
+          background: "linear-gradient(10deg, #d1d1d1, #ffffff)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          p: 2,
+        }}
+      >
+        <Card
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            width: "90%",
+            maxWidth: 1000,
+            borderRadius: 4,
+            overflow: "hidden",
+            minHeight: "70vh",
+            boxShadow: 5,
+          }}
+        >
+          {/* LEFT - Image */}
+          <Box
+            sx={{
+              display: { xs: "none", md: "block" },
+              flex: 7,
+              position: "relative",
             }}
           >
-            {/* LEFT – IMAGE / BRAND */}
-            <CCol
-              md={7}
-              className="position-relative d-none d-md-block"
-              style={{ overflow: "hidden" }}
+            <Box
+              component="img"
+              src={registerImage}
+              alt="register"
+              sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "80%",
+                height: "80%",
+                // background:
+                //   "linear-gradient(135deg, rgb(0, 45, 104), rgba(187,187,187,0.6))",
+              }}
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                top: "10%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                textAlign: "center",
+                color: "white",
+                zIndex: 2,
+              }}
             >
-              <CImage
-                src={registerImage}
-                //fluid
-                className="w-100 h-100 object-fit-cover"
-                style={{ opacity: 1 }}
-              />
+              <Typography variant="h4" fontWeight="bold" gutterBottom>
+                SkyGuard
+              </Typography>
+              <Typography variant="body1" sx={{ opacity: 0.75 }}>
+                Predict flight delays using AI
+              </Typography>
+            </Box>
+          </Box>
 
-              <div
-                className="position-absolute top-0 start-0 w-80 h-80"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(1, 35, 63, 0.84), rgba(187, 187, 187, 0.9))",
-                }}
-              />
+          {/* RIGHT - Login Form */}
+          <Box
+            sx={{
+              flex: 4,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              p: { xs: 3, md: 3 },
+              background: "rgb(255, 255, 255)",
 
-              <div
-                className="position-absolute start-50 text-center text-white px-3"
-                style={{
-                  top: "10%",
-                  transform: "translate(-50%, -50%)",
-                  zIndex: 2,
-                }}
-              >
-                <h2 className="fw-bold mb-2 fs-4 fs-md-2">
-                  SkyGuard
-                </h2>
-                <p className="opacity-75 fs-6 fs-md-5">
-                  Predict flight delays using AI
-                </p>
-              </div>
-            </CCol>
-
-            {/* RIGHT – REGISTER FORM */}
-            <CCol
-              xs={12}
-              md={5}
-              className="d-flex align-items-center justify-content-center p-3 p-md-4"
+              backdropFilter: "blur(18px)",
+            }}
+          >
+            <Card
+              sx={{
+                width: "100%",
+                borderRadius: 3,
+                p: 1,
+                background: "rgba(0, 60, 100, 0.96)",
+              }}
             >
-              <CCard
-                className="w-100 border-0"
-                style={{
-                  background: "rgba(7, 0, 107, 0.62)",
-                  backdropFilter: "blur(18px)",
-                  borderRadius: "20px",
-                }}
-              >
-                <CCardBody className="px-3 px-md-5 py-4 text-white">
-                  <div className="text-center mb-3 mb-md-4">
-                    <CImage src={logo} height={40} />
-                    <h4 className="mt-2 mt-md-3 fw-bold fs-5 fs-md-4">Register</h4>
-                  </div>
-                  <CForm onSubmit={handleSubmit}>
-                    {/* Full Name */}
-                    <CFormLabel>Full Name</CFormLabel>
-                    <CFormInput
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleChange}
-                      placeholder="Enter full name"
-                      className="mb-3"
-                      required
-                      style={{
-                        backgroundColor: "#0F0B1D",
-                        border: "1px solid #2E0E99",
+              <CardContent sx={{ textAlign: "center", p: 0 }}>
+                <Box mb={2}>
+                  <Box
+                    component="img"
+                    src={logo}
+                    alt="logo"
+                    sx={{ height: 35, mb: 0 }}
+                  />
+                  <Typography variant="h5" fontWeight="bold">
+                    Sign Up
+                  </Typography>
+                </Box>
+
+                <form onSubmit={handleSubmit}>
+                  <TextField
+                    label="Full Name"
+                    type="text"
+                    fullWidth
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    placeholder="Enter Your Full Name"
+                    margin="normal"
+                    required
+                    InputProps={{
+                      sx: {
+                        backgroundColor: "rgb(0, 14, 66)",
+                        border: "1px solid #2c568d",
                         color: "#fff",
-                      }}
-                    />
-
-                    {/* Phone Number */}
-                    <CFormLabel>Phone Number</CFormLabel>
-                    <CFormInput
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="+94 7XX XXX XXX"
-                      className="mb-3"
-                      required
-                      style={{
-                        backgroundColor: "#0F0B1D",
-                        border: "1px solid #2E0E99",
+                        borderRadius: 5,
+                        // '& .MuiOutlinedInput-root': {
+                        //   py: 0,
+                        //   height: 35,
+                        //   display: 'flex',
+                        //   alignItems: 'center',
+                        //   fontSize: "11px"
+                        // },
+                      },
+                    }}
+                  />
+                  <TextField
+                    label="Phone Number"
+                    type="text"
+                    fullWidth
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="Enter Phone Number"
+                    margin="normal"
+                    required
+                    InputProps={{
+                      sx: {
+                        backgroundColor: "rgb(0, 14, 66)",
+                        border: "1px solid #2c568d",
                         color: "#fff",
-                      }}
-                    />
+                        borderRadius: 5,
+                      },
+                    }}
+                  />
 
-                    {/* Role (only if admin) */}
-                    {isAdmin && (
-                      <>
-                        <CFormLabel>Role</CFormLabel>
-                        <CFormSelect
-                          name="role"
-                          value={formData.role}
-                          onChange={handleChange}
-                          className="mb-3"
-                          required
-                          style={{
-                            backgroundColor: "#0F0B1D",
-                            border: "1px solid #2E0E99",
-                            color: "#fff",
-                          }}
-                        >
-                          <option value="">Select role</option>
-                          <option value="admin">Admin</option>
-                          <option value="cashier">Cashier</option>
-                        </CFormSelect>
-                      </>
-                    )}
-
-                    {/* Email */}
-                    <CFormLabel>Email</CFormLabel>
-                    <CFormInput
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="Enter email"
-                      className="mb-3"
-                      required
-                      style={{
-                        backgroundColor: "#0F0B1D",
-                        border: "1px solid #2E0E99",
-                        color: "#fff",
-                      }}
-                    />
-
-                    {/* Password */}
-                    <CFormLabel>Password</CFormLabel>
-                    <CInputGroup>
-                      <CFormInput
-                        type={showPassword ? 'text' : 'password'}
-                        name="password"
-                        value={formData.password}
+                  {/* {isAdmin && (
+                    <>
+                      <CFormLabel>Role</CFormLabel>
+                      <CFormSelect
+                        name="role"
+                        value={formData.role}
                         onChange={handleChange}
-                        placeholder="Enter password"
-                        className="mb-4"
+                        className="mb-2"
                         required
+                        margin="normal"
                         style={{
                           backgroundColor: "#0F0B1D",
-                          border: "1px solid #2E0E99",
+                          border: "1px solid #2c568d",
                           color: "#fff",
                         }}
-                      />
-                      <CInputGroupText
-                        style={{ cursor: 'pointer', backgroundColor: '#0F0B1D', border: '1px solid #2E0E99' }}
-                        onClick={() => setShowPassword(!showPassword)}
                       >
-                        <CIcon
-                          icon={showPassword ? cilLockUnlocked : cilLockLocked}
-                          style={{ color: '#fff' }}
-                        />
-                      </CInputGroupText>
-                    </CInputGroup>
-                    {/* Feedback */}
-                    {errorMsg && <p className="text-danger text-center">{errorMsg}</p>}
-                    {successMsg && <p className="text-success text-center">{successMsg}</p>}
+                        <option value="">Select role</option>
+                        <option value="admin">Admin</option>
+                        <option value="cashier">Cashier</option>
+                      </CFormSelect>
+                    </>
+                  )} */}
 
-                    {/* Submit */}
-                    <div className="d-grid mb-3">
-                      <CButton
-                        type="submit"
-                        className="w-100 fw-bold"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, #838383ff, #bdbbbbff)",
-                          border: "none",
-                          padding: "5px 0",
-                          fontSize: "0.95rem",
-                        }}
-                        disabled={loading}
-                      >
-                        {loading ? "Registering..." : "Register"}
-                      </CButton>
-                    </div>
+                  {/* Email */}
+                  <TextField
+                    label="Email"
+                    type="email"
+                    fullWidth
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Enter Your Email"
+                    required
+                    margin="normal"
+                    InputProps={{
+                      sx: {
+                        backgroundColor: "rgb(0, 14, 66)",
+                        border: "1px solid #2c568d",
+                        color: "#fff",
+                        borderRadius: 5,
+                      },
+                    }}
+                  />
 
-                    {/* Link to login */}
-                    <div
-                      className="d-flex justify-content-center align-items-center mt-3"
-                      style={{ gap: "4px" }}
+                  {/* Password */}
+                  <TextField
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter password"
+                    required
+                    sx={{ mt: "15px" }}
+                    InputProps={{
+                      sx: {
+                        backgroundColor: "rgb(0, 14, 66)",
+                        border: "1px solid #2c568d",
+                        color: "#fff",
+                        borderRadius: 5,
+
+                      },
+                    }}
+                  />
+                  {/* Submit */}
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{
+                      mt: 5,
+                      py: 1.5,
+                      fontWeight: "bold",
+                      height: "40px",
+                      // width: "200px",
+                      background: "linear-gradient(135deg, #a5a5a5, #bdbbbb)",
+                    }}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <CircularProgress size={20} sx={{ color: "#6d95d1" }} />
+                    ) : (
+                      "Register"
+                    )}
+                  </Button>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      mt: 2,
+                      gap: 1,
+                      fontSize: "0.75rem",
+                    }}
+                  >
+                    <Typography sx={{ color: "#ffffff" }}>
+                      Already have an account?
+                    </Typography>
+                    <Link
+                      href="/login"
+                      underline="hover"
+                      sx={{ fontWeight: "bold", color: "#6d95d1" }}
                     >
-                      <span style={{ color: "#fafafaff", fontSize: "0.85rem" }}>
-                        Already have an account?
-                      </span>
-                      <a
-                        href="/login"
-                        style={{
-                          color: "#3800dfff",
-                          textDecoration: "none",
-                          fontSize: "0.85rem",
-                          fontWeight: "bold",
-                        }}
-                      >
-
-                        Login
-                      </a>
-                    </div>
-                  </CForm>
-                </CCardBody>
-              </CCard>
-            </CCol>
-          </CCol>
-        </CRow>
-      </CContainer>
-    </div>
+                      Login
+                    </Link>
+                  </Box>
+                </form>
+              </CardContent>
+            </Card>
+          </Box>
+        </Card >
+      </Box >
+    </>
   )
 }
 

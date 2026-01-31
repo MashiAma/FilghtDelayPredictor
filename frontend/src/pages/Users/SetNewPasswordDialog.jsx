@@ -6,7 +6,9 @@ import {
     Button,
     TextField,
     Stack,
-    IconButton
+    IconButton,
+    Alert,
+    Box,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useContext } from "react";
@@ -24,6 +26,7 @@ export default function SetNewPasswordDialog({ open, onClose }) {
         new_password: "",
         confirm_new_password: "",
     });
+    const [error, setError] = useState('')
 
     const [loading, setLoading] = useState(false);
 
@@ -59,23 +62,33 @@ export default function SetNewPasswordDialog({ open, onClose }) {
     };
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-            <DialogTitle>
-                Set New Password
-                <IconButton
-                    onClick={onClose}
-                    sx={{ position: "absolute", right: 8, top: 8 }}
-                >
-                    <CloseIcon />
-                </IconButton>
-            </DialogTitle>
+        <>
+            <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+                <Box style={{
+                    backgroundColor: "rgba(0, 60, 100, 0.96)",
+                }}>
+                    <DialogTitle style={{
+                        border: "none",
+                        fontSize: "1.2rem", color: 'white', fontWeight: 'bold'
+                    }}>
+                        Set New Password
+                        <IconButton
+                            onClick={onClose}
+                            sx={{ position: "absolute", right: 8, top: 8 }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
+                </Box>
 
-            <DialogContent>
-                <Stack spacing={2}>
+                <DialogContent>
+                    {error && <Alert severity="error">{error}</Alert>}
                     <TextField
                         type="password"
                         label="New Password"
                         name="new_password"
+                        margin="normal"
+                        size='small'
                         onChange={handleChange}
                         fullWidth
                     />
@@ -84,22 +97,34 @@ export default function SetNewPasswordDialog({ open, onClose }) {
                         type="password"
                         label="Confirm New Password"
                         name="confirm_new_password"
+                        margin="normal"
+                        size='small'
                         onChange={handleChange}
                         fullWidth
                     />
-                </Stack>
-            </DialogContent>
-
-            <DialogActions sx={{ px: 3, pb: 2 }}>
-                <Button onClick={onClose}>Cancel</Button>
-                <Button
-                    variant="contained"
-                    onClick={handleSubmit}
-                    disabled={loading}
-                >
-                    {loading ? "Saving..." : "Update Password"}
-                </Button>
-            </DialogActions>
-        </Dialog>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        style={{
+                            backgroundColor: "rgba(0, 60, 100, 0.96)", border: "none",
+                            fontSize: "0.85rem", color: 'white', fontWeight: 'bold'
+                        }}
+                        onClick={handleSubmit}
+                        disabled={loading}
+                    >
+                        {loading ? "Saving..." : "Update Password"}
+                    </Button>
+                    <Button style={{
+                        background:
+                            "linear-gradient(135deg, #838383ff, #bdbbbbff)",
+                        border: "none",
+                        fontSize: "0.85rem",
+                        fontWeight: 'bold',
+                        color: "black"
+                    }} onClick={onClose}>Cancel</Button>
+                </DialogActions>
+            </Dialog >
+        </>
     );
 }

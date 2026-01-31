@@ -1,24 +1,27 @@
 import React, { useState } from 'react';
 import {
-  CContainer,
-  CRow,
-  CCol,
-  CCard,
-  CCardBody,
-  CForm,
-  CFormInput,
-  CFormLabel,
-  CButton,
-  CImage,
-} from '@coreui/react';
-import '@coreui/coreui/dist/css/coreui.min.css';
-import '@coreui/icons/css/all.min.css';
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  CircularProgress,
+  Checkbox,
+  FormControlLabel,
+  Link,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import logo from './../../assets/images/logo.png';
-import resetPasswordImage from './../../assets/resetpassword.jpg';
+import resetPasswordImage from './../../assets/images/forget-password.jpg';
 import { verifyAndResetPassword, resetPasswordRequest } from '../../services/authService';
 import EmailVerificationModal from "./EmailVerificationModal";
 import { toast } from 'react-toastify';
+import CIcon from '@coreui/icons-react';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 
 const ResetPassword = () => {
@@ -29,6 +32,8 @@ const ResetPassword = () => {
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleEmailSubmit = async () => {
     if (!email) {
@@ -41,12 +46,16 @@ const ResetPassword = () => {
       return;
     }
 
+    setLoading(true);
     try {
       await resetPasswordRequest(email);
       toast.success("Verification code sent");
       setShowVerifyModal(true);
     } catch (err) {
       toast.error(err.response?.data?.detail || "User not found");
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -69,6 +78,7 @@ const ResetPassword = () => {
       return;
     }
 
+    setLoading(true);
     try {
       await verifyAndResetPassword({
         email,
@@ -76,129 +86,228 @@ const ResetPassword = () => {
         new_password: newPassword
       });
 
-      toast.success("Password reset successfully");
+      toast.success("Password Reset successfully");
       navigate("/login");
     } catch (err) {
       toast.error(err.response?.data?.detail || "Invalid verification code");
     }
+    finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div
-      className="d-flex align-items-center justify-content-center bg-white"
-      style={{ height: '100vh', overflow: 'hidden' }}
-    >
-      <CContainer fluid className="p-4" style={{ height: '100%' }}>
-        <CRow className="justify-content-center" style={{ height: '100%' }}>
-          <CCol
-            md={10}
-            className="d-flex p-0 rounded overflow-hidden border border-2 border-white shadow"
-            style={{ backgroundColor: 'white', height: '100%' }}
+    <>
+      <Box
+        sx={{
+          minHeight: "100vh",
+          width: "100%",
+          background: "linear-gradient(10deg, #d1d1d1, #ffffff)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          p: 2,
+        }}
+      >
+        <Card
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            width: "90%",
+            maxWidth: 1000,
+            borderRadius: 4,
+            overflow: "hidden",
+            minHeight: "70vh",
+            boxShadow: 5,
+          }}
+        >
+          {/* LEFT - Image */}
+          <Box
+            sx={{
+              display: { xs: "none", md: "block" },
+              flex: 7,
+              position: "relative",
+            }}
           >
-            <CCol
-              md={7}
-              className="p-0 position-relative bg-white"
-              style={{ overflow: 'hidden', height: '100%' }}
+            <Box
+              component="img"
+              src={resetPasswordImage}
+              alt="reset"
+              sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "80%",
+                height: "80%",
+                // background:
+                //   "linear-gradient(135deg, rgb(0, 45, 104), rgba(187,187,187,0.6))",
+              }}
+            />
+
+            <Box
+              sx={{
+                position: "absolute",
+                top: "1%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                textAlign: "center",
+                color: "white",
+                zIndex: 2,
+              }}
             >
-              <CImage
-                fluid
-                src={resetPasswordImage}
-                alt="Sample"
-                className="w-95 h-95 object-fit-cover"
-                style={{
-                  marginTop: "80px",
-                  borderTopLeftRadius: '20px',
-                  borderBottomLeftRadius: '20px',
-                }}
-              />
+              <Typography variant="h4" fontWeight="bold" gutterBottom>
+                SkyGuard
+              </Typography>
+              <Typography variant="body1" sx={{ opacity: 0.75 }}>
+                Predict flight delays using AI
+              </Typography>
+            </Box>
+          </Box>
 
-              <div
-                className="position-absolute top-0 start-50 text-center text-blue p-1"
-                style={{
-                  zIndex: 2,
-                  textShadow: '1px 1px 1px rgba(158, 157, 157, 0.7)',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  maxWidth: '90vw',
-                  transform: 'translateX(-50%)',
-                }}
-              >
-                <h3 className="fw-bold mt-3">Welcome to Sky Guard</h3>
-                {/* <h5>Your trusted gateway to knowledge and imagination</h5> */}
-              </div>
+          {/* RIGHT – LOGIN FORM */}
+          <Box
+            sx={{
+              flex: 4,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              p: { xs: 3, md: 3 },
+              background: "rgb(255, 255, 255)",
 
-              <div
-                className="position-absolute bottom-0 start-50 text-blue text-center px-0 mb-4"
-                style={{
-                  zIndex: 2,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  maxWidth: '90vw',
-                  transform: 'translateX(-50%)'
-                }}
-              >
-                <p className="mb-0">
-                  We are your trusted destination for quality books and school accessories.</p>
-                {/* <p className="mb-0">   We bring everything you need to make learning brighter and more enjoyable.</p> */}
-              </div>
-            </CCol>
-
-            <CCol
-              md={5}
-              className="d-flex align-items-start justify-content-center p-4"
-              style={{ height: '100vh' }}
+              backdropFilter: "blur(18px)",
+            }}
+          >
+            <Card
+              sx={{
+                width: "100%",
+                borderRadius: 3,
+                p: 1,
+                background: "rgba(0, 60, 100, 0.96)",
+              }}
             >
-              <CCard className="w-100 border-0">
-                <CCardBody className="px-5 pt-3 pb-4">
-                  <div className="text-center mb-3">
-                    <CImage src={logo} height={70} alt="Logo" />
-                    <h4 className="mt-4">Reset Password</h4>
-                  </div>
-                  {step === 1 && (
-                    <CForm>
-                      <CFormLabel htmlFor="email">Email</CFormLabel>
-                      <CFormInput
-                        type="email"
-                        value={email}
-                        id="email"
-                        placeholder="Email (Username)"
-                        className="mb-3"
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
+              <CardContent sx={{ textAlign: "center", p: 0 }}>
+                <Box mb={2}>
+                  <Box
+                    component="img"
+                    src={logo}
+                    alt="logo"
+                    sx={{ height: 35, mb: 0 }}
+                  />
+                  <Typography variant="h5" fontWeight="bold">
+                    Reset Password
+                  </Typography>
+                </Box>
+                {step === 1 && (
+                  <Box>
+                    <TextField
+                      label="Email"
+                      type="email"
+                      fullWidth
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter Your Email"
+                      margin="normal"
+                      InputProps={{
+                        sx: {
+                          backgroundColor: "#0F0B1D",
+                          color: "#fff",
+                          borderRadius: 5,
+                        },
+                      }}
+                    />
 
-                      <div className="d-grid gap-2 mb-1">
-                        <CButton className="mt-4 w-100" onClick={handleEmailSubmit}>
-                          Send Verification Code
-                        </CButton>
-                      </div>
-                      <div className="text-center mb-3">
-                        <a href="/login" className="text-decoration-underline text-muted">
-                          Login?
-                        </a>
-                      </div>
-                    </CForm>
-                  )}
-                  {step === 2 && (
-                    <CForm>
-                      <CFormLabel>New Password</CFormLabel>
-                      <CFormInput
-                        type="password"
-                        placeholder="Enter new password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                      />
-                      <CButton className="mt-4 w-100" onClick={handleResetPassword}>
-                        Reset Password
-                      </CButton>
-                    </CForm>
-                  )}
-                </CCardBody>
-              </CCard>
-            </CCol>
-          </CCol>
-        </CRow>
+                    <Button
+                      fullWidth
+                      sx={{
+                        mt: 2,
+                        py: 1.5,
+                        fontWeight: "bold",
+                        background: "linear-gradient(135deg, #838383, #bdbbbb)",
+                        color: "white",
+                        height: "40px",
+                      }}
+                      onClick={handleEmailSubmit}
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <CircularProgress size={20} sx={{ color: "white" }} />
+                      ) : (
+                        "Send Verification Code"
+                      )}
+                    </Button>
+
+                    <Box sx={{ textAlign: "center", mt: 2 }}>
+                      <Link
+                        href="/login"
+                        underline="hover"
+                        sx={{ color: "#33a0fa", fontWeight: "bold", fontSize: 12 }}
+                      >
+                        Login
+                      </Link>
+                    </Box>
+                  </Box>
+                )}
+
+                {step === 2 && (
+                  <Box>
+                    <TextField
+                      label="New Password"
+                      type={showPassword ? "text" : "password"}
+                      fullWidth
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter new password"
+                      margin="normal"
+                      InputProps={{
+                        sx: {
+                          backgroundColor: "#0F0B1D",
+                          color: "#fff",
+                          borderRadius: 1,
+                        },
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowPassword(!showPassword)}
+                              edge="end"
+                              sx={{ color: "#fff" }}
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+
+                    <Button
+                      fullWidth
+                      sx={{
+                        mt: 2,
+                        py: 1.5,
+                        fontWeight: "bold",
+                        background: "linear-gradient(135deg, #838383, #bdbbbb)",
+                        color: "#fff",
+                        height: "40px",
+                      }}
+                      onClick={handleResetPassword}
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <CircularProgress size={20} sx={{ color: "white" }} />
+                      ) : (
+                        "Reset Password"
+                      )}
+                    </Button>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+          </Box>
+        </Card>
+
         {/* Email Verification Modal */}
         <EmailVerificationModal
           visible={showVerifyModal}
@@ -206,8 +315,8 @@ const ResetPassword = () => {
           onVerify={handleCodeVerify}
           onClose={() => setShowVerifyModal(false)}
         />
-      </CContainer>
-    </div>
+      </Box>
+    </>
   );
 };
 

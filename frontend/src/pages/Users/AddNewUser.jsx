@@ -1,19 +1,23 @@
 import React, { useState } from 'react'
 import {
-  CCard,
-  CCardHeader,
-  CCardBody,
-  CForm,
-  CFormLabel,
-  CFormInput,
-  CFormSelect,
-  CButton,
-  CRow,
-  CCol,
-  CContainer
-} from '@coreui/react'
+  Card,
+  Typography,
+  Grid,
+  TextField,
+  Select,
+  Box,
+  MenuItem,
+  FormControl,
+  IconButton,
+  Button,
+  CircularProgress,
+  InputAdornment,
+} from "@mui/material";
+import { Lock, LockOpen } from "@mui/icons-material";
 import { toast } from 'react-toastify';
 import { register } from '../../services/authService';
+import { useTheme } from "@mui/material";
+
 
 const AddNewUser = () => {
   const [email, setEmail] = useState('')
@@ -21,6 +25,9 @@ const AddNewUser = () => {
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
   const [role, setRole] = useState('normal')
+  const theme = useTheme();
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false)
 
 
   const handleCreateUser = async () => {
@@ -52,12 +59,12 @@ const AddNewUser = () => {
       phone: phone || null,         // optional
       role: role.toLowerCase(),
     };
-
+    setLoading(true)
     try {
       const response = await register(newUser);
 
       toast.success('User added successfully!');
-      console.log('Created user:', response.data);
+      //console.log('Created user:', response.data);
 
       // Clear form
       setFullName('');
@@ -75,95 +82,188 @@ const AddNewUser = () => {
         toast.error('Failed to add user. Please try again.');
       }
     }
+    finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
-      <CContainer className="mt-0">
-        <CCard style={{ minHeight: '445px' }}>
-          <CCardHeader className="d-flex justify-content-between align-items-center py-2 px-3" style={{ backgroundColor: "#02187dff" }}>
-            <h5 style={{ color: "#f5f6faff", fontWeight: "bolder" }}>Create New User</h5>
-          </CCardHeader>
-          <CCardBody>
-            <CForm>
-              {/* Full Name and Role in same row */}
-              <CRow className="mb-3">
-                <CCol md={8}>
-                  <CFormLabel htmlFor="fullName" style={{ fontWeight: "bold" }}>Full Name</CFormLabel>
-                  <CFormInput
-                    style={{ minHeight: '40px' }}
-                    id="fullName"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Enter Full Name..."
-                  />
-                </CCol>
-                <CCol md={4}>
-                  <CFormLabel htmlFor="role" style={{ fontWeight: "bold" }}>Role</CFormLabel>
-                  <CFormSelect
-                    style={{ minHeight: '40px' }}
-                    id="role"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                  >
-                    <option value="admin">Admin</option>
-                    <option value="normal">Normal</option>
-                  </CFormSelect>
-                </CCol>
-              </CRow>
+      <Box p={3}>
+        <Typography variant="h5" style={{
+          border: "none",
+          fontSize: "1.2rem",
+          fontWeight: 'bold',
+          color: theme.palette.text.main,
+          marginBottom: "20px"
+        }}>
+          Create New User
+        </Typography>
 
-              {/* Email */}
-              <CRow className="mb-3">
-                <CCol md={8}>
-                  <CFormLabel htmlFor="email" style={{ fontWeight: "bold" }}>Email</CFormLabel>
-                  <CFormInput
-                    style={{ minHeight: '40px' }}
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter Email..."
-                  />
-                </CCol>
-                <CCol md={4}>
-                  <CFormLabel htmlFor="phone" style={{ fontWeight: "bold" }}>Phone Number</CFormLabel>
-                  <CFormInput
-                    style={{ minHeight: '40px' }}
-                    type="text"
-                    id="phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Enter Phone Number..."
-                  />
-                </CCol>
-              </CRow>
-
-              {/* Password */}
-              <CRow className="mb-4">
-                <CCol md={12}>
-                  <CFormLabel htmlFor="password" style={{ fontWeight: "bold" }}>Password</CFormLabel>
-                  <CFormInput
-                    style={{ minHeight: '40px' }}
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter Password..."
-                  />
-                </CCol>
-              </CRow>
-
-              <CRow>
-                <CCol md={50} className="d-flex justify-content-end mt-4">
-                  <CButton style={{ backgroundColor: "#02187dff", color: "#fcfcfdff", fontWeight: "bold", width: '150px', marginTop: "20px" }} onClick={handleCreateUser}>
-                    Create
-                  </CButton>
-                </CCol>
-              </CRow>
-            </CForm>
-          </CCardBody>
-        </CCard>
-      </CContainer>
+        <Card sx={{ p: 2, mb: 3 }}>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+              <Typography fontWeight="bold" color={theme.palette.text.main}>
+                Full Name
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Enter Full Name..."
+                sx={{
+                  mt: 1,
+                  borderRadius: "15px",
+                  "& input": {
+                    fontSize: "0.75rem",
+                    color: theme.palette.text.primary,
+                  },
+                  "& fieldset": {
+                    border: "1px solid #0e4a99",
+                  },
+                  backgroundColor: theme.palette.background.default,
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+              <Typography fontWeight="bold" color={theme.palette.text.main}>
+                Role
+              </Typography>
+              <FormControl fullWidth size="small" sx={{ mt: 1 }}>
+                <Select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  sx={{
+                    fontSize: "0.75rem",
+                    backgroundColor: theme.palette.background.default,
+                    color: theme.palette.text.primary,
+                    "& fieldset": {
+                      border: "1px solid #0e4a99",
+                    },
+                    height: 35,
+                    '& .MuiOutlinedInput-root': {
+                      py: 0,
+                      height: 35,
+                      display: 'flex',
+                      alignItems: 'center',
+                      fontSize: "11px"
+                    },
+                  }}
+                >
+                  <MenuItem value="admin" sx={{ minHeight: 30, py: 0.5 }}>Admin</MenuItem>
+                  <MenuItem value="normal" sx={{ minHeight: 30, py: 0.5 }}>Normal</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Grid container spacing={3} marginTop={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+              <Typography fontWeight="bold" color={theme.palette.text.main}>
+                Email
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter Email..."
+                sx={{
+                  mt: 1,
+                  borderRadius: "15px",
+                  "& input": {
+                    fontSize: "0.75rem",
+                    color: theme.palette.text.primary,
+                  },
+                  "& fieldset": {
+                    border: "1px solid #0e4a99",
+                  },
+                  backgroundColor: theme.palette.background.default,
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 6 }}><Typography fontWeight="bold" color={theme.palette.text.main}>
+              Phone Number
+            </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Enter Phone Number..."
+                sx={{
+                  mt: 1,
+                  borderRadius: "15px",
+                  "& input": {
+                    fontSize: "0.75rem",
+                    color: theme.palette.text.primary,
+                  },
+                  "& fieldset": {
+                    border: "1px solid #0e4a99",
+                  },
+                  backgroundColor: theme.palette.background.default,
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }} >
+              <Typography fontWeight="bold" color={theme.palette.text.main}>
+                Password
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter Password..."
+                sx={{
+                  mt: 1,
+                  borderRadius: "15px",
+                  "& input": {
+                    fontSize: "0.75rem",
+                    color: theme.palette.text.primary,
+                  },
+                  "& fieldset": {
+                    border: "1px solid #0e4a99",
+                  },
+                  backgroundColor: theme.palette.background.default,
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                        sx={{ color: theme.palette.text.main }}
+                      >
+                        {showPassword ? <LockOpen /> : <Lock />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Grid size={{ xs: 12 }} display="flex" justifyContent="flex-end" mt={6}>
+            <Button
+              size="medium"
+              variant="contained"
+              onClick={handleCreateUser}
+              disabled={loading}
+              sx={{
+                backgroundColor: "rgba(0, 60, 100, 0.96)",
+                fontWeight: "bold",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 60, 100, 0.7)",
+                },
+              }}
+            >
+              {loading ? <CircularProgress size={20} /> : "Create"}
+            </Button>
+          </Grid>
+        </Card>
+      </Box >
     </>
   )
 }

@@ -9,7 +9,9 @@ import {
     Stack,
     IconButton,
     Alert,
+    Box,
 } from '@mui/material'
+
 import CloseIcon from "@mui/icons-material/Close";
 import { AuthContext } from '../../context/AuthContext'
 import { verifyPassword } from '../../services/authService'
@@ -34,8 +36,7 @@ const VerifyPasswordDialog = ({ open, onClose, onVerified }) => {
 
             const response = await verifyPassword({ email, password: currentPassword });
 
-            console.log(response.data);
-            // Backend returns { success: true }
+            //console.log(response.data);
             if (response.data?.success) {
                 toast.success("Password verified");
                 setCurrentPassword("");  // clear input
@@ -53,13 +54,22 @@ const VerifyPasswordDialog = ({ open, onClose, onVerified }) => {
     return (
         <>
             <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-                <DialogTitle>Change Password<IconButton
-                    onClick={onClose}
-                    sx={{ position: "absolute", right: 8, top: 8 }}
-                >
-                    <CloseIcon />
-                </IconButton>
-                </DialogTitle>
+                <Box style={{
+                    backgroundColor: "rgba(0, 60, 100, 0.96)",
+                }}>
+                    <DialogTitle style={{
+                        border: "none",
+                        fontSize: "1.2rem", color: 'white', fontWeight: 'bold'
+                    }}>
+                        Change Password
+                        <IconButton
+                            onClick={onClose}
+                            sx={{ position: "absolute", right: 8, top: 8 }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
+                </Box>
 
                 <DialogContent>
                     {error && <Alert severity="error">{error}</Alert>}
@@ -69,6 +79,7 @@ const VerifyPasswordDialog = ({ open, onClose, onVerified }) => {
                         value={email}
                         fullWidth
                         margin="normal"
+                        size='small'
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     <TextField
@@ -77,23 +88,35 @@ const VerifyPasswordDialog = ({ open, onClose, onVerified }) => {
                         fullWidth
                         margin="normal"
                         value={currentPassword}
+                        size='small'
                         onChange={(e) => setCurrentPassword(e.target.value)}
                     />
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={onClose}>Cancel</Button>
                     <Button
                         variant="contained"
+                        style={{
+                            backgroundColor: "rgba(0, 60, 100, 0.96)", border: "none",
+                            fontSize: "0.85rem", color: 'white', fontWeight: 'bold'
+                        }}
                         onClick={handleVerify}
                         disabled={loading}
                     >
                         {loading ? "Verifying..." : "Verify"}
                     </Button>
+                    <Button style={{
+                        background:
+                            "linear-gradient(135deg, #838383ff, #bdbbbbff)",
+                        border: "none",
+                        fontSize: "0.85rem",
+                        fontWeight: 'bold',
+                        color: "black"
+                    }} onClick={onClose}>Cancel</Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog >
         </>
-    )
+    );
 }
 
 export default VerifyPasswordDialog

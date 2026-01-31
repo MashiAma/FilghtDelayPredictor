@@ -1,23 +1,18 @@
 import React, { useState } from 'react'
 import {
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle,
-  CForm,
-  CFormLabel,
-  CFormInput,
-  CButton,
-  CRow,
-  CCol,
-  CTooltip,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import {
-  cilPencil,
-} from '@coreui/icons';
-import { CBadge } from '@coreui/react'
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  Grid,
+  IconButton,
+  Tooltip,
+  Box,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+
 import { toast } from 'react-toastify';
 
 const UserDialog = ({ visible, user, onClose, onSave }) => {
@@ -41,63 +36,109 @@ const UserDialog = ({ visible, user, onClose, onSave }) => {
   }
 
   return (
-    <CModal visible={visible} onClose={onClose}>
-      <CModalHeader style={{ backgroundColor: "#02187dff" }}>
-        <CModalTitle style={{ fontWeight: "bold", color: "white" }}>User Details</CModalTitle>
-        <CTooltip content={isEditable ? 'Disable Editing' : 'Enable Editing'}>
-          <CButton
-            color="light"
-            className="ms-2"
-            onClick={toggleEdit}
-            style={{ border: 'none', boxShadow: 'none' }}
-          >
-            <CIcon icon={cilPencil} />
-          </CButton>
-        </CTooltip>
-      </CModalHeader>
-      <CModalBody>
-        <CForm>
-          <CRow className="mb-3">
-            <CCol md={6}>
-              <CFormLabel style={{ fontWeight: "bold" }}>Email</CFormLabel>
-              <CFormInput value={email} disabled />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel style={{ fontWeight: "bold" }}>Role</CFormLabel>
-              <CFormInput
-                value={role}
+    <>
+      <Dialog open={visible} onClose={onClose} maxWidth="xs" fullWidth>
+        <Box style={{
+          backgroundColor: "rgba(0, 60, 100, 0.96)",
+        }}>
+          <DialogTitle style={{
+            border: "none",
+            fontSize: "1.2rem", color: 'white', fontWeight: 'bold', justifyContent: "space-between"
+          }}>
+            User Details
+            <Tooltip title={isEditable ? "Disable Editing" : "Enable Editing"}>
+              <IconButton
+                onClick={toggleEdit}
+                sx={{ color: "white" }}
+                size="small"
+              >
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+          </DialogTitle>
+        </Box>
+        {/* BODY */}
+        <DialogContent sx={{ mt: 2 }}>
+          <Grid container spacing={2} marginBottom={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+              <TextField
+                label="Email"
+                value={email}
+                fullWidth
+                size="small"
                 disabled
               />
-            </CCol>
-          </CRow>
-          <div className="mb-3">
-            <CFormLabel style={{ fontWeight: "bold" }}>Full Name</CFormLabel>
-            <CFormInput
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              disabled={!isEditable}
-            />
-          </div>
+            </Grid>
 
-          <div className="mb-3">
-            <CFormLabel style={{ fontWeight: "bold" }}>Phone Number</CFormLabel>
-            <CFormInput
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              disabled={!isEditable}
-            />
-          </div>
-        </CForm>
-      </CModalBody>
-      <CModalFooter>
-        <CButton style={{ backgroundColor: "#adabadff", fontWeight: "bold", color: "black" }} onClick={onClose}>
-          Cancel
-        </CButton>
-        <CButton style={{ backgroundColor: "#02187dff", fontWeight: "bold", color: "white" }} onClick={handleSave} disabled={!isEditable}>
-          Save
-        </CButton>
-      </CModalFooter>
-    </CModal>
+            <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+              <TextField
+                label="Role"
+                value={role}
+                fullWidth
+                size="small"
+                disabled
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} marginBottom={3}>
+            <Grid size={{ xs: 12 }}>
+              <TextField
+                label="Full Name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                fullWidth
+                size="small"
+                disabled={!isEditable}
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} marginBottom={3}>
+            <Grid size={{ xs: 12 }}>
+              <TextField
+                label="Phone Number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                fullWidth
+                size="small"
+                disabled={!isEditable}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+
+        {/* FOOTER */}
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button
+            onClick={onClose}
+            sx={{
+              backgroundColor: "#adabadff",
+              fontWeight: "bold",
+              color: "black",
+              "&:hover": {
+                backgroundColor: "#9f9f9f",
+              },
+            }}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            onClick={handleSave}
+            disabled={!isEditable}
+            sx={{
+              backgroundColor: "rgba(0, 60, 100, 0.96)",
+              fontWeight: "bold",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "rgba(0, 60, 100, 0.7)",
+              },
+            }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   )
 }
 

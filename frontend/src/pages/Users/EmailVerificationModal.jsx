@@ -1,15 +1,22 @@
 import React, { useRef, useState, useEffect } from 'react'
 import {
-  CModal,
-  CModalHeader,
-  CModalTitle,
-  CModalBody,
-  CModalFooter,
-  CButton,
-  CFormInput,
-} from '@coreui/react'
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+  TextField,
+  Button,
+  Stack,
+  Box
+} from "@mui/material";
 
-const EmailVerificationModal = ({ visible, onClose, onVerify, email }) => {
+const EmailVerificationModal = ({
+  visible,
+  onClose,
+  onVerify,
+  email,
+}) => {
   const [code, setCode] = useState(['', '', '', '', '', ''])
   const inputs = useRef([])
 
@@ -63,60 +70,100 @@ const EmailVerificationModal = ({ visible, onClose, onVerify, email }) => {
   }
 
   return (
-    <CModal
-      alignment="center"
-      visible={visible}
+    <Dialog
+      open={visible}
       onClose={onClose}
-      backdrop="static"
-      keyboard={false}
+      fullWidth
+      maxWidth="xs"
+      disableEscapeKeyDown
     >
-      <CModalHeader>
-        <CModalTitle>Email Verification</CModalTitle>
-      </CModalHeader>
+      {/* Header */}
+      <DialogTitle
+        sx={{
+          background: "rgba(0, 64, 107, 0.91)",
+          color: "white",
+          fontWeight: "bold",
+          fontSize: "1.2rem"
+        }}
+      >
+        Email Verification
+      </DialogTitle>
 
-      <CModalBody>
-        <p className="mb-2">Enter the 6-digit code sent to:</p>
-        <strong>{email}</strong>
+      {/* Body */}
+      <DialogContent sx={{ mt: 2 }}>
+        <Typography variant="body1" mb={1}>
+          Enter the 6-digit code sent to:
+        </Typography>
 
-        <div className="d-flex justify-content-center mt-4 gap-2" onPaste={handlePaste}>
+        <Typography fontWeight="bold" mb={3}>
+          {email}
+        </Typography>
+
+        <Stack
+          direction="row"
+          spacing={1.5}
+          justifyContent="center"
+          onPaste={handlePaste}
+        >
           {code.map((digit, index) => (
-            <CFormInput
+            <TextField
               key={index}
-              type="text"
-              maxLength={1}
               value={digit}
-              ref={(el) => (inputs.current[index] = el)}
+              inputRef={(el) => (inputs.current[index] = el)}
               onChange={(e) => handleChange(e.target.value, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              style={{
-                width: '45px',
-                height: '50px',
-                textAlign: 'center',
-                fontSize: '24px',
-                fontWeight: 'bold',
+              inputProps={{
+                maxLength: 1,
+                style: {
+                  textAlign: "center",
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                  color: "rgba(0, 64, 107, 0.91)"
+                }
+              }}
+              sx={{
+                width: 45,
+                "& .MuiOutlinedInput-root": {
+                  height: 50
+                }
               }}
             />
           ))}
-        </div>
-      </CModalBody>
+        </Stack>
+      </DialogContent>
 
-      <CModalFooter>
-        <CButton
-          disabled={code.join('').length !== 6}
-          style={{ backgroundColor: '#02187d', color: 'white', fontWeight: 'bold' }}
+      {/* Footer */}
+      <DialogActions sx={{ px: 3, pb: 3 }}>
+        <Button
+          variant="contained"
+          disabled={code.join("").length !== 6}
           onClick={handleVerify}
+          sx={{
+            background: "rgba(0, 64, 107, 0.91)",
+            fontSize: "0.85rem",
+            fontWeight: "bold",
+            "&:hover": {
+              background: "rgba(0, 64, 107, 0.91)"
+            }
+          }}
         >
           Verify
-        </CButton>
-        <CButton
-          style={{ backgroundColor: '#adabad', color: 'black', fontWeight: 'bold' }}
+        </Button>
+
+        <Button
           onClick={onClose}
+          sx={{
+            background: "linear-gradient(135deg, #838383, #bdbbbb)",
+            color: "black",
+            fontSize: "0.85rem",
+            fontWeight: "bold"
+          }}
         >
           Cancel
-        </CButton>
-      </CModalFooter>
-    </CModal>
-  )
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 export default EmailVerificationModal

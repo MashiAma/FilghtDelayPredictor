@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react'
 import {
-  CButton,
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CFormInput,
-  CFormSwitch,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-  CPagination,
-  CPaginationItem,
-  CRow,
-  CCol,
-  CContainer
-} from '@coreui/react'
+  Box,
+  Card,
+  CardContent,
+  TextField,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TableContainer,
+  Paper,
+  Switch,
+  Button,
+  Typography,
+  Pagination,
+  Stack,
+  useTheme,
+} from "@mui/material";
 import { toast } from 'react-toastify';
+import { Lock, LockOpen } from "@mui/icons-material";
 import UserDialog from './UserDialog';
 import { getAllUsers, getUser, updateUser, updateUserStatus } from '../../services/authService'
 
@@ -28,6 +29,7 @@ const ViewUser = () => {
   const [selectedUser, setSelectedUser] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [users, setUsers] = useState([])
+  const theme = useTheme();
 
   const rowsPerPage = 5
 
@@ -111,115 +113,171 @@ const ViewUser = () => {
   )
 
   return (
-    <CContainer className="mt-0">
-      <CCard style={{ minHeight: '445px' }}>
-        <CCardHeader style={{ backgroundColor: "#02187dff" }}>
-          <CRow>
-            <CCol xs={12} md={6}>
-              <h5 style={{ color: "#f5f6faff", fontWeight: "bolder", marginTop: "5px" }}>User List</h5>
-            </CCol>
-            <CCol xs={12} md={6}>
-              <CFormInput
-                type="text"
-                placeholder="Search by name or email..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value)
-                  setCurrentPage(1)
-                }}
-                style={{ maxWidth: '100%', float: 'right' }}
-              />
-            </CCol>
-          </CRow>
-        </CCardHeader>
-        <CCardBody>
-          <CTable striped responsive hover>
-            <CTableHead>
-              <CTableRow>
-                <CTableHeaderCell>Full Name</CTableHeaderCell>
-                <CTableHeaderCell>Email</CTableHeaderCell>
-                <CTableHeaderCell>Role</CTableHeaderCell>
-                <CTableHeaderCell>Phone Number</CTableHeaderCell>
-                <CTableHeaderCell>Status</CTableHeaderCell>
-                <CTableHeaderCell>Action</CTableHeaderCell>
-                <CTableHeaderCell>Toggle</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {paginatedUsers.length > 0 ? (
-                paginatedUsers.map((user, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell>{user.full_name}</CTableDataCell>
-                    <CTableDataCell>{user.email}</CTableDataCell>
-                    <CTableDataCell>{user.role}</CTableDataCell>
-                    <CTableDataCell>{user.phone}</CTableDataCell>
-                    <CTableDataCell >
-                      {user.is_active ? 'Enabled' : 'Disabled'}
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CFormSwitch
-                        style={{ backgroundColor: user.is_active ? "#02187dff" : '#cdcdcdff' }}
-                        checked={user.is_active}
-                        onChange={() => handleToggleStatus(user)}
-                      />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CButton
-                        style={{ backgroundColor: "#02187dff", fontWeight: "bold", color: "white" }}
-                        size="sm"
-                        className="me-2"
-                        onClick={() => handleView(user)}
-                      >
-                        View
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                ))
-              ) : (
-                <CTableRow>
-                  <CTableDataCell colSpan="5" className="text-center">
-                    No matching users found.
-                  </CTableDataCell>
-                </CTableRow>
-              )}
-            </CTableBody>
-          </CTable>
+    <>
+      <Box p={3}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={0}
+        >
+          <Typography variant="h5" style={{
+            border: "none",
+            fontSize: "1.2rem",
+            fontWeight: 'bold',
+            color: theme.palette.text.main,
+          }}>
+            User List
+          </Typography>
 
-          <CPagination align="center" className="mt-3">
-            <CPaginationItem
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-            >
-              &laquo;
-            </CPaginationItem>
-            {[...Array(totalPages)].map((_, index) => (
-              <CPaginationItem
-                key={index}
-                active={currentPage === index + 1}
-                onClick={() => setCurrentPage(index + 1)}
-              >
-                {index + 1}
-              </CPaginationItem>
-            ))}
-            <CPaginationItem
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-            >
-              &raquo;
-            </CPaginationItem>
-          </CPagination>
-        </CCardBody>
-
-        {visibleDialog && selectedUser && (
-          <UserDialog
-            visible={visibleDialog}
-            user={selectedUser}
-            onClose={() => setVisibleDialog(false)}
-            onSave={handleSave}
+          {/* RIGHT: SEARCH */}
+          <TextField
+            size="small"
+            placeholder="Search by name or email..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            sx={{
+              minWidth: 400,
+              "& input": {
+                fontSize: "0.75rem",
+                color: theme.palette.text.primary,
+                height: "15px"
+              },
+              "& input::placeholder": {
+                color: "#a3a3a3ff",
+                opacity: 1,
+              },
+              "& fieldset": {
+                border: "1px solid #0e4a99",
+              },
+              backgroundColor: theme.palette.background.default,
+            }}
           />
-        )}
-      </CCard>
-    </CContainer>
+        </Box>
+      </Box>
+      <Card
+        sx={{
+          p: { xs: 2, md: 2 },
+          border: "none",
+          backgroundColor: theme.palette.background.default,
+        }}
+      >
+        <Card
+          sx={{
+            minHeight: 350,
+            backgroundColor: theme.palette.background.paper,
+          }}
+        >
+          <CardContent>
+            {/* TABLE */}
+            <TableContainer component={Paper} sx={{ backgroundColor: "transparent" }}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Full Name</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Email</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Role</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Phone Number</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Toggle</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Action</TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {paginatedUsers.length > 0 ? (
+                    paginatedUsers.map((user, index) => (
+                      <TableRow key={index} hover>
+                        <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
+                          {user.full_name}
+                        </TableCell>
+
+                        <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
+                          {user.email}
+                        </TableCell>
+
+                        <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
+                          {user.role}
+                        </TableCell>
+
+                        <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
+                          {user.phone}
+                        </TableCell>
+
+                        <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
+                          {user.is_active ? "Enabled" : "Disabled"}
+                        </TableCell>
+
+                        <TableCell>
+                          <Switch
+                            checked={user.is_active}
+                            onChange={() => handleToggleStatus(user)}
+                            sx={{
+                              "& .MuiSwitch-switchBase.Mui-checked": {
+                                color: "rgba(0, 60, 100, 0.96)",
+                              },
+                              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                                backgroundColor: "rgba(0, 60, 100, 0.96)",
+                              },
+                            }}
+                          />
+                        </TableCell>
+
+                        <TableCell>
+                          <Button
+                            size="small"
+                            variant="contained"
+                            onClick={() => handleView(user)}
+                            sx={{
+                              backgroundColor: "rgba(0, 60, 100, 0.96)",
+                              fontWeight: "bold",
+                              "&:hover": {
+                                backgroundColor: "rgba(0, 60, 100, 0.7)",
+                              },
+                            }}
+                          >
+                            View
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={7} align="center">
+                        No matching users found.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            {/* PAGINATION */}
+            <Stack mt={3} alignItems="center">
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={(e, value) => setCurrentPage(value)}
+                color="primary"
+              />
+            </Stack>
+          </CardContent>
+
+          {/* DIALOG */}
+          {visibleDialog && selectedUser && (
+            <UserDialog
+              visible={visibleDialog}
+              user={selectedUser}
+              onClose={() => setVisibleDialog(false)}
+              onSave={handleSave}
+            />
+          )}
+        </Card>
+      </Card >
+    </>
   )
 }
 

@@ -5,7 +5,7 @@ from fastapi import UploadFile
 from fastapi import HTTPException
 from io import StringIO
 import csv
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta , date
 REQUIRED_COLUMNS = {"holiday_date", "holiday_name", "holiday_type"}
 
 # --- Helper to calculate flags ---
@@ -163,3 +163,25 @@ def update_holiday(db: Session, holiday_id: int, holiday_in: HolidayUpdate):
 # --- Get all holidays ---
 def get_all_holidays(db: Session):
     return db.query(Holiday).all()
+
+def get_holiday_features(db: Session, dep_date: date) -> dict:
+    holiday = db.query(Holiday).filter(
+        Holiday.holiday_date == dep_date
+    ).first()
+
+    if not holiday:
+        return {
+            "is_sri_lankan_public_holiday": 0,
+            "is_poya_day": 0,
+            "is_festival_period": 0,
+            "is_post_holiday": 0,
+            "is_long_weekend": 0,
+        }
+
+    return {
+        "is_sri_lankan_public_holiday": int(holiday.is_sri_lankan_public_holiday),
+        "is_poya_day": int(holiday.is_poya_day),
+        "is_festival_period": int(holiday.is_festival_period),
+        "is_post_holiday": int(holiday.is_post_holiday),
+        "is_long_weekend": int(holiday.is_long_weekend),
+    }

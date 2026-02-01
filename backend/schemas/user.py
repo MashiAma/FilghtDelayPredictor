@@ -36,12 +36,23 @@ class UserUpdateStatus(BaseModel):
     is_active: bool
 
 # --- Change password ---
+class VerifyPassword(BaseModel):
+    email: EmailStr
+    password: str
+
 class ChangePassword(BaseModel):
-    old_password: str
+    email: EmailStr
+    # old_password: str
     new_password: str
     confirm_new_password:str
 
-# --- Reset password ---
-class ResetPassword(BaseModel):
+# --- Request reset ---
+class ResetPasswordRequest(BaseModel):
     email: EmailStr
+
+
+# --- Verify reset ---
+class ResetPasswordVerify(BaseModel):
+    email: EmailStr
+    code: str
     new_password: str

@@ -1,8 +1,9 @@
 #services/flight_service.py
 
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from models_sql.flight import Flight
-from datetime import datetime
+from datetime import datetime, date
 import csv
 from io import StringIO
 from fastapi import UploadFile
@@ -113,6 +114,33 @@ def update_flight(db: Session, flight_id: int, flight_in: FlightUpdate):
     db.refresh(flight)
     return flight
 
+def fetch_departure_times(
+    db: Session,
+    arrival: str,
+    airline: str,
+    flight_date: date,
+):
+    flights = (
+        db.query(Flight)
+        .filter(
+            Flight.arrival_airport == arrival,
+            Flight.airline == airline,
+            func.date(Flight.scheduled_departure) == flight_date
+        )
+        .order_by(Flight.scheduled_departure.asc())
+        .all()
+    )
+
+    return [
+        {
+            "scheduled_departure": f.scheduled_departure,
+            "departure_time": f.scheduled_departure.strftime("%H:%M"),
+            "arrival_airport": f.arrival_airport,
+            "airline": f.airline,
+            "flight_number": f.flight_number,
+        }
+        for f in flights
+    ]
 
 
 

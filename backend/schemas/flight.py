@@ -20,6 +20,12 @@ class FlightUpdate(BaseModel):
     status: Optional[str]
     aircraft: Optional[str]
 
+class DepartureTimeOut(BaseModel):
+    scheduled_departure: datetime
+    departure_time: str 
+    arrival_airport: str
+    airline:str
+    flight_number:str
 
 class FlightOut(FlightCreate):
     id: int

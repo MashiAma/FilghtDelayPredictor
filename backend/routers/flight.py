@@ -1,17 +1,20 @@
 #routers/flight.py
 
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Query
 from sqlalchemy.orm import Session
 from database.connection import get_db
-from schemas.flight import FlightCreate, FlightUpdate, FlightOut
+from datetime import date
+from schemas.flight import FlightCreate, FlightUpdate, FlightOut, DepartureTimeOut
 from services.flight_service import (
     get_flights,
     add_flight,
     add_flights_from_csv,
-    update_flight
+    update_flight,
+    fetch_departure_times
 )
 from utils.csv_validator import validate_flight_csv
 from models_sql.flight import Flight
+from typing import List
 
 router = APIRouter()
 
@@ -49,7 +52,22 @@ def update_flight_record(
     return flight
 
 
-
+@router.get(
+    "/departure-times",
+    response_model=List[DepartureTimeOut]
+)
+def get_departure_times(
+    arrival: str = Query(...),
+    airline: str = Query(...),
+    flight_date: date = Query(...),
+    db: Session = Depends(get_db)
+):
+    return fetch_departure_times(
+        db=db,
+        arrival=arrival,
+        airline=airline,
+        flight_date=flight_date,
+    )
 # @router.post("/predict", response_model=PredictionOut)
 # def submit_flight(flight_in: FlightCreate, db: Session = Depends(get_db)):
 #     # Step 1: Create flight entry

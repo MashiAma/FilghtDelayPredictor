@@ -1,26 +1,40 @@
-from pydantic import BaseModel
-from datetime import datetime
+from pydantic import BaseModel,validator
+from datetime import date, time, datetime
 from typing import Optional
 
-class PredictionCreate(BaseModel):
-    flight_id: int
-    predicted_delay_min: float
-    delay_class: str
-    probability: float
+class PredictionRequest(BaseModel):
+    arrival_airport: str
+    flight_number: Optional[str]
+    departure_date: date
+    departure_time: str
 
-class PredictionOut(PredictionCreate):
-    id: int
-    created_at: datetime
+    @validator("departure_time")
+    def parse_time(cls, v):
+        # remove milliseconds and timezone, keep only HH:MM:SS
+        if "T" in v:
+            v = v.split("T")[1]
+        v = v.split(".")[0]  # remove milliseconds
+        return datetime.strptime(v, "%H:%M").time()
 
-    class Config:
-        from_attributes = True  # For SQLAlchemy integration
+# class PredictionCreate(BaseModel):
+#     flight_id: int
+#     predicted_delay_min: float
+#     delay_class: str
+#     probability: float
 
-class PredictionLatestOut(BaseModel):
-    flight_id: int
-    predicted_delay_min: float
-    delay_class: str
-    probability: float
-    created_at: datetime
+# class PredictionOut(PredictionCreate):
+#     id: int
+#     created_at: datetime
 
-    class Config:
-        from_attributes = True
+#     class Config:
+#         from_attributes = True  # For SQLAlchemy integration
+
+# class PredictionLatestOut(BaseModel):
+#     flight_id: int
+#     predicted_delay_min: float
+#     delay_class: str
+#     probability: float
+#     created_at: datetime
+
+#     class Config:
+#         from_attributes = True

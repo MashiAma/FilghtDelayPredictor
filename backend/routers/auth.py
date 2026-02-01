@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.connection import get_db
-from schemas.user import UserCreate, UserLogin, UserOut, UserUpdateProfile, ChangePassword, ResetPassword, UserUpdateStatus
-from services.auth_service import create_user, authenticate_user, update_user_profile,set_user_status, change_user_password, reset_password
+from schemas.user import UserCreate, UserLogin, UserOut, UserUpdateProfile, VerifyPassword, ChangePassword, ResetPasswordRequest, ResetPasswordVerify, UserUpdateStatus
+from services.auth_service import create_user, authenticate_user,get_user_by_email, update_user_profile,set_user_status, change_user_password, verify_current_password, request_password_reset, verify_and_reset_password
 from models_sql.user import User
 from typing import List
+from utils.auth_utils import get_current_user
 
 router = APIRouter()
 
@@ -62,23 +63,88 @@ def update_user_status(
 
 
 # --- Change password ---
-@router.put("/change-password/{user_id}")
-def change_password(user_id: int, passwords: ChangePassword, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id).first()
+# @router.put("/change-password/{user_id}")
+# def change_password(user_id: int, passwords: ChangePassword, db: Session = Depends(get_db)):
+#     user = db.query(User).filter(User.id == user_id).first()
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     updated = change_user_password(db, user, passwords.old_password, passwords.new_password)
+#     if not updated:
+#         raise HTTPException(status_code=400, detail="Old password incorrect")
+#     return {"message": "Password changed successfully"}
+
+@router.post("/verify-password")
+def verify_password_endpoint(
+    payload: VerifyPassword,
+    db: Session = Depends(get_db),
+):
+    user = get_user_by_email(db, payload.email)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    updated = change_user_password(db, user, passwords.old_password, passwords.new_password)
-    if not updated:
-        raise HTTPException(status_code=400, detail="Old password incorrect")
-    return {"message": "Password changed successfully"}
+
+    # Step 2: verify password
+    if not verify_current_password(user, payload.password):
+        raise HTTPException(status_code=400, detail="Incorrect password")
+
+    return {"success": True}
+
+@router.put("/change-password")
+def change_password(
+    passwords: ChangePassword,
+    db: Session = Depends(get_db),
+):
+    user = db.query(User).filter(User.email == passwords.email).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    result = change_user_password(
+        db,
+        user,
+        # passwords.old_password,
+        passwords.new_password,
+        passwords.confirm_new_password
+    )
+
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["message"])
+
+    return result
+
+@router.post("/reset-password-request")
+def request_reset(
+    payload: ResetPasswordRequest,
+    db: Session = Depends(get_db)
+):
+    result = request_password_reset(db, payload.email)
+    if not result:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {"message": "Verification code sent to email"}
+
+@router.post("/reset-password-verify")
+def verify_reset(
+    payload: ResetPasswordVerify,
+    db: Session = Depends(get_db)
+):
+    result = verify_and_reset_password(
+        db,
+        payload.email,
+        payload.code,
+        payload.new_password
+    )
+
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["message"])
+
+    return result
 
 # --- Reset password ---
-@router.put("/reset-password")
-def reset_password_endpoint(reset: ResetPassword, db: Session = Depends(get_db)):
-    updated = reset_password(db, reset.email, reset.new_password)
-    if not updated:
-        raise HTTPException(status_code=404, detail="User not found")
-    return {"message": "Password reset successfully"}
+# @router.put("/reset-password")
+# def reset_password_endpoint(reset: ResetPassword, db: Session = Depends(get_db)):
+#     updated = reset_password(db, reset.email, reset.new_password)
+#     if not updated:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     return {"message": "Password reset successfully"}
 
 #get all users
 @router.get("/get-all-users", response_model=List[UserOut])

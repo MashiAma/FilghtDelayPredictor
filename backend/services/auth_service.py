@@ -2,6 +2,9 @@ from sqlalchemy.orm import Session
 from models_sql.user import User
 from passlib.context import CryptContext
 from utils.password_utils import hash_password, verify_password
+from models_sql.password_reset import PasswordResetCode
+from utils.email_utils import send_email_alert
+import random
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -68,40 +71,99 @@ def set_user_status(db: Session, email: str, is_active: bool):
 #     return user
 
 # services/user_service.py
+def verify_current_password(user, password: str) -> bool:
+    # user = db.query(User).filter(User.email == email).first()
+    if not user:
+        return False
+    return verify_password(password, user.hashed_password)
 
 
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+def change_user_password(
+    db: Session,
+    user: User,
+    # old_password: str,
+    new_password: str,
+    confirm_new_password: str
+):
 
-def hash_password(password):
-    return pwd_context.hash(password)
+    # user = db.query(User).filter(User.email == email).first()
+    # if not user:
+    #     return {"success": False, "message": "User not found"}
 
-def change_user_password(db: Session, user: User, current_password: str, new_password: str, confirm_new_password: str):
-    if not verify_password(current_password, user.password):
-        return {"success": False, "message": "Current password is incorrect"}
+    # if not verify_password(old_password, user.hashed_password):
+    #     return {"success": False, "message": "Current password is incorrect"}
 
     if new_password != confirm_new_password:
-        return {"success": False, "message": "New passwords do not match"}
+        return {"success": False, "message": "Passwords do not match"}
 
-    if current_password == new_password:
-        return {"success": False, "message": "New password must be different from current password"}
+    # if old_password == new_password:
+    #     return {"success": False, "message": "New password must be different"}
 
-    # Hash and save
-    user.password = hash_password(new_password)
+    user.hashed_password = hash_password(new_password)
     db.commit()
 
-    return {"success": True, "message": "Password updated successfully"}
+    return {"success": True, "message": "Password changed successfully"}
 
 
-# --- Reset password ---
-def reset_password(db: Session, email: str, new_password: str):
+def request_password_reset(db: Session, email: str):
     user = db.query(User).filter(User.email == email).first()
     if not user:
         return None
-    user.hashed_password = hash_password(new_password)
+
+    code = str(random.randint(100000, 999999))
+
+    # Remove existing codes
+    db.query(PasswordResetCode).filter(
+        PasswordResetCode.email == email
+    ).delete()
+
+    reset = PasswordResetCode(email=email, code=code)
+    db.add(reset)
     db.commit()
-    db.refresh(user)
-    return user
+
+    send_email_alert(
+        to_email=email,
+        subject="Password Reset Verification Code",
+        body=f"Your password reset code is: {code}"
+    )
+
+    return True
+
+def verify_and_reset_password(
+    db: Session,
+    email: str,
+    code: str,
+    new_password: str
+):
+    record = db.query(PasswordResetCode).filter(
+        PasswordResetCode.email == email,
+        PasswordResetCode.code == code
+    ).first()
+
+    if not record:
+        return {"success": False, "message": "Invalid or expired code"}
+
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        return {"success": False, "message": "User not found"}
+
+    user.hashed_password = hash_password(new_password)
+
+    # cleanup
+    db.delete(record)
+    db.commit()
+
+    return {"success": True, "message": "Password reset successfully"}
+
+# --- Reset password ---
+# def reset_password(db: Session, email: str, new_password: str):
+#     user = db.query(User).filter(User.email == email).first()
+#     if not user:
+#         return None
+#     user.hashed_password = hash_password(new_password)
+#     db.commit()
+#     db.refresh(user)
+#     return user
 
 # get all users
 def get_all_users(db: Session):

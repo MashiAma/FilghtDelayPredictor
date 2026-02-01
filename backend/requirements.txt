@@ -6,3 +6,11 @@ joblib
 numpy
 openai
 langchain
+email-validator
+sqlalchemy
+psycopg2-binary
+passlib[bcrypt]
+python-jose[cryptography]
+pydantic
+python-multipart
+python-dotenv

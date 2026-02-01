@@ -49,6 +49,9 @@ export const uploadFlightsCSV = async (file) => {
 };
 export const updateFlight = (flightId, data) => API.put(`/flights/update-flight/${flightId}`, data);      // Update a flight
 export const getAllFlights = () => API.get('/flights/get-All-flights/');     // Get flights
+export const fetchDepartureTimes = (params) =>
+  API.get("/flights/departure-times", { params });
+
 
 
 export const getAllHolidays = () => API.get("/holidays/get-all-holidays");             // Get all holidays
@@ -76,28 +79,14 @@ export const updateHoliday = (holidayId, data) => API.put(`/holidays/update-holi
 
 
 
+export const submitPrediction = (payload) =>
+  API.post("/predictions", payload);
 
-
-export const submitPrediction = (data) => API.post("/predictions/", data);          // Submit a flight for prediction
-export const getFlightPredictions = (flightId) => API.get(`/predictions/flight/${flightId}`);     // Get predictions for a specific flight
-export const getPredictionHistory = () => API.get("/predictions/history");        // Get prediction history
-export const getDelayClassification = () => API.get("/predictions/delay-classification");   // Get delay classification
-
-
+// export const getFlightPredictions = (flightId) => API.get(`/predictions/flight/${flightId}`);     // Get predictions for a specific flight
+// export const getPredictionHistory = () => API.get("/predictions/history");        // Get prediction history
+// export const getDelayClassification = () => API.get("/predictions/delay-classification");   // Get delay classification
 
 
 export const createAlert = (data) => API.post("/alert/", data);           // Create an alert
 export const getUserAlerts = (userId) => API.get(`/alert/user/${userId}`);      // Get user alerts
 export const markAlertRead = (alertId) => API.put(`/alert/${alertId}/read`);      // Mark an alert as read
-
-
-
-export const addItem = (itemData) => API.post('/items/add', itemData);                                      // Add a new item
-export const getAllItems = () => API.get('/items');                                                        // Get all items
-export const updateItem = (itemData) => API.put('/items/update', itemData);                               // Update an item
-export const deleteItem = (itemId) => API.delete(`/items/delete/${itemId}`);                             // Delete an item
-export const searchItemsWithPrices = (name) => API.get(`/items/search-with-prices?name=${name}`);        // Search items by name only
-export const addItemPrice = (itemId, priceData) =>                                                     // Add a price to a specific item
-  API.post(`/items/prices/${itemId}`, priceData);
-
-

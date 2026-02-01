@@ -31,7 +31,6 @@ export default function UploadFlightCSV() {
         try {
             setLoading(true);
 
-            // Directly pass the file (no need to wrap again in FormData here if service does it)
             const data = await uploadFlightsCSV(file);
 
             if (data.success) {

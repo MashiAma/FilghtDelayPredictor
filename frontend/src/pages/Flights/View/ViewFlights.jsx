@@ -13,7 +13,8 @@ import {
   TextField,
   Pagination,
   Typography,
-  Button
+  Button,
+  useTheme
 } from '@mui/material'
 import { toast } from 'react-toastify'
 import { getAllFlights } from '../../../services/authService'
@@ -43,6 +44,7 @@ const ViewFlights = () => {
   const [activeTab, setActiveTab] = useState(0)
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
+  const theme = useTheme();
 
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -117,7 +119,8 @@ const ViewFlights = () => {
   const filterFlights = (flights) =>
     flights.filter(f =>
       f.flight_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      f.departure_airport.toLowerCase().includes(searchTerm.toLowerCase())
+      f.departure_airport.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      f.airline.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
   const paginate = (flights) => {
@@ -135,96 +138,126 @@ const ViewFlights = () => {
 
   /* ---------- UI ---------- */
   return (
-    <Box p={2}>
-      <Typography variant="h5" mb={2}>
-        Arrival Flights (Today & Upcoming)
-      </Typography>
+    <>
+      <Box p={3}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={3}
+        >
+          <Typography variant="h5" style={{
+            border: "none",
+            fontSize: "1.2rem",
+            fontWeight: 'bold',
+            color: theme.palette.text.main,
+          }}>
+            Upcoming Flight Details
+          </Typography>
 
-      <TextField
-        fullWidth
-        placeholder="Search by flight number or origin..."
-        value={searchTerm}
-        onChange={(e) => {
-          setSearchTerm(e.target.value)
-          setCurrentPage(1)
-        }}
-        sx={{ mb: 2 }}
-      />
-
-      <Tabs
-        value={activeTab}
-        onChange={handleTabChange}
-        variant="scrollable"
-        scrollButtons="auto"
-      >
-        {airports.map((airport) => (
-          <Tab key={airport} label={airport} />
-        ))}
-      </Tabs>
-
-      <TableContainer component={Paper} sx={{ mt: 2 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Flight No</TableCell>
-              <TableCell>Scheduled Departure</TableCell>
-              <TableCell>Scheduled Arrival</TableCell>
-              <TableCell>Airline</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {paginated.length > 0 ? (
-              paginated.map((f) => (
-                <TableRow key={f.flight_number}>
-                  <TableCell>{f.flight_number}</TableCell>
-                  <TableCell>{formatDateTime(f.scheduled_departure)}</TableCell>
-                  <TableCell>{formatDateTime(f.scheduled_arrival)}</TableCell>
-                  <TableCell>{f.airline}</TableCell>
-                  <TableCell align="right">
-                    <Button
-                      size="small"
-                      variant="contained"
-                      sx={{ backgroundColor: '#02187d' }}
-                      onClick={() => handleView(f)}
-                    >
-                      View
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  No flights found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {filtered.length > rowsPerPage && (
-        <Box display="flex" justifyContent="center" mt={2}>
-          <Pagination
-            count={Math.ceil(filtered.length / rowsPerPage)}
-            page={currentPage}
-            onChange={(_, page) => setCurrentPage(page)}
+          {/* RIGHT: SEARCH */}
+          <TextField
+            size="small"
+            placeholder="Search by ariline..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            sx={{
+              minWidth: 400,
+              "& input": {
+                fontSize: "0.75rem",
+                color: theme.palette.text.primary,
+                height: "15px"
+              },
+              "& input::placeholder": {
+                color: "#a3a3a3ff",
+                opacity: 1,
+              },
+              "& fieldset": {
+                border: "1px solid #0e4a99",
+              },
+              backgroundColor: theme.palette.background.default,
+            }}
           />
         </Box>
-      )}
 
-      {/* ---------- Flight Dialog ---------- */}
-      {selectedFlight && (
-        <FlightDialog
-          open={dialogOpen}
-          flight={selectedFlight}
-          onClose={() => setDialogOpen(false)}
-          onSave={handleSave}
-        />
-      )}
-    </Box>
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
+          variant="scrollable"
+          scrollButtons="auto"
+        >
+          {airports.map((airport) => (
+            <Tab key={airport} label={airport} />
+          ))}
+        </Tabs>
+
+        <TableContainer component={Paper} sx={{ mt: 2 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }}>Flight No</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Scheduled Departure</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Scheduled Arrival</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Airline</TableCell>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {paginated.length > 0 ? (
+                paginated.map((f) => (
+                  <TableRow key={f.flight_number}>
+                    <TableCell sx={{ py: 0.5 }}>{f.flight_number}</TableCell>
+                    <TableCell sx={{ py: 0.5 }}>{formatDateTime(f.scheduled_departure)}</TableCell>
+                    <TableCell sx={{ py: 0.5 }}>{formatDateTime(f.scheduled_arrival)}</TableCell>
+                    <TableCell sx={{ py: 0.5 }}>{f.airline}</TableCell>
+                    <TableCell align="right" sx={{ py: 0.5 }}>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        sx={{ backgroundColor: "rgba(0, 60, 100, 0.96)" }}
+                        onClick={() => handleView(f)}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    No flights found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {filtered.length > rowsPerPage && (
+          <Box display="flex" justifyContent="center" mt={2}>
+            <Pagination
+              count={Math.ceil(filtered.length / rowsPerPage)}
+              page={currentPage}
+              onChange={(_, page) => setCurrentPage(page)}
+            />
+          </Box>
+        )}
+
+        {/* ---------- Flight Dialog ---------- */}
+        {selectedFlight && (
+          <FlightDialog
+            open={dialogOpen}
+            flight={selectedFlight}
+            onClose={() => setDialogOpen(false)}
+            onSave={handleSave}
+          />
+        )}
+      </Box>
+    </>
   )
 }
 

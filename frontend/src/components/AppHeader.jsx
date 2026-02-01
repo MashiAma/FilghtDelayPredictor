@@ -24,6 +24,8 @@ const AppHeader = ({ mode, toggleTheme }) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUsers, setAnchorElUsers] = useState(null);
   const [anchorElReports, setAnchorElReports] = useState(null);
+  const [anchorElFlights, setAnchorElFlights] = useState(null);
+  const [anchorElHolidays, setAnchorElHolidays] = useState(null);
   const navigate = useNavigate();
   const userRole = user?.role;
 
@@ -40,6 +42,12 @@ const AppHeader = ({ mode, toggleTheme }) => {
 
   const handleOpenReportsMenu = (event) => setAnchorElReports(event.currentTarget);
   const handleCloseReportsMenu = () => setAnchorElReports(null);
+
+  const handleOpenFlightsMenu = (event) => setAnchorElFlights(event.currentTarget);
+  const handleCloseFlightsMenu = () => setAnchorElFlights(null);
+
+  const handleOpenHolidaysMenu = (event) => setAnchorElHolidays(event.currentTarget);
+  const handleCloseHolidaysMenu = () => setAnchorElHolidays(null);
 
   return (
     <AppBar position="sticky" elevation={1} style={{ backgroundColor: "rgba(0, 60, 100, 0.96)" }}>
@@ -135,7 +143,7 @@ const AppHeader = ({ mode, toggleTheme }) => {
               }
 
               // ✅ REPORTS submenu (NEW — SAME AS USERS)
-              if (route.name === 'Users' && route.items) {
+              if (route.name === 'Reports' && route.items) {
                 return (
                   <div key={route.name}>
                     <Button onClick={handleOpenReportsMenu} sx={{ color: 'white', mx: 1 }}>
@@ -154,6 +162,62 @@ const AppHeader = ({ mode, toggleTheme }) => {
                             onClick={() => {
                               navigate(item.to);
                               handleCloseReportsMenu();
+                            }}
+                          >
+                            {item.name}
+                          </MenuItem>
+                        ))}
+                    </Menu>
+                  </div>
+                );
+              }
+              if (route.name === 'Flights' && route.items) {
+                return (
+                  <div key={route.name}>
+                    <Button onClick={handleOpenFlightsMenu} sx={{ color: 'white', mx: 1 }}>
+                      {route.name}
+                    </Button>
+                    <Menu
+                      anchorEl={anchorElFlights}
+                      open={Boolean(anchorElFlights)}
+                      onClose={handleCloseFlightsMenu}
+                    >
+                      {route.items
+                        .filter(item => !item.roles || item.roles.includes(userRole))
+                        .map((item) => (
+                          <MenuItem
+                            key={item.name}
+                            onClick={() => {
+                              navigate(item.to);
+                              handleCloseFlightsMenu();
+                            }}
+                          >
+                            {item.name}
+                          </MenuItem>
+                        ))}
+                    </Menu>
+                  </div>
+                );
+              }
+              if (route.name === 'Holidays' && route.items) {
+                return (
+                  <div key={route.name}>
+                    <Button onClick={handleOpenHolidaysMenu} sx={{ color: 'white', mx: 1 }}>
+                      {route.name}
+                    </Button>
+                    <Menu
+                      anchorEl={anchorElHolidays}
+                      open={Boolean(anchorElHolidays)}
+                      onClose={handleCloseHolidaysMenu}
+                    >
+                      {route.items
+                        .filter(item => !item.roles || item.roles.includes(userRole))
+                        .map((item) => (
+                          <MenuItem
+                            key={item.name}
+                            onClick={() => {
+                              navigate(item.to);
+                              handleCloseHolidaysMenu();
                             }}
                           >
                             {item.name}

@@ -8,15 +8,34 @@ import {
     InputLabel,
     Select,
     MenuItem,
-
 } from '@mui/material';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { addFlight } from '../../../services/authService';
 
 const flightStatuses = ['Scheduled', 'Delayed', 'Cancelled', 'Departed', 'Arrived'];
-const arrivalAirports = ['BOM', 'DEL', 'MLE', 'PBH'];
-const airlines = ['SriLankan', 'Air India', 'Thai Airways', 'Singapore Airlines'];
+const arrivalAirports = [{ code: 'BOM', name: 'Mumbai Chhatrapati Shivaji Maharaj International Airport' },
+{ code: 'DEL', name: 'Delhi Indira Gandhi International Airport' },
+{ code: 'BLR', name: 'Bangalore Kempegowda International Airport' },
+{ code: 'MAA', name: 'Chennai Chennai International Airport' },
+{ code: 'HYD', name: 'Hyderabad Rajiv Gandhi International Airport' },
+
+// Pakistan
+{ code: 'KHI', name: 'Karachi Jinnah International Airport' },
+{ code: 'LHE', name: 'Lahore Allama Iqbal International Airport' },
+
+// Bangladesh
+{ code: 'DAC', name: 'Dhaka Hazrat Shahjalal International Airport' },
+
+// Nepal
+{ code: 'KTM', name: 'Kathmandu Tribhuvan International Airport' },
+
+// Maldives
+{ code: 'MLE', name: 'Malé Velana International Airport' },
+
+// Bhutan
+{ code: 'PBH', name: 'Paro International Airport' },];
+const airlines = ['SriLankan Airlines', 'Air India', 'IndiGo', 'Emirates', 'fitsAir', 'flydubai', 'Gulf Air'];
 
 export default function AddSingleFlight() {
     const [form, setForm] = useState({
@@ -105,10 +124,9 @@ export default function AddSingleFlight() {
     };
 
     return (
-        <Box sx={{ maxWidth: 1000, mx: 'auto', p: 1 }}>
-            <Grid container spacing={2}>
-                {/* Flight Number */}
-                <Grid item xs={12} md={6}>
+        <Box sx={{ p: 0 }}>
+            <Grid container spacing={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <TextField
                         label="Flight Number"
                         name="flight_number"
@@ -116,22 +134,22 @@ export default function AddSingleFlight() {
                         value={form.flight_number}
                         onChange={handleChange}
                         required
-                        sx={{ width: "180px" }}
+                        size="medium"
                     />
                 </Grid>
-                <Grid item xs={12} md={4}>
-                    <FormControl fullWidth required sx={{ width: "180px" }}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <FormControl fullWidth required >
                         <InputLabel>Airline</InputLabel>
-                        <Select name="airline" value={form.airline} label="Airline" onChange={handleChange}>
+                        <Select name="airline" value={form.airline} label="Airline" onChange={handleChange} size="medium">
                             {airlines.map((a) => (
-                                <MenuItem key={a} value={a}>
+                                <MenuItem key={a} value={a} sx={{ minHeight: 30, py: 0.5 }}>
                                     {a}
                                 </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid item xs={12} md={4}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <TextField
                         label="Departure Airport"
                         name="departure_airport"
@@ -140,21 +158,22 @@ export default function AddSingleFlight() {
                         onChange={handleChange}
                         required
                         disabled
-                        sx={{ width: "180px" }}
+                        size="medium"
                     />
                 </Grid>
-                <Grid item xs={12} md={4}>
-                    <FormControl fullWidth required sx={{ width: "180px" }}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <FormControl fullWidth required >
                         <InputLabel>Arrival Airport</InputLabel>
                         <Select
                             name="arrival_airport"
                             value={form.arrival_airport}
                             label="Arrival Airport"
                             onChange={handleChange}
+                            size="medium"
                         >
-                            {arrivalAirports.map((airport) => (
-                                <MenuItem key={airport} value={airport}>
-                                    {airport}
+                            {arrivalAirports.map((a) => (
+                                <MenuItem key={a.code} value={a.code} sx={{ minHeight: 30, py: 0.5 }}>
+                                    {a.name} ({a.code})
                                 </MenuItem>
                             ))}
                         </Select>
@@ -162,7 +181,7 @@ export default function AddSingleFlight() {
                 </Grid>
 
                 {/* Row 2: 4 fields */}
-                <Grid item xs={12} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <TextField
                         type="date"
                         label="Departure Date"
@@ -172,10 +191,10 @@ export default function AddSingleFlight() {
                         value={form.departure_date}
                         onChange={handleChange}
                         required
-                        sx={{ width: "180px" }}
+                        size="medium"
                     />
                 </Grid>
-                <Grid item xs={12} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <TextField
                         type="time"
                         label="Departure Time"
@@ -185,10 +204,10 @@ export default function AddSingleFlight() {
                         value={form.departure_time}
                         onChange={handleChange}
                         required
-                        sx={{ width: "180px" }}
+                        size="medium"
                     />
                 </Grid>
-                <Grid item xs={12} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <TextField
                         type="date"
                         label="Arrival Date"
@@ -198,10 +217,10 @@ export default function AddSingleFlight() {
                         value={form.arrival_date}
                         onChange={handleChange}
                         required
-                        sx={{ width: "180px" }}
+                        size="medium"
                     />
                 </Grid>
-                <Grid item xs={12} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <TextField
                         type="time"
                         label="Arrival Time"
@@ -211,15 +230,15 @@ export default function AddSingleFlight() {
                         value={form.arrival_time}
                         onChange={handleChange}
                         required
-                        sx={{ width: "180px" }}
+                        size="medium"
                     />
                 </Grid>
 
                 {/* Row 3: Status & Aircraft */}
-                <Grid item xs={12} md={6}>
-                    <FormControl fullWidth required sx={{ width: "375px" }}>
+                <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+                    <FormControl fullWidth required>
                         <InputLabel>Status</InputLabel>
-                        <Select name="status" value={form.status} label="Status" onChange={handleChange}>
+                        <Select name="status" value={form.status} label="Status" onChange={handleChange} size="medium">
                             {flightStatuses.map((s) => (
                                 <MenuItem key={s} value={s}>
                                     {s}
@@ -228,7 +247,7 @@ export default function AddSingleFlight() {
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, sm: 6, md: 6 }}>
                     <TextField
                         label="Aircraft"
                         name="aircraft"
@@ -236,16 +255,14 @@ export default function AddSingleFlight() {
                         value={form.aircraft}
                         onChange={handleChange}
                         required
-                        sx={{ width: "375px" }}
+                        size="medium"
                     />
                 </Grid>
-
-                {/* Submit Button */}
-                <Grid item xs={12} sx={{ justifyContent: "flex-end" }}>
-                    <Button variant="contained" size="large" fullWidth onClick={handleSubmit} disabled={loading} >
-                        {loading ? 'Adding Flight…' : 'Add Flight'}
-                    </Button>
-                </Grid>
+            </Grid>
+            <Grid size={{ xs: 12 }} display="flex" justifyContent="flex-end" mt={6}>
+                <Button variant="contained" size="medium" onClick={handleSubmit} disabled={loading} >
+                    {loading ? 'Adding Flight…' : 'Add Flight'}
+                </Button>
             </Grid>
         </Box>
     );

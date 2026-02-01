@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Box,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -59,140 +60,146 @@ const FlightDialog = ({ open, flight, onClose, onSave }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle
-        sx={{
-          backgroundColor: "#02187d",
-          color: "white",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        Flight Details
-        <Tooltip title={isEditable ? "Disable Editing" : "Enable Editing"}>
-          <IconButton onClick={toggleEdit} sx={{ color: "white" }}>
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
-      </DialogTitle>
+    <>
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <Box style={{
+          backgroundColor: "rgba(0, 60, 100, 0.96)",
+        }}>
+          <DialogTitle style={{
+            border: "none",
+            fontSize: "1.2rem", color: 'white', fontWeight: 'bold', justifyContent: "space-between"
+          }}>
+            Flight Details
+            <Tooltip title={isEditable ? "Disable Editing" : "Enable Editing"}>
+              <IconButton onClick={toggleEdit} sx={{ color: "white" }}>
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+          </DialogTitle>
+        </Box>
+        <DialogContent sx={{ mt: 2 }}>
+          <Grid container spacing={3}>
 
-      <DialogContent sx={{ mt: 2 }}>
-        <Grid container spacing={2}>
+            {/* ---------- NON-EDITABLE ---------- */}
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <TextField label="Flight Number" value={flight.flight_number} fullWidth disabled size="small" />
+            </Grid>
 
-          {/* ---------- NON-EDITABLE ---------- */}
-          <Grid item xs={6}>
-            <TextField label="Flight Number" value={flight.flight_number} fullWidth disabled />
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <TextField label="Airline" value={flight.airline} fullWidth disabled size="small" />
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <TextField label="Departure Airport" value={flight.departure_airport} fullWidth disabled size="small" />
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <TextField label="Arrival Airport" value={flight.arrival_airport} fullWidth disabled size="small" />
+            </Grid>
+
+            {/* ---------- EDITABLE ---------- */}
+
+
+            {/* ---------- Scheduled Departure ---------- */}
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <TextField
+                label="Departure Date"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                value={depDate}
+                onChange={(e) => setDepDate(e.target.value)}
+                fullWidth
+                disabled={!isEditable}
+                size="small"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <TextField
+                label="Departure Time"
+                type="time"
+                InputLabelProps={{ shrink: true }}
+                value={depTime}
+                onChange={(e) => setDepTime(e.target.value)}
+                fullWidth
+                disabled={!isEditable}
+                size="small"
+              />
+            </Grid>
+
+            {/* ---------- Scheduled Arrival ---------- */}
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <TextField
+                label="Arrival Date"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                value={arrDate}
+                onChange={(e) => setArrDate(e.target.value)}
+                fullWidth
+                disabled={!isEditable}
+                size="small"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <TextField
+                label="Arrival Time"
+                type="time"
+                InputLabelProps={{ shrink: true }}
+                value={arrTime}
+                onChange={(e) => setArrTime(e.target.value)}
+                fullWidth
+                disabled={!isEditable}
+                size="small"
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+              <TextField
+                label="Status"
+                select
+                fullWidth
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                disabled={!isEditable}
+                size="small"
+              >
+                <MenuItem value="Scheduled">Scheduled</MenuItem>
+                <MenuItem value="Delayed">Delayed</MenuItem>
+                <MenuItem value="Boarding">Boarding</MenuItem>
+                <MenuItem value="Departed">Departed</MenuItem>
+                <MenuItem value="Arrived">Arrived</MenuItem>
+                <MenuItem value="Cancelled">Cancelled</MenuItem>
+              </TextField>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+              <TextField
+                label="Aircraft"
+                value={aircraft}
+                onChange={(e) => setAircraft(e.target.value)}
+                fullWidth
+                disabled={!isEditable}
+                size="small"
+              />
+            </Grid>
           </Grid>
+        </DialogContent>
 
-          <Grid item xs={6}>
-            <TextField label="Airline" value={flight.airline} fullWidth disabled />
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField label="Departure Airport" value={flight.departure_airport} fullWidth disabled />
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField label="Arrival Airport" value={flight.arrival_airport} fullWidth disabled />
-          </Grid>
-
-          {/* ---------- EDITABLE ---------- */}
-          <Grid item xs={6}>
-            <TextField
-              label="Status"
-              select
-              fullWidth
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              disabled={!isEditable}
-            >
-              <MenuItem value="Scheduled">Scheduled</MenuItem>
-              <MenuItem value="Delayed">Delayed</MenuItem>
-              <MenuItem value="Boarding">Boarding</MenuItem>
-              <MenuItem value="Departed">Departed</MenuItem>
-              <MenuItem value="Arrived">Arrived</MenuItem>
-              <MenuItem value="Cancelled">Cancelled</MenuItem>
-            </TextField>
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField
-              label="Aircraft"
-              value={aircraft}
-              onChange={(e) => setAircraft(e.target.value)}
-              fullWidth
-              disabled={!isEditable}
-            />
-          </Grid>
-
-          {/* ---------- Scheduled Departure ---------- */}
-          <Grid item xs={6}>
-            <TextField
-              label="Departure Date"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              value={depDate}
-              onChange={(e) => setDepDate(e.target.value)}
-              fullWidth
-              disabled={!isEditable}
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField
-              label="Departure Time"
-              type="time"
-              InputLabelProps={{ shrink: true }}
-              value={depTime}
-              onChange={(e) => setDepTime(e.target.value)}
-              fullWidth
-              disabled={!isEditable}
-            />
-          </Grid>
-
-          {/* ---------- Scheduled Arrival ---------- */}
-          <Grid item xs={6}>
-            <TextField
-              label="Arrival Date"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              value={arrDate}
-              onChange={(e) => setArrDate(e.target.value)}
-              fullWidth
-              disabled={!isEditable}
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField
-              label="Arrival Time"
-              type="time"
-              InputLabelProps={{ shrink: true }}
-              value={arrTime}
-              onChange={(e) => setArrTime(e.target.value)}
-              fullWidth
-              disabled={!isEditable}
-            />
-          </Grid>
-
-        </Grid>
-      </DialogContent>
-
-      <DialogActions sx={{ p: 2 }}>
-        <Button variant="outlined" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ backgroundColor: "#02187d" }}
-          onClick={handleSave}
-          disabled={!isEditable}
-        >
-          Save
-        </Button>
-      </DialogActions>
-    </Dialog>
+        <DialogActions sx={{ p: 2 }}>
+          <Button variant="outlined" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: "rgba(0, 60, 100, 0.96)", }}
+            onClick={handleSave}
+            disabled={!isEditable}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

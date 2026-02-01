@@ -75,11 +75,10 @@ export default function AddSingleHoliday() {
     };
 
     return (
-        <Box sx={{ maxWidth: 1000, mx: 'auto', p: 1 }}>
-
-            <Grid container spacing={2}>
+        <Box sx={{ p: 0 }}>
+            <Grid container spacing={3}>
                 {/* Holiday Date */}
-                <Grid item xs={12} md={4}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                     <TextField
                         type="date"
                         label="Holiday Date"
@@ -89,12 +88,11 @@ export default function AddSingleHoliday() {
                         value={form.holiday_date}
                         onChange={handleChange}
                         required
-                        sx={{ width: "240px" }}
                     />
                 </Grid>
 
                 {/* Holiday Name */}
-                <Grid item xs={12} md={4}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                     <TextField
                         label="Holiday Name"
                         name="holiday_name"
@@ -103,35 +101,43 @@ export default function AddSingleHoliday() {
                         onChange={handleChange}
                         required
                         placeholder="e.g. Vesak Poya Day"
-                        sx={{ width: "240px" }}
                     />
                 </Grid>
 
                 {/* Holiday Type (Autocomplete) */}
-                <Grid item xs={12} md={4}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                     <Autocomplete
                         options={HOLIDAY_TYPES}
                         value={form.holiday_type}
                         onChange={(e, newValue) =>
                             setForm({ ...form, holiday_type: newValue })
                         }
+                        // slotProps={{
+                        //                     textField: {
+                        //                         sx: {
+                        //                             '& .MuiOutlinedInput-root': {
+                        //                                 fontSize: "11px",
+                        //                             },
+                        //                             width: "370px"
+                        //                         },
+                        //                     },
+                        //                 }}
                         renderInput={(params) => (
                             <TextField
                                 {...params}
                                 label="Holiday Type"
                                 required
-                                sx={{ width: "240px" }}
+
                             />
                         )}
                     />
                 </Grid>
 
                 {/* Submit */}
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }} display="flex" justifyContent="flex-end" mt={6}>
                     <Button
                         variant="contained"
-                        size="large"
-                        fullWidth
+                        size="medium"
                         onClick={handleSubmit}
                         disabled={loading}
                     >

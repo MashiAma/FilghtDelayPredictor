@@ -64,7 +64,7 @@ const AppHeaderDropdown = () => {
         }}
       >
         <Box sx={{
-          background: "rgba(0, 57, 65, 0.62)",
+          background: "rgba(0, 23, 65, 0.62)",
         }}>
           <Typography sx={{ textAlign: "center", fontSize: "16px", fontWeight: "bold" }}>Account</Typography>
         </Box>

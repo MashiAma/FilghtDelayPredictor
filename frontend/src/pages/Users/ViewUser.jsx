@@ -157,126 +157,128 @@ const ViewUser = () => {
             }}
           />
         </Box>
-      </Box>
-      <Card
-        sx={{
-          p: { xs: 2, md: 2 },
-          border: "none",
-          backgroundColor: theme.palette.background.default,
-        }}
-      >
         <Card
           sx={{
-            minHeight: 350,
-            backgroundColor: theme.palette.background.paper,
+            // p: { xs: 2, md: 2 },
+            marginTop: "25px",
+            border: "none",
+            backgroundColor: theme.palette.background.default,
           }}
         >
-          <CardContent>
-            {/* TABLE */}
-            <TableContainer component={Paper} sx={{ backgroundColor: "transparent" }}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Full Name</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Email</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Role</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Phone Number</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Toggle</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Action</TableCell>
-                  </TableRow>
-                </TableHead>
+          <Card
+            sx={{
+              minHeight: 350,
+              backgroundColor: theme.palette.background.paper,
+            }}
+          >
+            <CardContent>
+              {/* TABLE */}
+              <TableContainer component={Paper} sx={{ backgroundColor: "transparent" }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Full Name</TableCell>
+                      <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Email</TableCell>
+                      <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Role</TableCell>
+                      <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Phone Number</TableCell>
+                      <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Status</TableCell>
+                      <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Toggle</TableCell>
+                      <TableCell sx={{ fontWeight: "bold", py: 0.5 }}>Action</TableCell>
+                    </TableRow>
+                  </TableHead>
 
-                <TableBody>
-                  {paginatedUsers.length > 0 ? (
-                    paginatedUsers.map((user, index) => (
-                      <TableRow key={index} hover>
-                        <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
-                          {user.full_name}
-                        </TableCell>
+                  <TableBody>
+                    {paginatedUsers.length > 0 ? (
+                      paginatedUsers.map((user, index) => (
+                        <TableRow key={index} hover>
+                          <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
+                            {user.full_name}
+                          </TableCell>
 
-                        <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
-                          {user.email}
-                        </TableCell>
+                          <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
+                            {user.email}
+                          </TableCell>
 
-                        <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
-                          {user.role}
-                        </TableCell>
+                          <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
+                            {user.role}
+                          </TableCell>
 
-                        <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
-                          {user.phone}
-                        </TableCell>
+                          <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
+                            {user.phone}
+                          </TableCell>
 
-                        <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
-                          {user.is_active ? "Enabled" : "Disabled"}
-                        </TableCell>
+                          <TableCell sx={{ color: theme.palette.text.primary, py: 0.1 }}>
+                            {user.is_active ? "Enabled" : "Disabled"}
+                          </TableCell>
 
-                        <TableCell>
-                          <Switch
-                            checked={user.is_active}
-                            onChange={() => handleToggleStatus(user)}
-                            sx={{
-                              "& .MuiSwitch-switchBase.Mui-checked": {
-                                color: "rgba(0, 60, 100, 0.96)",
-                              },
-                              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                          <TableCell>
+                            <Switch
+                              checked={user.is_active}
+                              onChange={() => handleToggleStatus(user)}
+                              sx={{
+                                "& .MuiSwitch-switchBase.Mui-checked": {
+                                  color: "rgba(0, 60, 100, 0.96)",
+                                },
+                                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                                  backgroundColor: "rgba(0, 60, 100, 0.96)",
+                                },
+                              }}
+                            />
+                          </TableCell>
+
+                          <TableCell>
+                            <Button
+                              size="small"
+                              variant="contained"
+                              onClick={() => handleView(user)}
+                              sx={{
                                 backgroundColor: "rgba(0, 60, 100, 0.96)",
-                              },
-                            }}
-                          />
-                        </TableCell>
-
-                        <TableCell>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            onClick={() => handleView(user)}
-                            sx={{
-                              backgroundColor: "rgba(0, 60, 100, 0.96)",
-                              fontWeight: "bold",
-                              "&:hover": {
-                                backgroundColor: "rgba(0, 60, 100, 0.7)",
-                              },
-                            }}
-                          >
-                            View
-                          </Button>
+                                fontWeight: "bold",
+                                "&:hover": {
+                                  backgroundColor: "rgba(0, 60, 100, 0.7)",
+                                },
+                              }}
+                            >
+                              View
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={7} align="center">
+                          No matching users found.
                         </TableCell>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={7} align="center">
-                        No matching users found.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
 
-            {/* PAGINATION */}
-            <Stack mt={3} alignItems="center">
-              <Pagination
-                count={totalPages}
-                page={currentPage}
-                onChange={(e, value) => setCurrentPage(value)}
-                color="primary"
+              {/* PAGINATION */}
+              <Stack mt={3} alignItems="center">
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={(e, value) => setCurrentPage(value)}
+                  color="primary"
+                />
+              </Stack>
+            </CardContent>
+
+            {/* DIALOG */}
+            {visibleDialog && selectedUser && (
+              <UserDialog
+                visible={visibleDialog}
+                user={selectedUser}
+                onClose={() => setVisibleDialog(false)}
+                onSave={handleSave}
               />
-            </Stack>
-          </CardContent>
+            )}
+          </Card>
+        </Card >
+      </Box >
 
-          {/* DIALOG */}
-          {visibleDialog && selectedUser && (
-            <UserDialog
-              visible={visibleDialog}
-              user={selectedUser}
-              onClose={() => setVisibleDialog(false)}
-              onSave={handleSave}
-            />
-          )}
-        </Card>
-      </Card >
     </>
   )
 }

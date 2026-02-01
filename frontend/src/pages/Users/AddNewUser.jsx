@@ -12,12 +12,11 @@ import {
   Button,
   CircularProgress,
   InputAdornment,
+  useTheme
 } from "@mui/material";
 import { Lock, LockOpen } from "@mui/icons-material";
 import { toast } from 'react-toastify';
 import { register } from '../../services/authService';
-import { useTheme } from "@mui/material";
-
 
 const AddNewUser = () => {
   const [email, setEmail] = useState('')

@@ -1,12 +1,5 @@
 import { element } from 'prop-types';
 import React from 'react'
-import Dashboard from '../pages/Dashboard';
-import AddNewCustomer from '../pages/AddNewCustomer';
-
-import AddItems from '../pages/AddItems';
-import ViewItems from '../pages/ViewItems';
-import SalesReport from '../pages/Salesreport';
-import CustomerReport from '../pages/CustomerReport';
 import Help from '../pages/Help';
 
 
@@ -31,10 +24,8 @@ const routes = [
   { path: '/main/help', name: 'Help', element: Help },
   { path: '/dashboard', name: 'Dashboard', element: FlightInputForm },
 
-  { path: '/main/items/new', name: 'AddItems', element: AddItems },
-  { path: '/main/items/view-or-modify', name: 'ViewItems', element: ViewItems },
-  { path: 'main/reports/sales', name: 'SalesReport', element: SalesReport },
-  { path: '/main/reports/customer', name: 'CustomerReport', element: CustomerReport },
+  // { path: 'main/reports/sales', name: 'SalesReport', element: SalesReport },
+  // { path: '/main/reports/customer', name: 'CustomerReport', element: CustomerReport },
 
 ]
 

@@ -1,138 +1,115 @@
-import React from 'react'
-import CIcon from '@coreui/icons-react'
 import {
-  cilUser,
-  cilCalculator,
-  cilPencil,
-  cilSpeedometer,
-  cilUserPlus,
-  cilPlus,
-  cilBook,
-  cilAddressBook,
-  cilNoteAdd,
-  cilCash
-} from '@coreui/icons'
-import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+  Dashboard as DashboardIcon,
+  Calculate as CalculateIcon,
+  GroupAdd as GroupAddIcon,
+  Add as AddIcon,
+  Edit as EditIcon,
+  Book as BookIcon,
+  NoteAdd as NoteAddIcon,
+  Person as PersonIcon,
+  AttachMoney as CashIcon,
+  ContactPage as ContactPageIcon,
+} from '@mui/icons-material';
 
 const navigation = [
   {
-    component: CNavItem,
     name: 'Dashboard',
     to: '/dashboard',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    roles: ['admin'],
-  },
-  {
-    component: CNavItem,
-    name: 'Bill Generator',
-    to: '/bill-generator',
-    icon: <CIcon icon={cilCalculator} customClassName="nav-icon" />,
+    icon: <DashboardIcon />,
     roles: ['admin', 'normal'],
   },
   {
-    component: CNavTitle,
-    name: 'main',
+    name: 'Bill Generator',
+    to: '/bill-generator',
+    icon: <DashboardIcon />,
+    roles: ['admin', 'normal'],
   },
   {
-    component: CNavGroup,
     name: 'Flights',
-    icon: <CIcon icon={cilUserPlus} customClassName="nav-icon" />,
+    icon: <ContactPageIcon />,
     roles: ['admin', 'normal'],
     items: [
       {
-        component: CNavItem,
         name: 'Add New',
         to: '/flight-details',
-        icon: <CIcon icon={cilPlus} style={{ marginRight: "10px" }} />,
+        icon: <AddIcon />,
         roles: ['admin', 'normal'],
       },
       {
-        component: CNavItem,
         name: 'View/Modify',
         to: '/flight-view',
-        icon: <CIcon icon={cilPencil} style={{ marginRight: "10px" }} />,
+        icon: <EditIcon />,
         roles: ['admin', 'normal'],
       },
       {
-        component: CNavItem,
         name: 'History',
         to: '/flight-history',
-        icon: <CIcon icon={cilPencil} style={{ marginRight: "10px" }} />,
+        icon: < EditIcon />,
         roles: ['admin', 'normal'],
       },
     ],
   },
   {
-    component: CNavGroup,
     name: 'Holidays',
-    icon: <CIcon icon={cilBook} customClassName="nav-icon" />,
+    icon: <EditIcon />,
     roles: ['admin', 'normal'],
     items: [
       {
-        component: CNavItem,
         name: 'Add New',
         to: '/holiday-details',
-        icon: <CIcon icon={cilPlus} style={{ marginRight: "10px" }} />,
+        icon: <EditIcon />,
         roles: ['admin', 'normal'],
       },
       {
-        component: CNavItem,
         name: 'View/Modify',
         to: '/holiday-view',
-        icon: <CIcon icon={cilPencil} style={{ marginRight: "10px" }} />,
+        icon: <EditIcon />,
         roles: ['admin', 'normal'],
       }
     ]
   },
   {
-    component: CNavGroup,
     name: 'Reports',
-    icon: <CIcon icon={cilNoteAdd} customClassName="nav-icon" />,
+    icon: <EditIcon />,
     roles: ['admin'],
     items: [
       {
-        component: CNavItem,
         name: 'Customer',
-        to: '/main/reports/customer',
-        icon: <CIcon icon={cilUser} style={{ marginRight: "10px" }} />,
+        to: '/reports/customer',
+        icon: <EditIcon />,
         roles: ['admin'],
       },
       {
-        component: CNavItem,
         name: 'Sales',
-        to: '/main/reports/sales',
-        icon: <CIcon icon={cilCash} style={{ marginRight: "10px" }} />,
+        to: '/reports/sales',
+        icon: <EditIcon />,
         roles: ['admin'],
       }
     ]
   },
   {
-    component: CNavGroup,
     name: 'Users',
-    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+    icon: <EditIcon />,
     roles: ['admin'],
     items: [
       {
-        component: CNavItem,
         name: 'New Users',
         to: '/add-user',
-        icon: <CIcon icon={cilPlus} style={{ marginRight: "10px" }} />,
+        icon: <EditIcon />,
         roles: ['admin'],
       },
       {
-        component: CNavItem,
         name: 'View/Modify',
         to: '/view-user',
-        icon: <CIcon icon={cilPencil} style={{ marginRight: "10px" }} />,
+        icon: <EditIcon />,
         roles: ['admin'],
       }
     ]
   },
   {
-    component: CNavItem,
     name: 'Help',
     to: '/main/help',
-    icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
+    icon: <EditIcon />,
     roles: ['admin', 'normal'],
   }
 ]

@@ -27,14 +27,14 @@ const CTA = () => {
 
           <Box textAlign="center">
             <CustomButton
-                    sx={{
-    backgroundColor: "blue.main",
-    "&:hover": {
-      backgroundColor: "blue.dark",
-    },
-  }}
-            endIcon={<FaPlaneDeparture />}
-            onClick={() => navigate("/login")}
+              sx={{
+                backgroundColor: "blue.main",
+                "&:hover": {
+                  backgroundColor: "blue.dark",
+                },
+              }}
+              endIcon={<FaPlaneDeparture />}
+              onClick={() => navigate("/login")}
             >Predict Now
             </CustomButton>
           </Box>

@@ -4,8 +4,7 @@ import Hero from "./sections/Hero";
 import Features from "./sections/Features";
 import HowItWorks from "./sections/HowItWorks";
 import CTA from "./sections/CTA";
-// import "./LandingPage.css";
-import { AppHeader } from "../../components";
+import AppHeader from "../../components/AppHeader";
 import PageTransition from "../../assets/animations/Pagetransition";
 import Footer from "../../components/Footer";
 
@@ -17,7 +16,7 @@ const LandingPage = () => {
       <Features />
       {/* <HowItWorks /> */}
       <CTA />
-      <Footer/>
+      <Footer />
     </PageTransition>
   );
 };

@@ -1,101 +1,119 @@
 import { createTheme } from "@mui/material/styles";
 
-const theme = createTheme({
-  palette: {
-    mode: "dark",
-
-    primary: {
-      main: "#4F8CFF",
-      dark: "#2563EB",
-      light: "#93B4FF",
-      contrastText: "#FFFFFF",
+export const getTheme = (mode) =>
+  createTheme({
+    palette: {
+      mode,
+      primary: { main: "rgba(0, 60, 100, 0.96)", },
+      secondary: { main: "rgba(0, 60, 128, 0.41)" },
+      // primary: { main: "#006577", dark: "#009499", contrastText: "#FFFFFF" }, // Sky blue
+      // secondary: { main: "#002b3f", contrastText: "#FFFFFF" }, // Green
+      background: {
+        default: mode == "dark" ? "#000000ff" : "#f1f1f1ff",
+        paper: mode == "dark" ? " #1c1c1cff" : "#ffffff",
+      },
+      // background: {
+      //   default: mode === 'dark' ? "#F3F4F6" : "#000000", main: "#006577", paper: "#111827", normal: "#F3F4F6"
+      // }, 
+      text: {
+        primary: mode === "dark" ? "#dadadaff" : "#000000ff",
+        secondary: mode === "dark" ? "#ffffffff" : "#6e6e6eff",
+        main: mode === "dark" ? "rgba(0, 84, 180, 0.81)" : "#001431d8",
+      },
+      info: { main: "#38BDF8", contrastText: "#082F49" },
+      success: { main: "#22C55E", contrastText: "#052E16" },
+      warning: { main: "#F59E0B", contrastText: "#451A03" },
+      error: { main: "#EF4444", contrastText: "#450A0A" },
     },
 
-    secondary: {
-      main: "#6C72FF",
-      contrastText: "#FFFFFF",
+    typography: {
+      fontFamily: "Inter, Roboto, Arial, sans-serif",
+      h1: {
+        fontiWeight: 700,
+        letterSpacing: "-0.02em",
+      },
+      h2: {
+        fontweight: 700,
+        letterSpacing: "-0.02em",
+      },
+      h3: { fontWeight: 700 },
+      h4: { fontWeight: 700 },
+      h6: {
+        fontiWeight: 700,
+        fontSize: "16px",
+        letterSpacing: "-0.02em",
+      },
+      body1: {
+        fontSize: "12px",
+        letterSpacing: "-0.02em",
+      },
+      body2: {
+        fontSize: "11px",
+        letterSpacing: "-0.02em",
+      },
     },
-
-    background: {
-      default: "#0E1325",   // Lighter page background
-      paper: "#1a203dff",     // Noticeably lighter cards
-    },
-
-    text: {
-      primary: "#E8EBF2",
-      secondary: "#B6BCD1",
-    },
-
-    divider: "#2A3358",
-
-    success: { main: "#22C55E" },
-    error: { main: "#EF4444" },
-    warning: { main: "#F59E0B" },
-    info: { main: "#38BDF8" },
-  },
-
-  typography: {
-    fontFamily: "Inter, Roboto, sans-serif",
-    body1: { fontSize: 14 },
-    body2: { fontSize: 13 },
     button: {
-      fontWeight: 600,
+      fontWeight: 500,
       textTransform: "none",
     },
-  },
+    shape: {
+      borderRadius: 14,
+    },
+    breakpoints: {
+      values: {
+        xs: 0,
+        ms: 768,
+        md: 1024,
+        lg: 1366,
+        x1: 1600,
+      },
+    },
 
-  shape: {
-    borderRadius: 16,
-  },
+    components: {
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundImage: "none",
+          },
+        },
+      },
 
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backgroundImage: "none",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
+      MuiButton: {
+        defaultProps: {
+          disableElevation: true,
+        },
+        styleOverrides: {
+          root: {
+            disableRipple: true,
+            textTransform: "none",
+            fontWeight: 600,
+          },
+        },
+      },
+      MuiPaper: {
+        defaultProps: {
+          elevation: 0,
+        },
+        styleOverrides: {
+          root: {
+            backgroundImage: "none",
+          },
+        },
+      },
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            fontSize: "11px",
+          },
+        },
+      },
+      MuiLink: {
+        styleOverrides: {
+          root: {
+            cursor: "pointer",
+          },
         },
       },
     },
 
-    MuiOutlinedInput: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#232B52", // lighter than card
-          borderRadius: 12,
-        },
-        notchedOutline: {
-          borderColor: "#2F3A6B",
-        },
-      },
-    },
-
-    MuiInputLabel: {
-      styleOverrides: {
-        root: {
-          color: "#B6BCD1",
-        },
-      },
-    },
-
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          padding: "10px 22px",
-          borderRadius: 12,
-        },
-      },
-    },
-
-    MuiTab: {
-      styleOverrides: {
-        root: {
-          minHeight: 56,
-          fontWeight: 500,
-        },
-      },
-    },
-  },
-});
-
-export default theme;
+  });

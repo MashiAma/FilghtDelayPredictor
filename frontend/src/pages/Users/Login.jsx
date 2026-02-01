@@ -71,7 +71,7 @@ function Login() {
       } else {
         Cookies.remove('rememberedEmail');
       }
-      navigate('/bill-generator', { replace: true });
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       console.log("Login error", err);
       if (err.response?.data?.message) {

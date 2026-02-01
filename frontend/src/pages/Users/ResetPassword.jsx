@@ -214,6 +214,7 @@ const ResetPassword = () => {
                       InputProps={{
                         sx: {
                           backgroundColor: "#0F0B1D",
+                          border: "1px solid #2c568d",
                           color: "#fff",
                           borderRadius: 5,
                         },
@@ -244,7 +245,7 @@ const ResetPassword = () => {
                       <Link
                         href="/login"
                         underline="hover"
-                        sx={{ color: "#33a0fa", fontWeight: "bold", fontSize: 12 }}
+                        sx={{ color: "#6d95d1", fontWeight: "bold", fontSize: 12 }}
                       >
                         Login
                       </Link>
@@ -265,6 +266,7 @@ const ResetPassword = () => {
                       InputProps={{
                         sx: {
                           backgroundColor: "#0F0B1D",
+                          border: "1px solid #2c568d",
                           color: "#fff",
                           borderRadius: 1,
                         },
@@ -306,16 +308,16 @@ const ResetPassword = () => {
               </CardContent>
             </Card>
           </Box>
-        </Card>
+        </Card >
 
         {/* Email Verification Modal */}
-        <EmailVerificationModal
+        < EmailVerificationModal
           visible={showVerifyModal}
           email={email}
           onVerify={handleCodeVerify}
           onClose={() => setShowVerifyModal(false)}
         />
-      </Box>
+      </Box >
     </>
   );
 };

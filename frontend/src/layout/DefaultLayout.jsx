@@ -1,19 +1,19 @@
-import React from 'react'
-import { AppContent, AppSidebar, Footer, AppHeader } from '../components/index.jsx'
+import AppHeader from "../components/AppHeader"
+import AppContent from "../components/AppContent"
+import { Fragment } from "react"
 
-const DefaultLayout = () => {
+const DefaultLayout = ({ mode, toggleTheme }) => {
   return (
-    <div>
-      <AppSidebar />
-      <div className="wrapper d-flex flex-column min-vh-100">
-        <AppHeader />
-        <div className="body flex-grow-1">
+    <Fragment>
+      <div >
+        <AppHeader mode={mode} toggleTheme={toggleTheme} />
+        <div >
           <AppContent />
         </div>
-        {/* <Footer /> */}
       </div>
-    </div>
+    </Fragment>
   )
 }
 
 export default DefaultLayout
+

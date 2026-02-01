@@ -12,7 +12,6 @@ import {
   Box,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-
 import { toast } from 'react-toastify';
 
 const UserDialog = ({ visible, user, onClose, onSave }) => {

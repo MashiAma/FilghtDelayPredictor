@@ -1,117 +1,198 @@
-import React, { useEffect, useRef } from 'react'
-import { NavLink } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useState, useContext } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
-  CContainer,
-  CDropdown,
-  CDropdownItem,
-  CDropdownMenu,
-  CDropdownToggle,
-  CHeader,
-  CHeaderNav,
-  CHeaderToggler,
-  CNavLink,
-  CNavItem,
-  useColorModes,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import {
-  cilBell,
-  cilContrast,
-  cilEnvelopeOpen,
-  cilList,
-  cilMenu,
-  cilMoon,
-  cilSun,
-} from '@coreui/icons'
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Button,
+  Menu,
+  MenuItem,
+  Box,
+  Container,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import navigation from '../routes/navigation';
+import { AuthContext } from '../context/AuthContext';
+import AppHeaderDropdown from './AppHeaderDropdown'; // import the dropdown
+import logo from "./../assets/images/logo.png"; // replace with your logo
 
-import { AppBreadcrumb } from './index'
-import { AppHeaderDropdown } from './header/index'
+const AppHeader = ({ mode, toggleTheme }) => {
+  const { user } = useContext(AuthContext);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUsers, setAnchorElUsers] = useState(null);
+  const [anchorElReports, setAnchorElReports] = useState(null);
+  const navigate = useNavigate();
+  const userRole = user?.role;
 
-const AppHeader = () => {
-  const headerRef = useRef()
-  const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
 
-  const dispatch = useDispatch()
-  const sidebarShow = useSelector((state) => state.sidebarShow)
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
 
-  useEffect(() => {
-    document.addEventListener('scroll', () => {
-      headerRef.current &&
-        headerRef.current.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0)
-    })
-  }, [])
+  const handleOpenUsersMenu = (event) => setAnchorElUsers(event.currentTarget);
+  const handleCloseUsersMenu = () => setAnchorElUsers(null);
+
+  const handleOpenReportsMenu = (event) => setAnchorElReports(event.currentTarget);
+  const handleCloseReportsMenu = () => setAnchorElReports(null);
 
   return (
-    <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
-      <CContainer className="border-bottom px-4" fluid>
-        <CHeaderToggler
-          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-          style={{ marginInlineStart: '-14px' }}
-        >
-          <CIcon icon={cilMenu} size="lg" />
-        </CHeaderToggler>
-        <CHeaderNav className="d-none d-md-flex">
-        </CHeaderNav>
-        <CHeaderNav className="ms-auto">
-          <CNavItem>
-            <CNavLink href="#">
-              <CIcon icon={cilBell} size="lg" />
-            </CNavLink>
-          </CNavItem>
-        </CHeaderNav>
-        <CHeaderNav>
-          <li className="nav-item py-1">
-            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
-          </li>
-          <CDropdown variant="nav-item" placement="bottom-end">
-            <CDropdownToggle caret={false}>
-              {colorMode === 'dark' ? (
-                <CIcon icon={cilMoon} size="lg" />
-              ) : colorMode === 'auto' ? (
-                <CIcon icon={cilContrast} size="lg" />
-              ) : (
-                <CIcon icon={cilSun} size="lg" />
-              )}
-            </CDropdownToggle>
-            <CDropdownMenu>
-              <CDropdownItem
-                active={colorMode === 'light'}
-                className="d-flex align-items-center"
-                as="button"
-                type="button"
-                onClick={() => setColorMode('light')}
-              >
-                <CIcon className="me-2" icon={cilSun} size="lg" /> Light
-              </CDropdownItem>
-              <CDropdownItem
-                active={colorMode === 'dark'}
-                className="d-flex align-items-center"
-                as="button"
-                type="button"
-                onClick={() => setColorMode('dark')}
-              >
-                <CIcon className="me-2" icon={cilMoon} size="lg" /> Dark
-              </CDropdownItem>
-              <CDropdownItem
-                active={colorMode === 'auto'}
-                className="d-flex align-items-center"
-                as="button"
-                type="button"
-                onClick={() => setColorMode('auto')}
-              >
-                <CIcon className="me-2" icon={cilContrast} size="lg" /> Auto
-              </CDropdownItem>
-            </CDropdownMenu>
-          </CDropdown>
-          <li className="nav-item py-1">
-            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
-          </li>
-          <AppHeaderDropdown />
-        </CHeaderNav>
-      </CContainer>
-    </CHeader>
-  )
-}
+    <AppBar position="sticky" elevation={1} style={{ backgroundColor: "rgba(0, 60, 100, 0.96)" }}>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
 
-export default AppHeader
+          <Box to="/" sx={{ display: "flex", alignItems: "center", height: 65, }}>
+            <Box component="img" src={logo} alt="DiaPredict" sx={{ height: 40, mr: 1 }} />
+            <Typography variant="h5" fontWeight="bold" sx={{ mr: 10, color: 'inherit', textDecoration: 'none' }}>
+              SkyGuard
+            </Typography>
+          </Box>
+
+          {/* Mobile Menu */}
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton size="large" color="inherit" onClick={handleOpenNavMenu}>
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorElNav}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            >
+              {navigation.map((route) => {
+                if (route.items) {
+                  return (
+                    <div key={route.name}>
+                      <MenuItem disabled>{route.name}</MenuItem>
+                      {route.items.map((item) => (
+                        <MenuItem
+                          key={item.name}
+                          sx={{ pl: 4 }}
+                          onClick={() => {
+                            navigate(item.to);
+                            handleCloseNavMenu();
+                          }}
+                        >
+                          {item.name}
+                        </MenuItem>
+                      ))}
+                    </div>
+                  );
+                }
+                return (
+                  <MenuItem
+                    key={route.name}
+                    onClick={() => {
+                      navigate(route.to);
+                      handleCloseNavMenu();
+                    }}
+                  >
+                    {route.name}
+                  </MenuItem>
+                );
+              })}
+            </Menu>
+          </Box>
+
+          {/* Desktop Menu */}
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {navigation.map((route) => {
+              // role check
+              if (route.roles && !route.roles.includes(userRole)) return null;
+              // Check if this is the Users menu
+              if (route.name === 'Users' && route.items) {
+                return (
+                  <div key={route.name}>
+                    <Button onClick={handleOpenUsersMenu} sx={{ color: 'white', mx: 1 }}>
+                      {route.name}
+                    </Button>
+                    <Menu
+                      anchorEl={anchorElUsers}
+                      open={Boolean(anchorElUsers)}
+                      onClose={handleCloseUsersMenu}
+                    >
+                      {route.items
+                        .filter(item => !item.roles || item.roles.includes(userRole))
+                        .map((item) => (
+                          <MenuItem
+                            key={item.name}
+                            onClick={() => {
+                              navigate(item.to);
+                              handleCloseUsersMenu();
+                            }}
+                          >
+                            {item.name}
+                          </MenuItem>
+                        ))}
+                    </Menu>
+                  </div>
+                );
+              }
+
+              // ✅ REPORTS submenu (NEW — SAME AS USERS)
+              if (route.name === 'Users' && route.items) {
+                return (
+                  <div key={route.name}>
+                    <Button onClick={handleOpenReportsMenu} sx={{ color: 'white', mx: 1 }}>
+                      {route.name}
+                    </Button>
+                    <Menu
+                      anchorEl={anchorElReports}
+                      open={Boolean(anchorElReports)}
+                      onClose={handleCloseReportsMenu}
+                    >
+                      {route.items
+                        .filter(item => !item.roles || item.roles.includes(userRole))
+                        .map((item) => (
+                          <MenuItem
+                            key={item.name}
+                            onClick={() => {
+                              navigate(item.to);
+                              handleCloseReportsMenu();
+                            }}
+                          >
+                            {item.name}
+                          </MenuItem>
+                        ))}
+                    </Menu>
+                  </div>
+                );
+              }
+
+              // normal menu
+              return (
+                <Button
+                  key={route.name}
+                  component={NavLink}
+                  to={route.to}
+                  sx={{
+                    color: 'white',
+                    mx: 1,
+                    '&.active': { borderBottom: '2px solid white' },
+                  }}
+                >
+                  {route.name}
+                </Button>
+              );
+            })}
+          </Box>
+
+          {/* Right Actions */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton onClick={toggleTheme}>
+              {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
+          </Box>
+          <AppHeaderDropdown />
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
+};
+
+export default AppHeader;

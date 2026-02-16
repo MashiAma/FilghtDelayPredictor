@@ -1,8 +1,9 @@
-from pydantic import BaseModel,validator
+from pydantic import BaseModel,validator,EmailStr
 from datetime import date, time, datetime
 from typing import Optional
 
 class PredictionRequest(BaseModel):
+    user_email:EmailStr
     arrival_airport: str
     flight_number: Optional[str]
     departure_date: date

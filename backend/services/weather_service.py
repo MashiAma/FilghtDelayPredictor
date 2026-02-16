@@ -1,14 +1,48 @@
+# import requests
+# from datetime import datetime, timezone
+
+# # OPENWEATHER_KEY = "YOUR_API_KEY"
+
+# AIRPORT_COORDS = {
+#     "CMB": (6.9271, 79.8612),
+#     "BOM":(19.0955321,72.8452249),
+#     "DEL":(28.5569844,77.0794947),
+#     "BLR":(13.1999045,77.7081115),
+#     "MAA":(12.9919257,80.1339756),
+#     "HYD":(17.2333391,78.424461),
+#     "KHI":(24.9007815,67.1655278),
+#     "LHE":(31.5202724,74.4032194),
+#     "DAC":(23.8434344,90.4003503),
+#     "KTM":(27.6991915,85.3540995),
+#     "MLE":(4.1887763,73.5248302),
+#     "PBH":(27.4051914,89.4161589)
+# }
 import requests
 from datetime import datetime, timezone
 
-# OPENWEATHER_KEY = "YOUR_API_KEY"
-
 AIRPORT_COORDS = {
-    "CMB": (6.9271, 79.8612),
-    "BOM": (19.0896, 72.8656),
+    "CMB": (7.1801543,79.8816746),
+    "BOM": (19.0955, 72.8452),
+    "DEL": (28.5570, 77.0795),
+    "BLR": (13.1999, 77.7081),
+    "MAA": (12.9919, 80.1340),
+    "HYD": (17.2333, 78.4245),
+    "KHI": (24.9008, 67.1655),
+    "LHE": (31.5203, 74.4032),
+    "DAC": (23.8434, 90.4004),
+    "KTM": (27.6992, 85.3541),
+    "MLE": (4.1888, 73.5248),
+    # "PBH": (27.4052, 89.4162)
 }
 
-def get_weather_features(airport_code: str, dep_dt: datetime) -> dict:
+LOW_VISIBILITY_THRESHOLD_M = 3000
+HIGH_WIND_THRESHOLD_MS = 15
+THUNDER_CODES = {95, 96, 99}
+
+def get_weather_features(airport_code: str, dep_dt: datetime,prefix: str) -> dict:
+    if airport_code not in AIRPORT_COORDS:
+        raise ValueError(f"Unsupported airport code: {airport_code}")
+
     lat, lon = AIRPORT_COORDS[airport_code]
 
     url = (
@@ -24,7 +58,6 @@ def get_weather_features(airport_code: str, dep_dt: datetime) -> dict:
 
     hourly = data["hourly"]
 
-    # Convert departure time to UTC ISO string hour
     dep_dt_utc = dep_dt.astimezone(timezone.utc)
     dep_hour = dep_dt_utc.replace(minute=0, second=0, microsecond=0)
     dep_hour_str = dep_hour.isoformat(timespec="hours")
@@ -32,7 +65,6 @@ def get_weather_features(airport_code: str, dep_dt: datetime) -> dict:
     try:
         idx = hourly["time"].index(dep_hour_str)
     except ValueError:
-        # fallback: nearest hour
         idx = min(
             range(len(hourly["time"])),
             key=lambda i: abs(
@@ -45,10 +77,11 @@ def get_weather_features(airport_code: str, dep_dt: datetime) -> dict:
     weathercode = hourly["weathercode"][idx]
     visibility = hourly["visibility"][idx]
     windspeed = hourly["windspeed_10m"][idx]
+    
 
     return {
-        "has_rain": int(precipitation > 0),
-        "has_thunderstorm": int(weathercode in [95, 96, 99]),
-        "low_visibility": int(visibility < 3000),
-        "high_wind": int(windspeed > 10),
+        f"{prefix}_has_rain": int(precipitation > 0),
+        f"{prefix}_has_thunderstorm": int(weathercode in THUNDER_CODES),
+        f"{prefix}_low_visibility": int(visibility < LOW_VISIBILITY_THRESHOLD_M),
+        f"{prefix}_high_wind": int(windspeed >= HIGH_WIND_THRESHOLD_MS), 
     }

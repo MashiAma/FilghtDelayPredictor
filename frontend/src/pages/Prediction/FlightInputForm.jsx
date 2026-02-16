@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     Box,
     Container,
@@ -18,6 +18,7 @@ import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { fetchDepartureTimes, submitPrediction } from '../../services/authService';
+import { AuthContext } from '../../context/AuthContext';
 
 // Sample data for Arrival Airports and Airlines
 const ARRIVAL_AIRPORTS = [
@@ -42,7 +43,7 @@ const ARRIVAL_AIRPORTS = [
     { code: 'MLE', name: 'Malé Velana International Airport' },
 
     // Bhutan
-    { code: 'PBH', name: 'Paro International Airport' },
+    // { code: 'PBH', name: 'Paro International Airport' },
 ];
 
 const AIRLINES = ['SriLankan Airlines', 'Air India', 'IndiGo', 'Emirates', 'fitsAir', 'flydubai', 'Gulf Air'];
@@ -56,6 +57,7 @@ const FlightInputForm = () => {
     const [flightNumber, setFlightNumber] = useState('');
     const [loading, setLoading] = useState(false);
     const theme = useTheme();
+    const { user } = useContext(AuthContext);
 
     const [loadingTimes, setLoadingTimes] = useState(false);
     const [result, setResult] = useState(null);
@@ -93,6 +95,7 @@ const FlightInputForm = () => {
         setResult(null);
 
         const payload = {
+            user_email: user.email,
             arrival_airport: arrival,
             airline,
             flight_number: flightNumber || null,
@@ -221,7 +224,7 @@ const FlightInputForm = () => {
                                                     '& .MuiOutlinedInput-root': {
                                                         fontSize: "11px",
                                                     },
-                                                    width: "370px"
+                                                    width: "440px"
                                                 },
                                             },
                                         }}

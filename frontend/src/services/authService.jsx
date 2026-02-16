@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "http://localhost:8080",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -80,12 +80,19 @@ export const updateHoliday = (holidayId, data) => API.put(`/holidays/update-holi
 
 
 export const submitPrediction = (payload) =>
-  API.post("/predictions", payload);
+  API.post("/predictions/predict", payload);
 
 // export const getFlightPredictions = (flightId) => API.get(`/predictions/flight/${flightId}`);     // Get predictions for a specific flight
 // export const getPredictionHistory = () => API.get("/predictions/history");        // Get prediction history
 // export const getDelayClassification = () => API.get("/predictions/delay-classification");   // Get delay classification
 
+// Get dashboard stats for all users (admin)
+export const getAdminDashboardStats = () => {
+  return API.get("/admin/stats");
+};
+export const getAdminDashboard = () => {
+  return API.get("/admin/admin-dashboard");
+};
 
 export const createAlert = (data) => API.post("/alert/", data);           // Create an alert
 export const getUserAlerts = (userId) => API.get(`/alert/user/${userId}`);      // Get user alerts

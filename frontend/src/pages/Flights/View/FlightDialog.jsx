@@ -169,6 +169,7 @@ const FlightDialog = ({ open, flight, onClose, onSave }) => {
                 <MenuItem value="Departed">Departed</MenuItem>
                 <MenuItem value="Arrived">Arrived</MenuItem>
                 <MenuItem value="Cancelled">Cancelled</MenuItem>
+                <MenuItem value="Diverted">Diverted</MenuItem>
               </TextField>
             </Grid>
 

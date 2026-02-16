@@ -10,6 +10,7 @@ import ViewHolidays from '../pages/Holiday/View/ViewHolidays';
 import AddNewUser from '../pages/Users/AddNewUser';
 import ViewUser from '../pages/Users/ViewUser';
 import FlightInputForm from '../pages/Prediction/FlightInputForm';
+import AdminDashboard from '../pages/AdminDashboard';
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -20,7 +21,7 @@ const routes = [
   { path: '/holiday-view', name: 'ViewHolidays', element: ViewHolidays },
   { path: '/add-user', name: 'AddNewUser', element: AddNewUser },
   { path: '/view-user', name: 'ViewUser', element: ViewUser },
-
+  { path: '/admin-dashboard', name: 'AdminDashboard', element: AdminDashboard },
   { path: '/main/help', name: 'Help', element: Help },
   { path: '/dashboard', name: 'Dashboard', element: FlightInputForm },
 

@@ -18,12 +18,12 @@ const navigation = [
     icon: <DashboardIcon />,
     roles: ['admin', 'normal'],
   },
-  {
-    name: 'Bill Generator',
-    to: '/bill-generator',
-    icon: <DashboardIcon />,
-    roles: ['admin', 'normal'],
-  },
+  // {
+  //   name: 'Bill Generator',
+  //   to: '/bill-generator',
+  //   icon: <DashboardIcon />,
+  //   roles: ['admin', 'normal'],
+  // },
   {
     name: 'Flights',
     icon: <ContactPageIcon />,
@@ -105,6 +105,12 @@ const navigation = [
         roles: ['admin'],
       }
     ]
+  },
+  {
+    name: 'Admin Dashboard',
+    to: '/admin-dashboard',
+    icon: <ContactPageIcon />,
+    roles: ['admin'],
   },
   {
     name: 'Help',

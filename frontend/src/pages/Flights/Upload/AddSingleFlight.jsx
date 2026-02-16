@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { addFlight } from '../../../services/authService';
 
-const flightStatuses = ['Scheduled', 'Delayed', 'Cancelled', 'Departed', 'Arrived'];
+const flightStatuses = ['Scheduled', 'Delayed', 'Cancelled', 'Departed', "Diverted", 'Arrived'];
 const arrivalAirports = [{ code: 'BOM', name: 'Mumbai Chhatrapati Shivaji Maharaj International Airport' },
 { code: 'DEL', name: 'Delhi Indira Gandhi International Airport' },
 { code: 'BLR', name: 'Bangalore Kempegowda International Airport' },
@@ -33,9 +33,12 @@ const arrivalAirports = [{ code: 'BOM', name: 'Mumbai Chhatrapati Shivaji Mahara
 // Maldives
 { code: 'MLE', name: 'Malé Velana International Airport' },
 
-// Bhutan
-{ code: 'PBH', name: 'Paro International Airport' },];
+    // Bhutan
+    // { code: 'PBH', name: 'Paro International Airport' },
+];
 const airlines = ['SriLankan Airlines', 'Air India', 'IndiGo', 'Emirates', 'fitsAir', 'flydubai', 'Gulf Air'];
+
+const aircrafts = ["A20N", "A21N", "A320", "A321", "A332", "A333", "B38M", "B39M", "B738", "B77W"]
 
 export default function AddSingleFlight() {
     const [form, setForm] = useState({
@@ -240,7 +243,7 @@ export default function AddSingleFlight() {
                         <InputLabel>Status</InputLabel>
                         <Select name="status" value={form.status} label="Status" onChange={handleChange} size="medium">
                             {flightStatuses.map((s) => (
-                                <MenuItem key={s} value={s}>
+                                <MenuItem key={s} value={s} sx={{ minHeight: 30, py: 0.5 }}>
                                     {s}
                                 </MenuItem>
                             ))}
@@ -248,7 +251,17 @@ export default function AddSingleFlight() {
                     </FormControl>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 6 }}>
-                    <TextField
+                    <FormControl fullWidth required>
+                        <InputLabel>Aircraft</InputLabel>
+                        <Select name="aircraft" value={form.status} label="Aircraft" onChange={handleChange} size="medium">
+                            {aircrafts.map((s) => (
+                                <MenuItem key={s} value={s} sx={{ minHeight: 30, py: 0.5 }}>
+                                    {s}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    {/* <TextField
                         label="Aircraft"
                         name="aircraft"
                         fullWidth
@@ -256,7 +269,7 @@ export default function AddSingleFlight() {
                         onChange={handleChange}
                         required
                         size="medium"
-                    />
+                    /> */}
                 </Grid>
             </Grid>
             <Grid size={{ xs: 12 }} display="flex" justifyContent="flex-end" mt={6}>

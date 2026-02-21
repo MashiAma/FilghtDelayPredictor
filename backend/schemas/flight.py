@@ -1,6 +1,6 @@
 #schemas/flight.py
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field,ConfigDict
 from datetime import datetime
 from typing import Optional
 
@@ -15,10 +15,10 @@ class FlightCreate(BaseModel):
     aircraft: str
 
 class FlightUpdate(BaseModel):
-    scheduled_departure: Optional[datetime]
-    scheduled_arrival: Optional[datetime]
-    status: Optional[str]
-    aircraft: Optional[str]
+    scheduled_departure: Optional[datetime] = None
+    scheduled_arrival: Optional[datetime] = None
+    status: Optional[str]= None
+    aircraft: Optional[str]= None
 
 class DepartureTimeOut(BaseModel):
     scheduled_departure: datetime
@@ -30,13 +30,4 @@ class DepartureTimeOut(BaseModel):
 class FlightOut(FlightCreate):
     id: int
 
-    class Config:
-        from_attributes = True
-
-
-# class PredictionOut(BaseModel):
-#     flight_id: int
-#     predicted_delay_min: float
-#     delay_class: str
-#     probability: float
-#     created_at: datetime
+    model_config = ConfigDict(from_attributes=True)

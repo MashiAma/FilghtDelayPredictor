@@ -1,4 +1,4 @@
-from pydantic import BaseModel,validator,EmailStr
+from pydantic import BaseModel,field_validator,EmailStr,ConfigDict
 from datetime import date, time, datetime
 from typing import Optional
 
@@ -9,7 +9,7 @@ class PredictionRequest(BaseModel):
     departure_date: date
     departure_time: str
 
-    @validator("departure_time")
+    @field_validator("departure_time")
     def parse_time(cls, v):
         # remove milliseconds and timezone, keep only HH:MM:SS
         if "T" in v:
@@ -24,8 +24,7 @@ class FlightInfo(BaseModel):
     scheduled_departure: Optional[datetime]
     scheduled_arrival: Optional[datetime]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
         
 class PredictionHistoryOut(BaseModel):
@@ -39,8 +38,9 @@ class PredictionHistoryOut(BaseModel):
     created_at: datetime
     flight: FlightInfo
 
-    class Config:
-        from_attributes = True
+    # class Config:
+    #     from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PredictionHistoryResponse(BaseModel):

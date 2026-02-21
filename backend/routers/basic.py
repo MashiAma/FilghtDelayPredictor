@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database.connection import get_db
-from schemas.admin import AdminStatsResponse, ChartData
-from services.admin_service import (
+from schemas.basic import AdminStatsResponse, ChartData
+from services.basic_service import (
     get_admin_stats_service,
     get_delay_distribution_service,
     get_delay_by_airline_service,

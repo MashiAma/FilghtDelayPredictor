@@ -61,14 +61,6 @@ def set_user_status(db: Session, email: str, is_active: bool):
     db.refresh(user)
     return user
 
-# --- Change password ---
-# def change_user_password(db: Session, user: User, old_password: str, new_password: str):
-#     if not verify_password(old_password, user.hashed_password):
-#         return None
-#     user.hashed_password = hash_password(new_password)
-#     db.commit()
-#     db.refresh(user)
-#     return user
 
 # services/user_service.py
 def verify_current_password(user, password: str) -> bool:
@@ -86,12 +78,6 @@ def change_user_password(
     confirm_new_password: str
 ):
 
-    # user = db.query(User).filter(User.email == email).first()
-    # if not user:
-    #     return {"success": False, "message": "User not found"}
-
-    # if not verify_password(old_password, user.hashed_password):
-    #     return {"success": False, "message": "Current password is incorrect"}
 
     if new_password != confirm_new_password:
         return {"success": False, "message": "Passwords do not match"}
@@ -154,16 +140,6 @@ def verify_and_reset_password(
     db.commit()
 
     return {"success": True, "message": "Password reset successfully"}
-
-# --- Reset password ---
-# def reset_password(db: Session, email: str, new_password: str):
-#     user = db.query(User).filter(User.email == email).first()
-#     if not user:
-#         return None
-#     user.hashed_password = hash_password(new_password)
-#     db.commit()
-#     db.refresh(user)
-#     return user
 
 # get all users
 def get_all_users(db: Session):

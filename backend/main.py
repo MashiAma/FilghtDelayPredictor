@@ -1,8 +1,9 @@
 from fastapi import FastAPI
-from routers import auth,alert, admin, ai_chat, flight, prediction, holiday, report
+from routers import auth,alert, basic, ai_chat, flight, prediction, holiday, report
 from models_sql.user import User
 from models_sql.alert import Alert
 from models_sql.flight import Flight
+from database.connection import Base, engine  # Make sure this exists
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -16,9 +17,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Create tables on startup
+Base.metadata.create_all(bind=engine)
+
 # Routers
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
-app.include_router(admin.router, prefix="/admin", tags=["Admin"])
+app.include_router(basic.router, prefix="/basic", tags=["Basic"])
 app.include_router(ai_chat.router, prefix="/ai_chat", tags=["AI Chat"])
 app.include_router(flight.router, prefix="/flights", tags=["Flights"])
 app.include_router(alert.router, prefix="/alerts", tags=["Alerts"])

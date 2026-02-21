@@ -121,21 +121,3 @@ def predict_and_save(payload: PredictionRequest, db: Session = Depends(get_db)):
 
     return result
 
-
-# # Get all predictions for a flight
-# @router.get("/flight/{flight_id}", response_model=list[PredictionOut])
-# def predictions_for_flight(flight_id: int, db: Session = Depends(get_db)):
-#     return get_predictions_by_flight(db, flight_id)
-
-# # Get latest prediction for a flight
-# @router.get("/flight/{flight_id}/latest", response_model=PredictionOut)
-# def latest_prediction(flight_id: int, db: Session = Depends(get_db)):
-#     pred = get_latest_prediction(db, flight_id)
-#     if not pred:
-#         raise HTTPException(status_code=404, detail="No prediction found for this flight")
-#     return pred
-
-
-# Admin Dashboard
-# get admin dashboard stats
-

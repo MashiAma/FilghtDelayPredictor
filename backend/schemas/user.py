@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr,ConfigDict
 from typing import Optional
 
 # --- For creating a new user ---
@@ -23,8 +23,7 @@ class UserOut(BaseModel):
     role: str
     is_active: bool
 
-    class Config:
-        from_attributes = True  # pydantic v2 replacement for orm_mode
+    model_config = ConfigDict(from_attributes=True)
 
 # --- Update profile ---
 class UserUpdateProfile(BaseModel):

@@ -68,17 +68,3 @@ def get_departure_times(
         airline=airline,
         flight_date=flight_date,
     )
-# @router.post("/predict", response_model=PredictionOut)
-# def submit_flight(flight_in: FlightCreate, db: Session = Depends(get_db)):
-#     # Step 1: Create flight entry
-#     flight = create_flight(db, flight_in.dict())
-#     # Step 2: Generate prediction
-#     prediction = create_prediction(db, flight)
-#     return prediction
-
-# @router.get("/{flight_id}/history", response_model=list[PredictionOut])
-# def flight_history(flight_id: int, db: Session = Depends(get_db)):
-#     history = get_prediction_history(db, flight_id)
-#     if not history:
-#         raise HTTPException(status_code=404, detail="No predictions found for this flight")
-#     return history

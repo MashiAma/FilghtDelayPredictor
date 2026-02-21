@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field,ConfigDict
 from datetime import date
 from typing import Optional
 
@@ -19,5 +19,4 @@ class HolidayOut(HolidayCreate):
     is_post_holiday: bool
     is_long_weekend: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

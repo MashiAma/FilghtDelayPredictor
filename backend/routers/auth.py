@@ -42,7 +42,7 @@ def read_user(email: str, db: Session = Depends(get_db)):
 # UPDATE profile (own profile or admin updating any user)
 @router.put("/update-profile/{email}", response_model=UserOut)
 def update_profile(email: str, user_in: UserUpdateProfile, db: Session = Depends(get_db)):
-    update_data = user_in.dict(exclude_unset=True)  # only fields that were sent
+    update_data = user_in.model_dump(exclude_unset=True)
     user = update_user_profile(db, email, **update_data)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -61,17 +61,6 @@ def update_user_status(
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-
-# --- Change password ---
-# @router.put("/change-password/{user_id}")
-# def change_password(user_id: int, passwords: ChangePassword, db: Session = Depends(get_db)):
-#     user = db.query(User).filter(User.id == user_id).first()
-#     if not user:
-#         raise HTTPException(status_code=404, detail="User not found")
-#     updated = change_user_password(db, user, passwords.old_password, passwords.new_password)
-#     if not updated:
-#         raise HTTPException(status_code=400, detail="Old password incorrect")
-#     return {"message": "Password changed successfully"}
 
 @router.post("/verify-password")
 def verify_password_endpoint(
@@ -138,13 +127,6 @@ def verify_reset(
 
     return result
 
-# --- Reset password ---
-# @router.put("/reset-password")
-# def reset_password_endpoint(reset: ResetPassword, db: Session = Depends(get_db)):
-#     updated = reset_password(db, reset.email, reset.new_password)
-#     if not updated:
-#         raise HTTPException(status_code=404, detail="User not found")
-#     return {"message": "Password reset successfully"}
 
 #get all users
 @router.get("/get-all-users", response_model=List[UserOut])

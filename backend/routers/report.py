@@ -6,7 +6,7 @@ from models_sql.prediction import Prediction
 from database.connection import get_db
 from datetime import datetime, date, time
 from schemas.prediction import PredictionRequest
-from services.report_service import get_user_predictions_by_period,get_operational_report
+from services.report_service import get_user_predictions_by_period
 from schemas.prediction import PredictionHistoryResponse
 from typing import Optional
 from services.report_service import get_users_report
@@ -45,11 +45,3 @@ def user_flight_report(
         from_date=from_date,
         to_date=to_date
     )
-
-@router.get("/admin/operational-report")
-def operational_report(
-    start_date: datetime,
-    end_date: datetime,
-    db: Session = Depends(get_db)
-):
-    return get_operational_report(db, start_date, end_date)

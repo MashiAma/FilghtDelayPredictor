@@ -1,22 +1,3 @@
-# import requests
-# from datetime import datetime, timezone
-
-# # OPENWEATHER_KEY = "YOUR_API_KEY"
-
-# AIRPORT_COORDS = {
-#     "CMB": (6.9271, 79.8612),
-#     "BOM":(19.0955321,72.8452249),
-#     "DEL":(28.5569844,77.0794947),
-#     "BLR":(13.1999045,77.7081115),
-#     "MAA":(12.9919257,80.1339756),
-#     "HYD":(17.2333391,78.424461),
-#     "KHI":(24.9007815,67.1655278),
-#     "LHE":(31.5202724,74.4032194),
-#     "DAC":(23.8434344,90.4003503),
-#     "KTM":(27.6991915,85.3540995),
-#     "MLE":(4.1887763,73.5248302),
-#     "PBH":(27.4051914,89.4161589)
-# }
 import requests
 from datetime import datetime, timezone
 

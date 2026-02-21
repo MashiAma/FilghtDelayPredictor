@@ -13,6 +13,7 @@ import {
     useTheme,
     Card,
     CircularProgress,
+    LinearProgress
 } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -48,6 +49,27 @@ const ARRIVAL_AIRPORTS = [
 
 const AIRLINES = ['SriLankan Airlines', 'Air India', 'IndiGo', 'Emirates', 'fitsAir', 'flydubai', 'Gulf Air'];
 
+
+// Custom Gauge Component using CSS
+const PredictionGauge = ({ value }) => {
+    const color = value > 60 ? '#ff4d4d' : value > 30 ? '#ffcc00' : '#4caf50';
+    return (
+        <Box textAlign="center" position="relative" display="inline-flex">
+            <CircularProgress
+                variant="determinate"
+                value={value}
+                size={120}
+                thickness={5}
+                sx={{ color: color, filter: 'drop-shadow(0px 0px 8px rgba(0,0,0,0.5))' }}
+            />
+            <Box position="absolute" top={0} left={0} bottom={0} right={0} display="flex" alignItems="center" justifyContent="center" flexDirection="column">
+                <Typography variant="h4" fontWeight="bold" color="white">{value}%</Typography>
+                <Typography variant="caption" color="gray">Delay Risk</Typography>
+            </Box>
+        </Box>
+    );
+};
+
 const FlightInputForm = () => {
     const [arrival, setArrival] = useState('');
     const [airline, setAirline] = useState('');
@@ -61,6 +83,15 @@ const FlightInputForm = () => {
 
     const [loadingTimes, setLoadingTimes] = useState(false);
     const [result, setResult] = useState(null);
+
+    // Glassmorphism Style
+    const glassStyle = {
+        background: 'rgba(255, 255, 255, 0.05)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '16px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+    };
 
     useEffect(() => {
         if (!arrival || !airline || !selectedDate) return;
@@ -139,9 +170,9 @@ const FlightInputForm = () => {
                     fontWeight: 'bold',
                     color: theme.palette.text.main,
                 }}>
-                    Flight Delay Prediction
+                    Dashboard
                 </Typography>
-                <Card sx={{ mt: "20px", p: 3 }}>
+                <Card sx={{ ...glassStyle, mt: "20px", p: 3 }}>
                     <Box component="form" noValidate autoComplete="off" >
                         <Grid container spacing={3}>
                             {/* Departure Airport */}
@@ -163,18 +194,6 @@ const FlightInputForm = () => {
                                         value={arrival}
                                         onChange={(e) => setArrival(e.target.value)}
                                         label="Arrival Airport"
-                                    // sx={{
-                                    //     mt: 1,
-                                    //     mb: 1.5,
-                                    //     height: 35,
-                                    //     '& .MuiOutlinedInput-root': {
-                                    //         py: 0,
-                                    //         height: 35,
-                                    //         display: 'flex',
-                                    //         alignItems: 'center',
-                                    //         fontSize: "11px"
-                                    //     },
-                                    // }}
                                     >
                                         {ARRIVAL_AIRPORTS.map((a) => (
                                             <MenuItem key={a.code} value={a.code} sx={{ minHeight: 30, py: 0.5 }}>
@@ -268,6 +287,33 @@ const FlightInputForm = () => {
                                 <Typography fontWeight="bold">Prediction Result</Typography>
                                 <pre>{JSON.stringify(result, null, 2)}</pre>
                             </Box>
+                        )}
+                        {result && (
+                            <Grid container spacing={3} mt={4}>
+                                <Grid item xs={12} md={5}>
+                                    <Card sx={{ ...glassStyle, p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                                        <PredictionGauge value={78} /> {/* Replace with result.probability */}
+                                        <Box>
+                                            <Typography variant="h6" color="#ff4d4d">High Risk of Delay</Typography>
+                                            <Typography variant="body2" color="gray">Based on current weather and air traffic.</Typography>
+                                        </Box>
+                                    </Card>
+                                </Grid>
+
+                                <Grid item xs={12} md={7}>
+                                    <Card sx={{ ...glassStyle, p: 3 }}>
+                                        <Typography fontWeight="bold" mb={2}>Reasoning Breakdown</Typography>
+                                        <Box mb={2}>
+                                            <Typography variant="caption" color="gray">Weather at Destination</Typography>
+                                            <LinearProgress variant="determinate" value={85} sx={{ height: 8, borderRadius: 5, bgcolor: '#333', '& .MuiLinearProgress-bar': { bgcolor: '#ff4d4d' } }} />
+                                        </Box>
+                                        <Box mb={2}>
+                                            <Typography variant="caption" color="gray">Airport Congestion</Typography>
+                                            <LinearProgress variant="determinate" value={40} sx={{ height: 8, borderRadius: 5, bgcolor: '#333', '& .MuiLinearProgress-bar': { bgcolor: '#ffcc00' } }} />
+                                        </Box>
+                                    </Card>
+                                </Grid>
+                            </Grid>
                         )}
                     </Box>
                 </Card>

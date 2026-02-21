@@ -83,16 +83,33 @@ export const submitPrediction = (payload) =>
   API.post("/predictions/predict", payload);
 
 // export const getFlightPredictions = (flightId) => API.get(`/predictions/flight/${flightId}`);     // Get predictions for a specific flight
-// export const getPredictionHistory = () => API.get("/predictions/history");        // Get prediction history
 // export const getDelayClassification = () => API.get("/predictions/delay-classification");   // Get delay classification
 
-// Get dashboard stats for all users (admin)
+// Admin dashboard
 export const getAdminDashboardStats = () => {
   return API.get("/admin/stats");
 };
 export const getAdminDashboard = () => {
   return API.get("/admin/admin-dashboard");
 };
+
+
+
+// Reports
+export const getUserPredictionReport = (user_email, from_date, to_date) => {
+  return API.get(`/report/user-prediction-report?user_email=${user_email}&start_date=${from_date}&end_date=${to_date}`);
+};
+
+export const getAdminPredictionReport = (filters = {}) => {
+  const params = Object.fromEntries(
+    Object.entries(filters).filter(
+      ([_, value]) => value !== "" && value !== null && value !== undefined
+    )
+  );
+
+  return API.get("/report/admin-prediction-report", { params });
+};
+
 
 export const createAlert = (data) => API.post("/alert/", data);           // Create an alert
 export const getUserAlerts = (userId) => API.get(`/alert/user/${userId}`);      // Get user alerts

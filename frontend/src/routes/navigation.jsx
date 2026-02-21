@@ -18,12 +18,12 @@ const navigation = [
     icon: <DashboardIcon />,
     roles: ['admin', 'normal'],
   },
-  // {
-  //   name: 'Bill Generator',
-  //   to: '/bill-generator',
-  //   icon: <DashboardIcon />,
-  //   roles: ['admin', 'normal'],
-  // },
+  {
+    name: 'History',
+    to: '/history',
+    icon: <DashboardIcon />,
+    roles: ['admin', 'normal'],
+  },
   {
     name: 'Flights',
     icon: <ContactPageIcon />,
@@ -36,7 +36,7 @@ const navigation = [
         roles: ['admin', 'normal'],
       },
       {
-        name: 'View/Modify',
+        name: 'View Details',
         to: '/flight-view',
         icon: <EditIcon />,
         roles: ['admin', 'normal'],
@@ -61,11 +61,17 @@ const navigation = [
         roles: ['admin', 'normal'],
       },
       {
-        name: 'View/Modify',
+        name: 'View Details',
         to: '/holiday-view',
         icon: <EditIcon />,
         roles: ['admin', 'normal'],
-      }
+      },
+      {
+        name: 'History',
+        to: '/holiday-history',
+        icon: < EditIcon />,
+        roles: ['admin', 'normal'],
+      },
     ]
   },
   {
@@ -74,14 +80,14 @@ const navigation = [
     roles: ['admin'],
     items: [
       {
-        name: 'Customer',
-        to: '/reports/customer',
+        name: 'Prediction',
+        to: '/reports/prediction-report',
         icon: <EditIcon />,
-        roles: ['admin'],
+        roles: ['admin', 'normal'],
       },
       {
-        name: 'Sales',
-        to: '/reports/sales',
+        name: 'Prediction 2',
+        to: '/reports/admin-prediction-report',
         icon: <EditIcon />,
         roles: ['admin'],
       }

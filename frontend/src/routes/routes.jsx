@@ -11,6 +11,10 @@ import AddNewUser from '../pages/Users/AddNewUser';
 import ViewUser from '../pages/Users/ViewUser';
 import FlightInputForm from '../pages/Prediction/FlightInputForm';
 import AdminDashboard from '../pages/AdminDashboard';
+import FlightPredictionReport from '../pages/Reports/FlightPredictionReport';
+import AdminPredictionReport from '../pages/Reports/AdminPredictionReport';
+import FlightHistory from '../pages/Flights/FlightHistory';
+import HolidayHistory from '../pages/Holiday/HolidayHistory';
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -24,6 +28,10 @@ const routes = [
   { path: '/admin-dashboard', name: 'AdminDashboard', element: AdminDashboard },
   { path: '/main/help', name: 'Help', element: Help },
   { path: '/dashboard', name: 'Dashboard', element: FlightInputForm },
+  { path: '/flight-history', name: 'FlightHistory', element: FlightHistory },
+  { path: '/holiday-history', name: 'HolidayHistory', element: HolidayHistory },
+  { path: '/reports/prediction-report', name: 'FlightPredictionReport', element: FlightPredictionReport },
+  { path: '/reports/admin-prediction-report', name: 'AdminPredictionReport', element: AdminPredictionReport },
 
   // { path: 'main/reports/sales', name: 'SalesReport', element: SalesReport },
   // { path: '/main/reports/customer', name: 'CustomerReport', element: CustomerReport },

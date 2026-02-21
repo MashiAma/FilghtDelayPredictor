@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,Query
 from sqlalchemy.orm import Session
 from models_sql.flight import Flight
 from models_sql.prediction import Prediction
@@ -27,7 +27,7 @@ def combine_date_time(d: datetime.date, t: datetime.time) -> datetime:
 def predict_and_save(payload: PredictionRequest, db: Session = Depends(get_db)):
     dep_dt = combine_date_time(payload.departure_date, payload.departure_time)
 
-    # 🔹 Find flight
+    # Find flight
     flight_q = db.query(Flight).filter(
         Flight.arrival_airport == payload.arrival_airport,
         Flight.scheduled_departure == dep_dt
@@ -39,7 +39,7 @@ def predict_and_save(payload: PredictionRequest, db: Session = Depends(get_db)):
     if not flight:
         raise HTTPException(status_code=404, detail="Flight not found")
 
-    # 🔹 Gather features
+    # Gather features
     scheduled_dep_time = (
         flight.scheduled_departure.hour * 60
         + flight.scheduled_departure.minute

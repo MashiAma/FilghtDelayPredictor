@@ -253,7 +253,7 @@ export default function AddSingleFlight() {
                 <Grid size={{ xs: 12, sm: 6, md: 6 }}>
                     <FormControl fullWidth required>
                         <InputLabel>Aircraft</InputLabel>
-                        <Select name="aircraft" value={form.status} label="Aircraft" onChange={handleChange} size="medium">
+                        <Select name="aircraft" value={form.aircraft} label="Aircraft" onChange={handleChange} size="medium">
                             {aircrafts.map((s) => (
                                 <MenuItem key={s} value={s} sx={{ minHeight: 30, py: 0.5 }}>
                                     {s}

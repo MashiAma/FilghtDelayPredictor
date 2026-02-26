@@ -87,7 +87,7 @@ export const submitPrediction = (payload) =>
 
 // Admin dashboard
 export const getAdminDashboardStats = () => {
-  return API.get("/admin/stats");
+  return API.get("/basic/stats");
 };
 export const getAdminDashboard = () => {
   return API.get("/admin/admin-dashboard");

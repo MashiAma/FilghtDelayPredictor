@@ -308,10 +308,7 @@ const AdminPredictionReport = () => {
                                     <TableCell sx={{ fontSize: "11px", py: 1.0, textAlign: "center" }}>{row.flight.scheduled_departure ? dayjs(row.flight.scheduled_departure).format("YYYY-MM-DD HH:mm") : "-"}</TableCell>
                                     <TableCell sx={{ fontSize: "11px", py: 1.0, textAlign: "center" }}>{row.flight.scheduled_arrival ? dayjs(row.flight.scheduled_arrival).format("YYYY-MM-DD HH:mm") : "-"}</TableCell>
                                     <TableCell sx={{ fontSize: "11px", py: 1.0, textAlign: "center" }}>{row.delay_class_dep || "-"}</TableCell>
-                                    <TableCell sx={{ fontSize: "11px", py: 1.0, textAlign: "center" }}>{(row.dep_probability * 100).toFixed(2) + "%" ?? "-"}</TableCell>
-                                    <TableCell sx={{ fontSize: "11px", py: 1.0, textAlign: "center" }}>{row.delay_class_arr || "-"}</TableCell>
-                                    <TableCell sx={{ fontSize: "11px", py: 1.0, textAlign: "center" }}>{(row.arr_probability * 100).toFixed(2) + "%" ?? "-"}</TableCell>
-                                    <TableCell sx={{ fontSize: "11px", py: 1.0, textAlign: "center" }}>{dayjs(row.created_at).format("YYYY-MM-DD HH:mm")}</TableCell>
+                                    <TableCell sx={{ fontSize: "11px", py: 1.0, textAlign: "center" }}>{row.dep_probability?.toFixed ? (row.dep_probability * 100).toFixed(2) + "%" : "-"}</TableCell>                                   <TableCell sx={{ fontSize: "11px", py: 1.0, textAlign: "center" }}>{dayjs(row.created_at).format("YYYY-MM-DD HH:mm")}</TableCell>
                                 </TableRow>
                             ))}
                             {trend.length === 0 && (
@@ -404,9 +401,7 @@ const AdminPredictionReport = () => {
                                             <td>{flight.scheduled_departure ? dayjs(flight.scheduled_departure).format("YYYY-MM-DD HH:mm") : "-"}</td>
                                             <td>{flight.scheduled_arrival ? dayjs(flight.scheduled_arrival).format("YYYY-MM-DD HH:mm") : "-"}</td>
                                             <td>{row.delay_class_dep || "-"}</td>
-                                            <td>{(row.dep_probability * 100).toFixed(2) + "%" ?? "-"}</td>
-                                            <td>{row.delay_class_arr || "-"}</td>
-                                            <td>{(row.arr_probability * 100).toFixed(2) + "%" ?? "-"}</td>
+                                            <td>{row.dep_probability?.toFixed ? (row.dep_probability * 100).toFixed(2) + "%" : "-"}</td>
                                             <td>{dayjs(row.created_at).format("YYYY-MM-DD HH:mm")}</td>
                                         </tr>
                                     );

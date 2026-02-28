@@ -1,7 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from services.llm_provider import get_llm
-from typing import Dict, Any
+from typing import Dict, Any, List
 import json
 import re
 
@@ -55,7 +55,7 @@ HISTORICAL PERFORMANCE:
 Respond with ONLY a valid JSON object, no markdown, no extra text:
 
 {{
-  "narrative": "2 to 3 sentence operational story explaining the delay situation based only on facts above",
+  "narrative": "4 to 5 sentence operational story explaining the delay situation based only on facts above",
   "reason_breakdown": {{
     "weather": "one sentence about weather contribution or write No significant weather impact",
     "holiday_congestion": "one sentence about holiday or congestion contribution or write No holiday impact",
@@ -72,6 +72,7 @@ def generate_narrative(
     features: Dict[str, Any],
     dep_probability: float,
     delay_class_dep: str,
+    top_features: List[Dict[str, Any]],
 ) -> Dict[str, Any]:
     """
     Generates AI operational narrative using whichever LLM is configured.
@@ -90,17 +91,17 @@ def generate_narrative(
         "delay_class_dep": delay_class_dep,
         "scheduled_flight_duration_min": features.get("scheduled_flight_duration_min", 0),
         "is_short_haul": features.get("is_short_haul", False),
-        "dep_wind_speed_10m": features.get("dep_wind_speed_10m", False),
-        "dep_cloud_cover": features.get("dep_cloud_cover", False),
-        "dep_visibility": features.get("dep_visibility", False),
-        "dep_precipitation": features.get("dep_precipitation", False),
-        "dep_weather_code": features.get("dep_weather_code", False),
-        "arr_wind_speed_10m": features.get("arr_wind_speed_10m", False),
-        "arr_cloud_cover": features.get("arr_cloud_cover", False),
-        "arr_visibility": features.get("arr_visibility", False),
-        "arr_precipitation": features.get("arr_precipitation", False),
-        "arr_weather_code": features.get("arr_weather_code", False),
-        "dep_is_monsoon_season": features.get("dep_is_monsoon_season", False),
+        "dep_wind_speed_10m": features.get("dep_wind_speed_10m", 0),
+        "dep_cloud_cover": features.get("dep_cloud_cover", 0),
+        "dep_visibility": features.get("dep_visibility", 0),
+        "dep_precipitation": features.get("dep_precipitation", 0),
+        "dep_weather_code": features.get("dep_weather_code", 0),
+        "arr_wind_speed_10m": features.get("arr_wind_speed_10m", 0),
+        "arr_cloud_cover": features.get("arr_cloud_cover", 0),
+        "arr_visibility": features.get("arr_visibility", 0),
+        "arr_precipitation": features.get("arr_precipitation", 0),
+        "arr_weather_code": features.get("arr_weather_code", 0),
+        "dep_is_monsoon_season": features.get("dep_is_monsoon_season", 0),
         "scheduled_departure_hour": features.get("scheduled_departure_hour", 0),
         "day_of_week": day_of_week,
         "scheduled_is_weekend": features.get("scheduled_is_weekend", False),

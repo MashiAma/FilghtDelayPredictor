@@ -83,8 +83,8 @@ def get_best_day_of_week(db: Session, origin: str, destination: str) -> str:
 
     if result:
         dow_map = {
-            7: "Sunday", 1: "Monday", 2: "Tuesday",
-            3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday"
+            6: "Sunday", 0: "Monday", 1: "Tuesday",
+            2: "Wednesday", 3: "Thursday", 4: "Friday", 5: "Saturday"
         }
         return dow_map.get(int(result.dow), "Tuesday")
     return "Tuesday"

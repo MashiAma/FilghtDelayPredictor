@@ -109,6 +109,12 @@ def predict_and_save(payload: PredictionRequest, db: Session = Depends(get_db)):
 
     try:
         result = save_prediction(model_features)
+        print("Top features contributing to the delay:")
+        for f in result["dep_top_features"]:
+            if isinstance(f, dict):
+                print(f"Feature: {f['feature']}, Impact: {f['impact']:.4f}")
+            else:
+                print(f"Feature: {f[0]}, Impact: {float(f[1]):.4f}")
         # facts = build_structured_facts(result, model_features)
         # narrative = generate_narrative(facts)
         # result["narrative"] = narrative
@@ -169,21 +175,23 @@ def predict_and_save(payload: PredictionRequest, db: Session = Depends(get_db)):
     #     print("FULL ERROR:", e)
         
 
-    # # AI Narrative
-    # narrative_result = {}
-    # try:
-    #     narrative_result = generate_narrative(
-    #         features=model_features,
-    #         dep_probability=dep_probability,
-    #         delay_class_dep=delay_class_dep,
-    #     )
-    # except Exception as e:
-    #     print(f"[NARRATIVE ERROR] {type(e).__name__}: {e}")
-    #     narrative_result = {
-    #         "narrative": f"Narrative generation unavailable: {str(e)}",
-    #         "reason_breakdown": {},
-    #         "confidence_explanation": "",
-    #     }
+    # AI Narrative
+    narrative_result = {}
+    try:
+        narrative_result = generate_narrative(
+            features=model_features,
+            dep_probability=dep_probability,
+            delay_class_dep=delay_class_dep,
+            top_features=result["dep_top_features"],
+        )
+    except Exception as e:
+        print(f"[NARRATIVE ERROR] {type(e).__name__}: {e}")
+        narrative_result = {
+            "narrative": f"Narrative generation unavailable: {str(e)}",
+            "reason_breakdown": {},
+            "confidence_explanation": "",
+            "top_features":""
+        }
 
     # # Passenger Impact
     # impact_result = {}
@@ -249,10 +257,11 @@ def predict_and_save(payload: PredictionRequest, db: Session = Depends(get_db)):
     return {
         # Original prediction
 
-        # # AI Narrative
-        # "narrative":              narrative_result.get("narrative", ""),
-        # "reason_breakdown":       narrative_result.get("reason_breakdown", {}),
-        # "confidence_explanation": narrative_result.get("confidence_explanation", ""),
+        # AI Narrative
+        "narrative":              narrative_result.get("narrative", ""),
+        "reason_breakdown":       narrative_result.get("reason_breakdown", {}),
+        "confidence_explanation": narrative_result.get("confidence_explanation", ""),
+        "top_features": narrative_result.get("top_features", ""),
 
         # # Passenger Impact
         # "passenger_impact":    impact_result.get("primary_impact", ""),

@@ -290,7 +290,7 @@ const FlightInputForm = () => {
                         )}
                         {result && (
                             <Grid container spacing={3} mt={4}>
-                                <Grid item xs={12} md={5}>
+                                <Grid size={{ xs: 12, md: 5 }}>
                                     <Card sx={{ ...glassStyle, p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
                                         <PredictionGauge value={78} /> {/* Replace with result.probability */}
                                         <Box>
@@ -300,7 +300,7 @@ const FlightInputForm = () => {
                                     </Card>
                                 </Grid>
 
-                                <Grid item xs={12} md={7}>
+                                <Grid size={{ xs: 12, md: 7 }}>
                                     <Card sx={{ ...glassStyle, p: 3 }}>
                                         <Typography fontWeight="bold" mb={2}>Reasoning Breakdown</Typography>
                                         <Box mb={2}>

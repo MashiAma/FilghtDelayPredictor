@@ -61,6 +61,7 @@ def get_narrative(payload: NarrativeRequest):
             features=payload.features,
             dep_probability=payload.dep_probability,
             delay_class_dep=payload.delay_class_dep,
+            top_features= payload.top_features
         )
 
         impact = analyze_passenger_impact(

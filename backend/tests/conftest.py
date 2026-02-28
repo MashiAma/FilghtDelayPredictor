@@ -69,10 +69,6 @@ def test_prediction(db, test_flight, test_user):
         user_email=test_user.email,
         delay_class_dep="Minor",
         dep_probability=0.5,
-        delay_class_arr="On-time",
-        arr_probability=0.2,
-        predicted_dep_delay_min=15,
-        predicted_arr_delay_min=5,
         input_features={"sample": "data"},
     )
 

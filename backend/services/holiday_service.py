@@ -26,7 +26,7 @@ def calculate_holiday_flags(holiday_date, holiday_type, db: Session):
 
     # Long weekend: Friday (4) or Monday (0)
     weekday = holiday_date.weekday()
-    if weekday in [0, 4]:
+    if weekday in [1, 5]:
         flags["is_long_weekend"] = True
 
     return flags

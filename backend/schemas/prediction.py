@@ -31,10 +31,6 @@ class PredictionHistoryOut(BaseModel):
     id: int
     delay_class_dep: str
     dep_probability: float
-    delay_class_arr: Optional[str]
-    arr_probability: float
-    predicted_dep_delay_min: Optional[float]
-    predicted_arr_delay_min: Optional[float]
     created_at: datetime
     flight: FlightInfo
 

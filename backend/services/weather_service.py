@@ -16,9 +16,9 @@ AIRPORT_COORDS = {
     # "PBH": (27.4052, 89.4162)
 }
 
-LOW_VISIBILITY_THRESHOLD_M = 3000
-HIGH_WIND_THRESHOLD_MS = 15
-THUNDER_CODES = {95, 96, 99}
+# LOW_VISIBILITY_THRESHOLD_M = 3000
+# HIGH_WIND_THRESHOLD_MS = 15
+# THUNDER_CODES = {95, 96, 99}
 
 def get_weather_features(airport_code: str, dep_dt: datetime,prefix: str) -> dict:
     if airport_code not in AIRPORT_COORDS:
@@ -29,7 +29,7 @@ def get_weather_features(airport_code: str, dep_dt: datetime,prefix: str) -> dic
     url = (
         "https://api.open-meteo.com/v1/forecast?"
         f"latitude={lat}&longitude={lon}"
-        "&hourly=precipitation,weathercode,visibility,windspeed_10m"
+        "&hourly=precipitation,weathercode,visibility,windspeed_10m,cloudcover"
         "&timezone=UTC"
     )
 
@@ -54,15 +54,17 @@ def get_weather_features(airport_code: str, dep_dt: datetime,prefix: str) -> dic
             )
         )
 
-    precipitation = hourly["precipitation"][idx]
-    weathercode = hourly["weathercode"][idx]
+    wind_speed_10m = hourly["windspeed_10m"][idx]
+    cloud_cover = hourly["cloudcover"][idx]
     visibility = hourly["visibility"][idx]
-    windspeed = hourly["windspeed_10m"][idx]
+    precipitation = hourly["precipitation"][idx]
+    weather_code = hourly["weathercode"][idx]
     
 
     return {
-        f"{prefix}_has_rain": int(precipitation > 0),
-        f"{prefix}_has_thunderstorm": int(weathercode in THUNDER_CODES),
-        f"{prefix}_low_visibility": int(visibility < LOW_VISIBILITY_THRESHOLD_M),
-        f"{prefix}_high_wind": int(windspeed >= HIGH_WIND_THRESHOLD_MS), 
+        f"{prefix}_wind_speed_10m": float(wind_speed_10m),
+        f"{prefix}_cloud_cover": int(cloud_cover),
+        f"{prefix}_visibility": int(visibility),
+        f"{prefix}_precipitation": float(precipitation), 
+        f"{prefix}_weather_code": int(weather_code), 
     }

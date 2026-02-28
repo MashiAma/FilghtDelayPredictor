@@ -31,7 +31,6 @@ def setup_test_data(db: Session):
         full_name="Test User",
         hashed_password="test",  # or hashed if your User model expects hashed
         role="normal",
-        email_alert_opt=True,
         is_active=True
     )
     db.add(test_user)
@@ -62,10 +61,6 @@ def setup_test_data(db: Session):
         user_email=test_user.email,
         delay_class_dep="On-time",
         dep_probability=0.1,
-        delay_class_arr="Minor",
-        arr_probability=0.5,
-        predicted_dep_delay_min=5,
-        predicted_arr_delay_min=15,
         input_features={"sample_feature": 1},
         created_at=datetime.now(timezone.utc)
     )

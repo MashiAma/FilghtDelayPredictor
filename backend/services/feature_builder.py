@@ -17,14 +17,15 @@ def build_time_features(dep_dt: datetime, arr_dt: datetime, status:str) -> dict:
         "scheduled_arrival_day_of_week": weekday_map[arr_dt.weekday()],
         "scheduled_is_weekend": 1 if (int(dep_dt.weekday())) >= 5 else 0,
         "scheduled_month": dep_dt.month,
-        "scheduled_is_peak_hour": 1 if 6 <= (int(dep_dt.hour)) <= 10 or 16 <= (int(dep_dt.hour)) <= 20 else 0,
+        "scheduled_is_peak_hour": 1 if 6 <= (int(dep_dt.hour)) <= 9 or 18 <= (int(dep_dt.hour)) <= 21 else 0,
         "scheduled_early_morning_departure": 1 if 0 <=  (int(dep_dt.hour)) <= 6 else 0,
         "scheduled_late_night_departure": 1 if 22 <=(int(dep_dt.hour)) <= 24 else 0,
         "scheduled_flight_duration_min": duration_min,
+        "is_short_haul":1 if (int(duration_min)) <= 120 else 0,
 
         "is_diverted": int(status_clean == "diverted"),
         "is_cancelled": int(status_clean == "cancelled"),
-        "dep_is_monsoon_season": 1 if dep_dt.month in [5,6,7,8,9] else 0,
+        "dep_is_monsoon_season": 1 if dep_dt.month in [12,1,2,5,6,7,8,9] else 0,
     }
 
 def get_historical_features(
@@ -48,10 +49,10 @@ def get_historical_features(
     ).first()
     route_avg_delay = route_row.avg_delay if route_row else 0
     route_delay_rate = route_row.delay_rate if route_row else 0
-    is_short_haul = route_row.is_short_haul if route_row else 0
+    # is_short_haul = route_row.is_short_haul if route_row else 0
 
     return {
-        "is_short_haul": is_short_haul,
+        # "is_short_haul": is_short_haul,
         "route_avg_delay": route_avg_delay,
         "route_delay_rate": route_delay_rate, 
         "airline_avg_delay": airline_avg_delay,

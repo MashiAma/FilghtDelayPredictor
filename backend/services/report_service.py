@@ -50,10 +50,6 @@ def get_user_predictions_by_period(
             "user_email": p.user_email,
             "delay_class_dep": p.delay_class_dep,
             "dep_probability": p.dep_probability if p.dep_probability else 0,
-            "delay_class_arr": p.delay_class_arr,
-            "arr_probability": p.arr_probability if p.arr_probability else 0,
-            "predicted_dep_delay_min": p.predicted_dep_delay_min,
-            "predicted_arr_delay_min": p.predicted_arr_delay_min,
             "created_at": (
                 p.created_at
                 .replace(tzinfo=timezone.utc)
@@ -119,13 +115,6 @@ def get_users_report(
 
             "delay_class_dep": p.delay_class_dep,
             "dep_probability": p.dep_probability if p.dep_probability else 0,
-
-            "delay_class_arr": p.delay_class_arr,
-            "arr_probability": p.arr_probability if p.arr_probability else 0,
-
-            "predicted_dep_delay_min": p.predicted_dep_delay_min,
-            "predicted_arr_delay_min": p.predicted_arr_delay_min,
-
             "created_at": (
                 p.created_at
                 .replace(tzinfo=timezone.utc)

@@ -30,6 +30,4 @@ def test_save_prediction():
     result = service.save_prediction(features)
 
     assert result["dep_probability"] == 0.8
-    assert result["arr_probability"] == 0.8
     assert result["delay_class_dep"] == "Major"
-    assert result["delay_class_arr"] == "Major"

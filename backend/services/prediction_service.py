@@ -1,13 +1,11 @@
+# services/prediction_service.py
 from sqlalchemy.orm import Session
-from models_sql.prediction import Prediction
-from schemas.prediction import PredictionRequest
-from datetime import datetime
-from sqlalchemy import func
-
 import joblib
 import numpy as np
 import lightgbm as lgb
+import shap
 
+# Load models
 # explainer_dep = shap.Explainer(model_dep)
 # explainer_arr = shap.Explainer(model_arr)
 
@@ -16,10 +14,10 @@ import lightgbm as lgb
 
 # Load LightGBM Booster models
 model_dep = lgb.Booster(model_file="models/flight_delay_model.txt")
-model_arr = lgb.Booster(model_file="models/flight_delay_model.txt")
 model_columns = joblib.load("models/model_columns.pkl")
 label_encoders = joblib.load("models/label_encoders.pkl")
 
+# Preprocessing
 def preprocess_input(features: dict) -> np.ndarray:
     processed = []
 
@@ -46,14 +44,28 @@ def preprocess_input(features: dict) -> np.ndarray:
 
 def classify(prob: float) -> str:
     """Classifies delay severity based on probability thresholds"""
-    if prob < 0.3:
+    if prob < 0.4:
         return "On-time"
-    elif prob < 0.7:
-        return "Minor"
     else:
         return "Major"
 
-def save_prediction(features: dict):
+# SHAP Feature Importance
+# def get_top_features(explainer, X, top_n=5):
+#     shap_values = explainer.shap_values(X)
+#     contributions = dict(zip(model_columns, shap_values[0]))
+#     sorted_features = sorted(contributions.items(), key=lambda x: abs(x[1]), reverse=True)
+#     return sorted_features[:top_n]
+
+# # Counterfactual simulation
+# def simulate_counterfactual(features: dict, shift_hours: int):
+#     modified = features.copy()
+#     modified["scheduled_depature_time"] += shift_hours * 60
+#     X = preprocess_input(modified)
+#     prob = model_dep.predict(X)[0]
+#     return float(prob)
+
+# Main prediction function
+def save_prediction(features: dict):    
     """
     Predicts departure and arrival delay probabilities and classes
     features: dict with keys exactly matching training feature names
@@ -62,11 +74,37 @@ def save_prediction(features: dict):
 
     # LightGBM Booster prediction returns probability of class 1
     dep_prob = model_dep.predict(X)[0]
-    arr_prob = model_arr.predict(X)[0]
+
+    # dep_top = get_top_features(explainer_dep, X)
+
+    # shifted_prob = simulate_counterfactual(features, 2)
+    # risk_change = shifted_prob - dep_prob
+    # recommendation = (
+    #     "Departing 2 hours later reduces predicted delay risk."
+    #     if shifted_prob < dep_prob
+    #     else "No improvement observed with departure time shift."
+    # )
+
+    # human_group = (
+    #     "Late-night leisure travelers"
+    #     if features.get("scheduled_late_night_departure") and features.get("is_long_weekend")
+    #     else "Short-haul passengers"
+    #     if features.get("is_short_haul")
+    #     else "General passengers"
+    # )
 
     return {
         "dep_probability": float(dep_prob),
         "delay_class_dep": classify(dep_prob),
-        "arr_probability": float(arr_prob),
-        "delay_class_arr": classify(arr_prob),
+        # "dep_top_features": dep_top,
+        # "counterfactual": {
+        #     "baseline": float(dep_prob),
+        #     "shifted_plus_2h": shifted_prob,
+        #     "risk_change": float(risk_change),
+        # },
+        # "recommendation": recommendation,
+        # "human_impact": {
+        #     "affected_group": human_group,
+        #     "severity_score": float(dep_prob),
+        # },
     }

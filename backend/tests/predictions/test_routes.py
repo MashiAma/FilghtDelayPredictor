@@ -43,6 +43,4 @@ def mock_save_prediction(features):
     return {
         "dep_probability": 0.2,
         "delay_class_dep": "On-time",
-        "arr_probability": 0.2,
-        "delay_class_arr": "On-time",
     }

@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, Boolean, Date, String, UniqueConstraint
+from sqlalchemy import Column, Integer, Boolean, Date, String, UniqueConstraint,DateTime
 from database.connection import Base
+from datetime import datetime
 
 class Holiday(Base):
     __tablename__ = "holidays"
@@ -14,6 +15,7 @@ class Holiday(Base):
     is_festival_period = Column(Boolean, default=False)
     is_post_holiday = Column(Boolean, default=False)
     is_long_weekend = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     __table_args__ = (
         UniqueConstraint(

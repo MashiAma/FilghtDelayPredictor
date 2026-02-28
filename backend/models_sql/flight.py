@@ -3,6 +3,8 @@
 from sqlalchemy import Column, Integer, String, DateTime, UniqueConstraint
 from database.connection import Base
 from sqlalchemy.orm import relationship
+from datetime import datetime
+
 
 class Flight(Base):
     __tablename__ = "flights"
@@ -19,6 +21,7 @@ class Flight(Base):
     airline = Column(String, nullable=False)
     status = Column(String, nullable=False)
     aircraft = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     __table_args__ = (
         UniqueConstraint(
@@ -29,3 +32,4 @@ class Flight(Base):
     )
 
     predictions = relationship("Prediction", back_populates="flight")
+    alerts = relationship("Alert", back_populates="flight", cascade="all, delete-orphan")

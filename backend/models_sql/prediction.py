@@ -10,10 +10,6 @@ class Prediction(Base):
     user_email = Column(String, ForeignKey("users.email"))
     delay_class_dep = Column(String, nullable=False)
     dep_probability = Column(Float, nullable=False)
-    delay_class_arr = Column(String)
-    arr_probability = Column(Float, nullable=False)
-    predicted_dep_delay_min = Column(Float)
-    predicted_arr_delay_min = Column(Float)
     input_features = Column(JSON) # Store all input features as JSON
     created_at = Column(DateTime, default=datetime.utcnow)
 

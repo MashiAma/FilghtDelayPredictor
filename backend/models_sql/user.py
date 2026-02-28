@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean,DateTime
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 from database.connection import Base
+from datetime import datetime
 
 
 class User(Base):
@@ -13,7 +14,7 @@ class User(Base):
     hashed_password = Column(String(200), nullable=False)
     phone = Column(String(20), nullable=True)
     role = Column(String(20), default="normal")
-    email_alert_opt = Column(Boolean, default=True)
     is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     alerts = relationship("Alert", back_populates="user", cascade="all, delete-orphan")

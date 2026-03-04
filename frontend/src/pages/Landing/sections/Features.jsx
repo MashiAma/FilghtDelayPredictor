@@ -24,7 +24,7 @@ const features = [
     title: "Holiday Awareness",
     desc: "Detect holiday-related congestion risks.",
   },
-    {
+  {
     icon: <FaCalendarAlt size={28} />,
     title: "Explainable Recommendations",
     desc: "Provide Explainable Analysis",

@@ -18,12 +18,12 @@ const navigation = [
     icon: <DashboardIcon />,
     roles: ['admin', 'normal'],
   },
-  {
-    name: 'History',
-    to: '/history',
-    icon: <DashboardIcon />,
-    roles: ['admin', 'normal'],
-  },
+  // {
+  //   name: 'History',
+  //   to: '/history',
+  //   icon: <DashboardIcon />,
+  //   roles: ['admin', 'normal'],
+  // },
   {
     name: 'Flights',
     icon: <ContactPageIcon />,
@@ -80,13 +80,13 @@ const navigation = [
     roles: ['admin'],
     items: [
       {
-        name: 'Prediction',
+        name: 'User Predictions',
         to: '/reports/prediction-report',
         icon: <EditIcon />,
         roles: ['admin', 'normal'],
       },
       {
-        name: 'Prediction 2',
+        name: 'All Predictions',
         to: '/reports/admin-prediction-report',
         icon: <EditIcon />,
         roles: ['admin'],

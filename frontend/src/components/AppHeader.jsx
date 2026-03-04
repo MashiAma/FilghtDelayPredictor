@@ -50,7 +50,7 @@ const AppHeader = ({ mode, toggleTheme }) => {
   const handleCloseHolidaysMenu = () => setAnchorElHolidays(null);
 
   return (
-    <AppBar position="sticky" elevation={1} style={{ backgroundColor: "rgba(0, 60, 100, 0.96)" }}>
+    <AppBar position="sticky" elevation={1} style={{ backgroundColor: "rgba(0, 60, 100, 0.96)", padding: 2 }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
 

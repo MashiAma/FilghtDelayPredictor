@@ -44,10 +44,10 @@ def preprocess_input(features: dict) -> np.ndarray:
 
 def classify(prob: float) -> str:
     """Classifies delay severity based on probability thresholds"""
-    if prob < 0.4:
+    if prob < 0.5:
         return "On-time"
     else:
-        return "Major"
+        return "Delayed"
 
 # SHAP Feature Importance
 # def get_top_features(X: np.ndarray, top_n=10):

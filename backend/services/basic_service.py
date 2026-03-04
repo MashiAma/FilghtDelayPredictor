@@ -1,10 +1,15 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func, extract
 from datetime import datetime
-from models_sql.flight import Flight
-from models_sql.prediction import Prediction
 from models_sql.user import User
+from models_sql.prediction import Prediction
+from models_sql.flight import Flight
+from models_sql.holiday import Holiday  # you must create this table
 
+
+# =========================
+# HELPER
+# =========================
 
 def get_current_month_range():
     now = datetime.utcnow()
@@ -26,54 +31,51 @@ def get_admin_stats_service(db: Session):
 
     start, end = get_current_month_range()
 
-    # Total Flights Current Month
-    total_flights = db.query(func.count(Flight.id)).filter(
-        Flight.scheduled_departure >= start,
-        Flight.scheduled_departure < end
-    ).scalar() or 0
-
-    # Total Predictions Current Month
-    total_predictions = db.query(func.count(Prediction.id)).join(
-        Flight, Flight.id == Prediction.flight_id
-    ).filter(
-        Flight.scheduled_departure >= start,
-        Flight.scheduled_departure < end
-    ).scalar() or 0
-
-    # Total Users
     total_users = db.query(func.count(User.id)).scalar() or 0
+    total_predictions = db.query(func.count(Prediction.id)).scalar() or 0
 
-    # Delay Rate
-    total_preds = db.query(func.count(Prediction.id)).scalar() or 0
-
-    delayed_preds = db.query(func.count(Prediction.id)).filter(
-        Prediction.delay_class_dep == "Delayed"
+    predictions_this_month = db.query(func.count(Prediction.id)).filter(
+        Prediction.created_at >= start,
+        Prediction.created_at < end
     ).scalar() or 0
 
-    delay_rate = (delayed_preds / total_preds * 100) if total_preds else 0
+    flights_this_month = db.query(func.count(Flight.id)).filter(
+        Flight.created_at >= start,   # use correct date column
+        Flight.created_at < end
+    ).scalar() or 0
 
-    # Most Delayed Airline
-    most_delayed = db.query(
-        Flight.airline,
-    ).join(Prediction, Flight.id == Prediction.flight_id) \
-     .group_by(Flight.airline) \
-     .first()
+    high_risk_count = db.query(func.count(Prediction.id)).filter(
+        Prediction.delay_class_dep == "High"
+    ).scalar() or 0
+
+    high_risk_percentage = (
+        (high_risk_count / total_predictions) * 100
+        if total_predictions else 0
+    )
+
+    avg_probability = db.query(
+        func.avg(Prediction.dep_probability)
+    ).scalar() or 0
 
     return {
-        "total_flights_current_month": total_flights,
-        "total_predictions_current_month": total_predictions,
         "total_users": total_users,
-        # "average_departure_delay": round(avg_delay, 2),
-        "delay_rate_percent": round(delay_rate, 2),
-        "most_delayed_airline": most_delayed[0] if most_delayed else None
+        "total_predictions": total_predictions,
+        "predictions_this_month": predictions_this_month,
+        "flights_this_month": flights_this_month,
+        "high_risk_percentage": round(high_risk_percentage, 2),
+        "average_probability": round(avg_probability, 2)
     }
 
 
-def get_delay_distribution_service(db: Session):
+# =========================
+# USER ROLE PIE CHART
+# =========================
+
+def get_user_role_distribution_service(db: Session):
     data = db.query(
-        Prediction.delay_class_dep,
-        func.count(Prediction.id)
-    ).group_by(Prediction.delay_class_dep).all()
+        User.role,
+        func.count(User.id)
+    ).group_by(User.role).all()
 
     return {
         "labels": [d[0] for d in data],
@@ -81,106 +83,93 @@ def get_delay_distribution_service(db: Session):
     }
 
 
-def get_delay_by_airline_service(db: Session):
+# =========================
+# MONTHLY HIGH RISK BAR CHART
+# =========================
+
+DELAY_CLASSES = ["On-time", "Delayed"]  # adjust according to your system
+
+def get_delay_distribution_service(db: Session):
+
+    start, end = get_current_month_range()
+
     data = db.query(
-        Flight.airline,
-    ).join(Prediction, Flight.id == Prediction.flight_id) \
-     .group_by(Flight.airline).all()
+        Prediction.delay_class_dep,
+        func.count(Prediction.id)
+    ).filter(
+        Prediction.created_at >= start,
+        Prediction.created_at < end
+    ).group_by(
+        Prediction.delay_class_dep
+    ).all()
+
+    counts = {d[0]: d[1] for d in data}
+
+    labels = []
+    values = []
+
+    for cls in DELAY_CLASSES:
+        labels.append(cls)
+        values.append(float(counts.get(cls, 0)))
 
     return {
-        "labels": [d[0] for d in data],
-        "values": [round(d[1], 2) for d in data]
+        "labels": labels,
+        "values": values
+    }
+
+# =========================
+# LAST 10 PREDICTIONS
+# =========================
+
+def get_last_10_predictions_service(db: Session):
+
+    predictions = (
+        db.query(Prediction)
+        .join(Flight, Flight.id == Prediction.flight_id)
+        .order_by(Prediction.created_at.desc())
+        .limit(10)
+        .all()
+    )
+
+    results = []
+
+    for p in predictions:
+        route = f"{p.flight.departure_airport} → {p.flight.arrival_airport}"
+
+        results.append({
+            "user_email": p.user_email,   # directly from Prediction
+            "route": route,
+            "probability": round(p.dep_probability or 0, 2),
+            "risk_level": p.delay_class_dep,
+            "created_at": p.created_at
+        })
+
+    return {
+        "total": len(results),
+        "predictions": results
     }
 
 
-def get_delay_by_hour_service(db: Session):
-    data = db.query(
-        extract("hour", Flight.scheduled_departure),
-    ).join(Prediction, Flight.id == Prediction.flight_id) \
-     .group_by(extract("hour", Flight.scheduled_departure)) \
-     .order_by(extract("hour", Flight.scheduled_departure)) \
-     .all()
+# =========================
+# UPCOMING HOLIDAYS (THIS MONTH)
+# =========================
+
+def get_current_month_holidays_service(db: Session):
+
+    start, end = get_current_month_range()
+
+    holidays = db.query(Holiday).filter(
+        Holiday.holiday_date >= start,
+        Holiday.holiday_date < end
+    ).all()
 
     return {
-        "labels": [str(int(d[0])) for d in data],
-        "values": [round(d[1], 2) for d in data]
+        "holidays": [
+            {
+                "name": h.holiday_name,
+                "date": h.holiday_date,
+                "type": h.holiday_type
+            }
+            for h in holidays
+        ]
     }
-
-
-def get_delay_trend_service(db: Session):
-    data = db.query(
-        func.date(Flight.scheduled_departure),
-    ).join(Prediction, Flight.id == Prediction.flight_id) \
-     .group_by(func.date(Flight.scheduled_departure)) \
-     .order_by(func.date(Flight.scheduled_departure)) \
-     .all()
-
-    return {
-        "labels": [str(d[0]) for d in data],
-        "values": [round(d[1], 2) for d in data]
-    }
-
-# def get_users_report(
-#     db: Session,
-#     airline: Optional[str] = None,
-#     aircraft: Optional[str] = None,
-#     destination: Optional[str] = None,
-#     from_date: Optional[datetime] = Query(None),
-#     to_date: Optional[datetime] = Query(None),
-# ):
-
-#     # Single join using relationship
-#     query = db.query(Prediction).join(Prediction.flight)
-
-#     # Date filter
-#     if from_date and to_date:
-#         query = query.filter(
-#             Prediction.created_at >= from_date,
-#             Prediction.created_at <= to_date
-#         )
-
-#     # Flight filters (no new join!)
-#     if airline:
-#         query = query.filter(Flight.airline == airline)
-#     if aircraft:
-#         query = query.filter(Flight.aircraft == aircraft)
-#     if destination:
-#         query = query.filter(Flight.arrival_airport == destination)
-
-#     predictions = query.all()
-
-#     results = []
-
-#     for p in predictions:
-#         flight = p.flight
-
-#         results.append({
-#             "prediction_id": p.id,
-#             "user_email": p.user_email,
-
-#             "delay_class_dep": p.delay_class_dep,
-#             "dep_probability": p.dep_probability if p.dep_probability else 0,
-
-
-
-#             "created_at": (
-#                 p.created_at
-#                 .replace(tzinfo=timezone.utc)
-#                 .astimezone(ZoneInfo("Asia/Colombo"))
-#                 .strftime("%Y-%m-%d %H:%M")
-#             ),
-
-#             "flight": {
-#                 "airline": flight.airline if flight else None,
-#                 "aircraft": flight.aircraft if flight else None,
-#                 "origin": flight.departure_airport if flight else None,
-#                 "destination": flight.arrival_airport if flight else None,
-#                 "scheduled_departure": flight.scheduled_departure if flight else None,
-#                 "scheduled_arrival": flight.scheduled_arrival if flight else None,
-#             }
-#         })
-
-#     return {
-#         "total_predictions": len(results),
-#         "predictions": results
-#     }

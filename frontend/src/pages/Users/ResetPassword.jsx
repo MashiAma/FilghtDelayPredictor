@@ -134,7 +134,7 @@ const ResetPassword = () => {
               component="img"
               src={resetPasswordImage}
               alt="reset"
-              sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+              sx={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.85 }}
             />
             <Box
               sx={{
@@ -162,7 +162,7 @@ const ResetPassword = () => {
               <Typography variant="h4" fontWeight="bold" gutterBottom>
                 SkyGuard
               </Typography>
-              <Typography variant="body1" sx={{ opacity: 0.75 }}>
+              <Typography variant="h6" >
                 Predict flight delays using AI
               </Typography>
             </Box>

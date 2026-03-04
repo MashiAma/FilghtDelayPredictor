@@ -2,6 +2,7 @@ import { Box, Typography, Button, Container } from "@mui/material";
 import { motion } from "framer-motion";
 import CustomButton from "../../../components/CustomButton/CustomButton";
 import { FaPlaneDeparture } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 const CTA = () => {
   return (
@@ -9,7 +10,7 @@ const CTA = () => {
       sx={{
         py: 5,
         background:
-          "linear-gradient(135deg, #090774ff 0%, #cbd0fcff 100%)",
+          "linear-gradient(135deg, rgb(0, 62, 133) 0%, #cbd0fcff 100%)",
       }}
     >
       <Container>
@@ -27,15 +28,14 @@ const CTA = () => {
 
           <Box textAlign="center">
             <CustomButton
-              sx={{
-                backgroundColor: "blue.main",
-                "&:hover": {
-                  backgroundColor: "blue.dark",
-                },
-              }}
+              variant="contained"
+              color="inherit"
+              size="large"
+              component={NavLink}
+              to="/register"
+              sx={{ mt: 3 }}
               endIcon={<FaPlaneDeparture />}
-              onClick={() => navigate("/login")}
-            >Predict Now
+            >Sign Up Now
             </CustomButton>
           </Box>
         </motion.div>

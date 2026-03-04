@@ -7,6 +7,7 @@ import CTA from "./sections/CTA";
 import AppHeader from "../../components/AppHeader";
 import PageTransition from "../../assets/animations/Pagetransition";
 import Footer from "../../components/Footer";
+import { FaHeartbeat, FaStethoscope, FaChartLine } from "react-icons/fa";
 
 const LandingPage = () => {
   return (

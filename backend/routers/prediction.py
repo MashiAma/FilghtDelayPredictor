@@ -148,7 +148,7 @@ def predict_and_save(payload: PredictionRequest, db: Session = Depends(get_db)):
             user_email=payload.user_email,
             flight_id=flight.id,
             probability=dep_probability,
-            delay_class=delay_class_dep
+            delay_class=delay_class_dep,
         )
     except Exception as e:
         print("Alert trigger failed:", e)
@@ -190,7 +190,7 @@ def predict_and_save(payload: PredictionRequest, db: Session = Depends(get_db)):
             "narrative": f"Narrative generation unavailable: {str(e)}",
             "reason_breakdown": {},
             "confidence_explanation": "",
-            "top_features":""
+            # "top_features":""
         }
 
     # # Passenger Impact

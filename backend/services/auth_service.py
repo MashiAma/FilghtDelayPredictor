@@ -110,7 +110,46 @@ def request_password_reset(db: Session, email: str):
     send_email_alert(
         to_email=email,
         subject="Password Reset Verification Code",
-        body=f"Your password reset code is: {code}"
+        body=f"""
+<html>
+<body style="font-family: Arial, sans-serif; color: #333;">
+
+    <div style="max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+
+        <img src="cid:logo" alt="SkyGuard" style="height: 60px;">
+
+        <h2 style="color:#2E86C1;">Password Reset Request</h2>
+
+        <p>Hello,</p>
+
+        <p>We received a request to reset your password.</p>
+
+        <p>Your verification code is:</p>
+
+        <h1 style="letter-spacing: 4px; text-align:center; color:#000;">
+            {code}
+        </h1>
+
+        <p>This code will expire in 10 minutes.</p>
+
+        <p>If you did not request this reset, please ignore this email.</p>
+
+        <hr style="margin-top:30px;">
+
+        <p style="font-size:12px; color:gray;">
+            This is an automated message. Please do not reply.
+        </p>
+
+        <p style="font-size:12px; color:gray;">
+            — SkyGuard Team
+        </p>
+
+    </div>
+
+</body>
+</html>
+""",
+logo_path="assets/logo.png"
     )
 
     return True

@@ -83,17 +83,27 @@ export const submitPrediction = (payload) =>
   API.post("/predictions/predict", payload);
 
 // export const getFlightPredictions = (flightId) => API.get(`/predictions/flight/${flightId}`);     // Get predictions for a specific flight
-// export const getDelayClassification = () => API.get("/predictions/delay-classification");   // Get delay classification
 
 // Admin dashboard
 export const getAdminDashboardStats = () => {
   return API.get("/basic/stats");
 };
-export const getAdminDashboard = () => {
-  return API.get("/admin/admin-dashboard");
+
+export const getUserRoles = () => {
+  return API.get("/basic/charts/user-roles");
 };
 
+export const getAdminDashboard = () => {
+  return API.get("/basic/charts/delay-distribution");
+};
 
+export const getLast10Predictions = () => {
+  return API.get("/basic/last-10");
+};
+
+export const getUpcomingHolidays = () => {
+  return API.get("/basic/holidays");
+};
 
 // Reports
 export const getUserPredictionReport = (user_email, from_date, to_date) => {
@@ -110,7 +120,3 @@ export const getAdminPredictionReport = (filters = {}) => {
   return API.get("/report/admin-prediction-report", { params });
 };
 
-
-export const createAlert = (data) => API.post("/alert/", data);           // Create an alert
-export const getUserAlerts = (userId) => API.get(`/alert/user/${userId}`);      // Get user alerts
-export const markAlertRead = (alertId) => API.put(`/alert/${alertId}/read`);      // Mark an alert as read

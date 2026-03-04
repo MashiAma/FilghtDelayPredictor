@@ -4,8 +4,9 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_FROM
+from email.mime.image import MIMEImage
 
-def send_email_alert(to_email: str, subject: str, body: str):
+def send_email_alert(to_email: str, subject: str, body: str,logo_path: str = None):
     """
     Send an email alert to the user.
     
@@ -14,13 +15,25 @@ def send_email_alert(to_email: str, subject: str, body: str):
     :param body: Email body (HTML or plain text)
     """
     # Create the email message
-    msg = MIMEMultipart()
+    msg = MIMEMultipart('related')  # allows HTML + embedded images
     msg['From'] = SMTP_FROM
     msg['To'] = to_email
     msg['Subject'] = subject
 
-    # Attach body as plain text (you can also send HTML)
-    msg.attach(MIMEText(body, 'plain'))
+    html_body = MIMEMultipart('alternative')
+    html_body.attach(MIMEText(body, 'html'))
+    msg.attach(html_body)
+
+    # Attach logo if provided
+    if logo_path:
+        try:
+            with open(logo_path, 'rb') as f:
+                img = MIMEImage(f.read())
+                img.add_header('Content-ID', '<logo>')  # reference in HTML
+                img.add_header('Content-Disposition', 'inline', filename='logo.png')
+                msg.attach(img)
+        except Exception as e:
+            print(f"Failed to attach logo: {e}")
 
     # Connect to SMTP server
     try:

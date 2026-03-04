@@ -6,7 +6,7 @@ import CustomButton from "../../../components/CustomButton/CustomButton";
 
 const Hero = () => {
   return (
-    <Box sx={{ mt:0, mb:5 }}>
+    <Box sx={{ mt: 0, mb: 5 }}>
       <Container maxWidth="lg">
         <Box
           display="grid"
@@ -29,13 +29,13 @@ const Hero = () => {
             </Typography>
 
             <CustomButton
-            sx={{
-    backgroundColor: "blue.main",
-    "&:hover": {
-      backgroundColor: "blue.dark",
-    },
-  }}
-            onClick={() => navigate("/login")}
+              sx={{
+                backgroundColor: "blue.main",
+                "&:hover": {
+                  backgroundColor: "blue.dark",
+                },
+              }}
+              onClick={() => navigate("/login")}
             >Predict Now
             </CustomButton>
           </motion.div>

@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Register from "./pages/Users/Register";
 import Login from "./pages/Users/Login";
-import LandingPage from "./pages/Landing/LandingPage";
+import LandingPage from "./pages/Landing/LandingPageTest";
 import ResetPassword from "./pages/Users/ResetPassword";
 import PrivateRoute from "./routes/PrivateRoute";
 import DefaultLayout from "./layout/DefaultLayout";

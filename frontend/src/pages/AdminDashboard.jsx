@@ -4,9 +4,6 @@ import {
     Card,
     CardContent,
     Typography,
-    TextField,
-    Button,
-    Stack,
     Grid,
     TableContainer,
     Table,
@@ -15,37 +12,74 @@ import {
     TableCell,
     TableBody,
     Paper,
-    useTheme,
-    Collapse,
-    IconButton,
+    useTheme
 } from "@mui/material";
 import {
     BarChart,
     Bar,
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
     PieChart,
     Pie,
     Cell,
-    Legend
+    Tooltip,
+    Legend,
+    CartesianGrid,
+    XAxis,
+    YAxis
 } from "recharts";
-import { getAdminDashboardStats } from "../services/authService";
 
-const COLORS = ["#00685aff", "#003775ff", "#0086afff"]; // Low, High
+import {
+    getAdminDashboardStats,
+    getAdminDashboard,
+    getUserRoles,
+    getLast10Predictions,
+    getUpcomingHolidays
+} from "../services/authService";
+
+const COLORS = ["rgb(0, 175, 152)", "rgb(63, 146, 172)", "#00c49fff", "#ffbb28ff"];
+const now = new Date();
+
+const month = now.toLocaleString("default", { month: "long" });
+const year = now.getFullYear();
 
 const AdminDashboard = () => {
-    const [stats, setStats] = useState(null);
     const theme = useTheme();
+
+    const [stats, setStats] = useState(null);
+    const [roleStats, setRoleStats] = useState([]);
+    const [last10Predictions, setLast10Predictions] = useState([]);
+    const [holidays, setHolidays] = useState([]);
+    const [delayDistribution, setDelayDistribution] = useState({
+        labels: [],
+        values: []
+    });
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await getAdminDashboardStats();
-                setStats(res.data); // assuming axios-style response
+                // Fetch summary stats
+                const statsRes = await getAdminDashboardStats();
+                setStats(statsRes.data);
+
+                // Fetch user roles and format for PieChart
+                const rolesRes = await getUserRoles();
+                const formattedRoles = rolesRes.data.labels.map((label, idx) => ({
+                    role: label.charAt(0).toUpperCase() + label.slice(1),
+                    count: rolesRes.data.values[idx] || 0
+                }));
+                setRoleStats(formattedRoles);
+
+                // Fetch last 10 predictions
+                const last10Res = await getLast10Predictions();
+                setLast10Predictions(last10Res.data.predictions);
+
+                // Fetch upcoming holidays
+                const holidaysRes = await getUpcomingHolidays();
+                setHolidays(holidaysRes.data.holidays);
+
+                // Fetch delay distribution
+                const delayDistRes = await getAdminDashboard();
+                setDelayDistribution(delayDistRes.data);
+
             } catch (err) {
                 console.error(err);
             }
@@ -55,19 +89,17 @@ const AdminDashboard = () => {
 
     if (!stats) return <div>Loading...</div>;
 
-    const { total_flights_current_month, total_predictions_current_month, total_users, average_departure_delay, delay_rate_percent, most_delayed_airline } = stats;
+    const {
+        predictions_this_month,
+        total_users,
+        average_probability,
+        flights_this_month,
+        high_risk_percentage,
+    } = stats;
 
-    // Top high-risk users
-    // const topHighRisk = [...users]
-    //     .sort((a, b) => b.probability - a.probability)
-    //     .slice(0, 10);
+    // Prepare PieChart data for roles
+    const rolePieData = roleStats;
 
-    // Pie chart data
-    // const pieData = [
-    //     { name: "Low Risk", value: risk_distribution.low },
-    //     { name: "High Risk", value: risk_distribution.high },
-    //     { name: "Not Checked", value: risk_distribution.not_checked }
-    // ];
 
     return (
         <Box p={3}>
@@ -84,57 +116,6 @@ const AdminDashboard = () => {
             {/* Summary Cards */}
             <Card sx={{ p: 2, mb: 3 }}>
                 <Grid container spacing={4}>
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }} >
-                        <Card style={{
-                            p: 3,
-                            height: "100%",
-                            border: "1px solid #ddd",
-                            borderRadius: 8,
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            textAlign: "center",
-                        }}>
-                            <Typography style={{
-                                fontSize: "1.1rem",
-                                fontWeight: "bold",
-                                mb: 1,
-                                color: theme.palette.text.primary,
-                            }}>Total Flights</Typography>
-                            <Typography style={{
-                                fontSize: "2rem",
-                                fontWeight: "bold",
-                                mb: 1,
-                                color: theme.palette.text.main,
-                            }}>{total_flights_current_month}</Typography>
-                        </Card>
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }} >
-                        <Card style={{
-                            p: 3,
-                            height: "100%",
-                            border: "1px solid #ddd",
-                            borderRadius: 8,
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            textAlign: "center",
-                        }}>
-                            <Typography style={{
-                                fontSize: "1.1rem",
-                                fontWeight: "bold",
-                                mb: 1,
-                                color: theme.palette.text.primary,
-                            }}>Total Predictions</Typography>
-                            <Typography style={{
-                                fontSize: "2rem",
-                                fontWeight: "bold",
-                                mb: 1,
-                                color: theme.palette.text.main,
-                            }}>{total_predictions_current_month}</Typography>
-                        </Card>
-                    </Grid>
-
                     <Grid size={{ xs: 12, sm: 6, md: 3 }} >
                         <Card style={{
                             p: 3,
@@ -176,19 +157,72 @@ const AdminDashboard = () => {
                                 fontWeight: "bold",
                                 mb: 1,
                                 color: theme.palette.text.primary,
-                            }}>Average Depature Delay</Typography>
+                            }}>Predictions on {month + " - " + year}</Typography>
                             <Typography style={{
                                 fontSize: "2rem",
                                 fontWeight: "bold",
                                 mb: 1,
                                 color: theme.palette.text.main,
-                            }}>{average_departure_delay}</Typography>
+                            }}>{predictions_this_month}</Typography>
                         </Card>
                     </Grid>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }} >
+                        <Card style={{
+                            p: 3,
+                            height: "100%",
+                            border: "1px solid #ddd",
+                            borderRadius: 8,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            textAlign: "center",
+                        }}>
+                            <Typography style={{
+                                fontSize: "1.1rem",
+                                fontWeight: "bold",
+                                mb: 1,
+                                color: theme.palette.text.primary,
+                            }}>Number of Flights on {month + " - " + year}</Typography>
+                            <Typography style={{
+                                fontSize: "2rem",
+                                fontWeight: "bold",
+                                mb: 1,
+                                color: theme.palette.text.main,
+                            }}>{flights_this_month}</Typography>
+                        </Card>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }} >
+                        <Card style={{
+                            p: 3,
+                            height: "100%",
+                            border: "1px solid #ddd",
+                            borderRadius: 8,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            textAlign: "center",
+                        }}>
+                            <Typography style={{
+                                fontSize: "1.1rem",
+                                fontWeight: "bold",
+                                mb: 1,
+                                color: theme.palette.text.primary,
+                            }}>Average Departure Delay</Typography>
+                            <Typography style={{
+                                fontSize: "2rem",
+                                fontWeight: "bold",
+                                mb: 1,
+                                color: theme.palette.text.main,
+                            }}>{(average_probability * 100).toFixed(2)}%</Typography>
+                        </Card>
+                    </Grid>
+
                 </Grid>
             </Card>
-            {/* <Grid container spacing={4}>
-                <Grid size={{ xs: 12, sm: 6, md: 4 }} >
+
+            {/* User Roles PieChart */}
+            <Grid container spacing={4}>
+                <Grid size={{ xs: 12, sm: 6, md: 6 }} >
                     <Card sx={{ height: "100%" }}>
                         <CardContent>
                             <Typography variant="h6" style={{
@@ -197,19 +231,19 @@ const AdminDashboard = () => {
                                 fontWeight: 'bold',
                                 color: theme.palette.text.main,
                                 marginBottom: "20px"
-                            }} >Risk Distribution</Typography>
+                            }} >User Roles Distribution</Typography>
                             <Box sx={{ width: "100%", height: 300 }}>
                                 <PieChart width="100%" height={300}>
                                     <Pie
-                                        data={pieData}
-                                        dataKey="value"
-                                        nameKey="name"
+                                        data={rolePieData}
+                                        dataKey="count"
+                                        nameKey="role"
                                         cx="50%"
                                         cy="50%"
-                                        outerRadius={90}
+                                        outerRadius={100}
                                         label
                                     >
-                                        {pieData.map((entry, index) => (
+                                        {rolePieData.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Pie>
@@ -220,8 +254,9 @@ const AdminDashboard = () => {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 8 }} >
-                    <Card sx={{ height: "100%" }}>
+                {/* Delay Distribution BarChart */}
+                <Grid size={{ xs: 12, sm: 6, md: 6 }} >
+                    <Card>
                         <CardContent>
                             <Typography variant="h6" style={{
                                 border: "none",
@@ -229,60 +264,101 @@ const AdminDashboard = () => {
                                 fontWeight: 'bold',
                                 color: theme.palette.text.main,
                                 marginBottom: "20px"
-                            }} >Last Predicted User List</Typography>
-                            <Box sx={{ width: "100%", height: 300, }}>
-                                <BarChart data={topHighRisk} width="100%" height={300}>
+                            }} >Predicted Delay Distribution on {month + " - " + year}</Typography>
+                            {delayDistribution.labels.length > 0 ? (
+                                <BarChart width={400} height={300} data={delayDistribution.labels.map((label, idx) => ({
+                                    delay: label,
+                                    count: delayDistribution.values[idx] || 0
+                                }))}>
                                     <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="email" />
-                                    <YAxis domain={[0, 100]} />
+                                    <XAxis dataKey="delay" />
+                                    <YAxis />
                                     <Tooltip />
-                                    <Bar dataKey="probability" fill="#004d91ff" />
+                                    <Bar dataKey="count" fill="rgb(0, 151, 189)" />
                                 </BarChart>
-                            </Box>
+                            ) : (
+                                <Typography>No data available</Typography>
+                            )}
                         </CardContent>
                     </Card>
                 </Grid>
-            </Grid >
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} sx={{ marginTop: "25px" }}>
-                <Card sx={{ height: "100%" }}>
-                    <CardContent>
-                        <Typography style={{
-                            border: "none",
-                            fontSize: "0.95rem",
-                            fontWeight: 'bold',
-                            color: theme.palette.text.main,
-                            marginBottom: "5px"
-                        }} >Top 10 High-Risk Users Summary</Typography>
-                        <TableContainer component={Paper}>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 0.1, textAlign: "left" }}>Email</TableCell>
-                                        <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 0.1, textAlign: "left" }}>Probability</TableCell>
-                                        <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 0.1, textAlign: "left" }}>Risk Label</TableCell>
-                                        <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 0.1, textAlign: "left" }}>Prediction Date</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {users
-                                        .filter(u => u.probability >= 50)
-                                        .map(u => (
-                                            <TableRow key={u.email}>
-                                                <TableCell>{u.email}</TableCell>
-                                                <TableCell>{u.probability}</TableCell>
-                                                <TableCell>{u.label}</TableCell>
-                                                <TableCell>{u.created_at}</TableCell>
+            </Grid>
+
+            {/* Last 10 Predictions Table */}
+            <Grid container spacing={4} marginTop={4}>
+                <Grid size={{ xs: 12, sm: 6, md: 8 }} >
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6" style={{
+                                border: "none",
+                                fontSize: "0.95rem",
+                                fontWeight: 'bold',
+                                color: theme.palette.text.main,
+                                marginBottom: "20px"
+                            }} >Last 10 Predictions</Typography>
+                            <TableContainer component={Paper}>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Email</TableCell>
+                                            <TableCell>Route</TableCell>
+                                            <TableCell>Probability</TableCell>
+                                            <TableCell>Risk Level</TableCell>
+                                            <TableCell>Date</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {last10Predictions.map((p, idx) => (
+                                            <TableRow key={idx}>
+                                                <TableCell>{p.user_email}</TableCell>
+                                                <TableCell>{p.route}</TableCell>
+                                                <TableCell>{(p.probability * 100).toFixed(2)}%</TableCell>
+                                                <TableCell>{p.risk_level}</TableCell>
+                                                <TableCell>{new Date(p.created_at).toLocaleString()}</TableCell>
                                             </TableRow>
                                         ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </CardContent>
+                    </Card>
+                </Grid>
 
-                    </CardContent>
-                </Card>
-            </Grid> */}
-        </Box >
-
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} >
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6" style={{
+                                border: "none",
+                                fontSize: "0.95rem",
+                                fontWeight: 'bold',
+                                color: theme.palette.text.main,
+                                marginBottom: "20px"
+                            }} >Upcoming Holidays on {month + " - " + year}</Typography>
+                            <TableContainer component={Paper}>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Name</TableCell>
+                                            <TableCell>Date</TableCell>
+                                            <TableCell>Type</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {holidays.map((h, idx) => (
+                                            <TableRow key={idx}>
+                                                <TableCell>{h.name}</TableCell>
+                                                <TableCell>{new Date(h.date).toLocaleDateString()}</TableCell>
+                                                <TableCell>{h.type}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+        </Box>
     );
 };
 

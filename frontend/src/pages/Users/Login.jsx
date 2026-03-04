@@ -123,7 +123,7 @@ function Login() {
               component="img"
               src={loginImage}
               alt="login"
-              sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+              sx={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }}
             />
             <Box
               sx={{
@@ -150,7 +150,7 @@ function Login() {
               <Typography variant="h4" fontWeight="bold" gutterBottom>
                 SkyGuard
               </Typography>
-              <Typography variant="body1" sx={{ opacity: 0.75 }}>
+              <Typography variant="h6" >
                 Predict flight delays using AI
               </Typography>
             </Box>

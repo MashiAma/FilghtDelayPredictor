@@ -260,8 +260,6 @@ const FlightPredictionReport = () => {
                                     <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Scheduled Arrival</TableCell>
                                     <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Depature Delay Class</TableCell>
                                     <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Depature Probability</TableCell>
-                                    <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Arrival Delay Class</TableCell>
-                                    <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Arrival Probability</TableCell>
                                     <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Prediction Date</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -349,8 +347,6 @@ const FlightPredictionReport = () => {
                                 <th>Scheduled Arrival</th>
                                 <th>Depature Delay Class</th>
                                 <th>Depature Probability</th>
-                                <th>Arrival Delay Class</th>
-                                <th>Arrival Probability</th>
                                 <th>Prediction Date</th>
                             </tr>
                         </thead>

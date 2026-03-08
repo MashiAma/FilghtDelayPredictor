@@ -1,0 +1,2 @@
+Model,Tuning,SMOTE,Threshold,Accuracy,ROC AUC,F1 Macro,F1 Weighted,Precision,Recall,Best Iteration,Data Leakage
+LightGBM (Corrected),Optuna (12 trials),Yes,0.3144,0.7107,0.7465,0.6635,0.7054,0.5760,0.5039,156,None

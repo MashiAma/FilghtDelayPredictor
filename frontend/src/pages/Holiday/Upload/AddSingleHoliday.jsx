@@ -15,12 +15,7 @@ import { toast } from 'react-toastify';
 import { addHoliday } from '../../../services/authService';
 
 const HOLIDAY_TYPES = [
-    "Public Holiday",
-    "Religious Holiday",
-    "National Holiday",
-    "Bank Holiday",
-    "School Holiday",
-    "Festival",
+    "Public"
 ];
 
 export default function AddSingleHoliday() {

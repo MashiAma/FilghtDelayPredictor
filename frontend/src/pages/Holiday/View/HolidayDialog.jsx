@@ -16,12 +16,7 @@ import EditIcon from "@mui/icons-material/Edit";
 
 /* ---------- Holiday Types ---------- */
 const HOLIDAY_TYPES = [
-    "Public Holiday",
-    "Religious Holiday",
-    "National Holiday",
-    "Bank Holiday",
-    "School Holiday",
-    "Festival",
+    "Public",
 ];
 /* ---------------------------------- */
 

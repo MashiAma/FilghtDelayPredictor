@@ -104,6 +104,9 @@ export const getLast10Predictions = () => {
 export const getUpcomingHolidays = () => {
   return API.get("/basic/holidays");
 };
+export const getUpcomingFlights = () => {
+  return API.get("basic/tomorrow-flights");
+};
 
 // Reports
 export const getUserPredictionReport = (user_email, from_date, to_date) => {

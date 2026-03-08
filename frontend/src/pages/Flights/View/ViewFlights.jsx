@@ -50,7 +50,7 @@ const ViewFlights = () => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedFlight, setSelectedFlight] = useState(null)
 
-  const rowsPerPage = 5
+  const rowsPerPage = 8
 
   /* ---------- Fetch flights ---------- */
   useEffect(() => {

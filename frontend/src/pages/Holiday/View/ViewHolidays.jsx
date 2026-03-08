@@ -43,7 +43,7 @@ const ViewHolidays = () => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedHoliday, setSelectedHoliday] = useState(null);
 
-    const rowsPerPage = 6;
+    const rowsPerPage = 8;
 
     /* ---------- Fetch Holidays ---------- */
     useEffect(() => {

@@ -34,15 +34,13 @@ export default function UploadHolidayCSV() {
             // Directly pass the file (no need to wrap again in FormData here if service does it)
             const data = await uploadHolidaysCSV(file);
 
-            if (data.success) {
+            if (data.added_records > 0) {
                 toast.success(`Holiday CSV uploaded successfully. Added ${data.added_records} records.`);
                 setFile(null);
                 setErrors([]);
             } else if (data.errors?.length > 0) {
                 setErrors(data.errors);
                 toast.error(`Upload Failed with ${data.errors.length} error(s).`);
-            } else {
-                toast.error('CSV upload failed');
             }
         } catch (err) {
             toast.error('CSV upload failed');

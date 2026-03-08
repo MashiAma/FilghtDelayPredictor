@@ -33,7 +33,7 @@ export default function UploadFlightCSV() {
 
             const data = await uploadFlightsCSV(file);
 
-            if (data.success) {
+            if (data.added_records > 0) {
                 toast.success(`Flight CSV uploaded successfully. Added ${data.added_records} records.`);
                 setFile(null);
                 setErrors([]);

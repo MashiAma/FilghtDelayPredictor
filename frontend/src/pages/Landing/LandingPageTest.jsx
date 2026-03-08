@@ -11,31 +11,31 @@ import flightImg from "../../assets/images/flight-hero.jpg";
 import { useRef } from "react";
 import Footer from "../../components/Footer";
 import PageTransition from "../../assets/animations/Pagetransition";
-import { FaPlane, FaCloudSun, FaCalendarAlt } from "react-icons/fa";
+import { FaPlane, FaCloudSun, FaCalendarAlt, FaBell, FaBrain, FaNewspaper } from "react-icons/fa";
 import HowItWorks from "./sections/HowItWorks";
 import CTA from "./sections/CTA";
 
 
 const features = [
     {
-        icon: <FaPlane size={28} />,
+        icon: <FaPlane size={50} />,
         title: "Real-Time Predictions",
         desc: "Instant AI-based delay predictions.",
     },
     {
-        icon: <FaCloudSun size={28} />,
-        title: "Weather Intelligence",
-        desc: "Monsoon and weather pattern analysis.",
+        icon: <FaCalendarAlt size={28} />,
+        title: "Explainable AI Insights & Recommendations",
+        desc: "Understand feature contributions and get actionable recommendations.",
     },
     {
-        icon: <FaCalendarAlt size={28} />,
-        title: "Holiday Awareness",
-        desc: "Detect holiday-related congestion risks.",
+        icon: <FaNewspaper size={50} />,
+        title: "Aviation News Intelligence",
+        desc: "Stay updated with real-time, airport-specific aviation news.",
     },
     {
-        icon: <FaCalendarAlt size={28} />,
-        title: "Explainable Recommendations",
-        desc: "Provide Explainable Analysis",
+        icon: <FaBell size={50} />,
+        title: "Operational Alerts",
+        desc: "Receive timely notifications about delays and risk events.",
     },
 ];
 
@@ -143,9 +143,7 @@ const LandingPage = ({ mode, toggleTheme }) => {
                                 Predict Flight Delays with AI Precision
                             </Typography>
                             <Typography variant="h6" color="text.secondary" mb={4}>
-                                AI-powered flight delay prediction with probability scoring,
-                                explainable machine learning insights, and LLM-generated
-                                operational risk analysis.
+                                AI-powered flight delay prediction with probability scoring, explainable machine learning insights, LLM-generated operational risk analysis, real-time aviation news intelligence, and actionable recommendations.
                             </Typography>
 
                             <Button

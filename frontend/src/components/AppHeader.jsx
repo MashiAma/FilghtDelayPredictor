@@ -55,7 +55,7 @@ const AppHeader = ({ mode, toggleTheme }) => {
         <Toolbar disableGutters>
 
           <Box to="/" sx={{ display: "flex", alignItems: "center", height: 65, }}>
-            <Box component="img" src={logo} alt="DiaPredict" sx={{ height: 40, mr: 1 }} />
+            <Box component="img" src={logo} alt="SkyGuard" sx={{ height: 40, mr: 1 }} />
             <Typography variant="h5" fontWeight="bold" sx={{ mr: 10, color: 'inherit', textDecoration: 'none' }}>
               SkyGuard
             </Typography>

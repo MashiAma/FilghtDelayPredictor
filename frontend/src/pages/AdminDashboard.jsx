@@ -32,14 +32,21 @@ import {
     getAdminDashboard,
     getUserRoles,
     getLast10Predictions,
-    getUpcomingHolidays
+    getUpcomingHolidays,
+    getUpcomingFlights
 } from "../services/authService";
 
 const COLORS = ["rgb(0, 175, 152)", "rgb(63, 146, 172)", "#00c49fff", "#ffbb28ff"];
 const now = new Date();
-
+now.setDate(now.getDate() + 1);
 const month = now.toLocaleString("default", { month: "long" });
 const year = now.getFullYear();
+
+const formattedTomorrow = now.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+});
 
 const AdminDashboard = () => {
     const theme = useTheme();
@@ -48,6 +55,7 @@ const AdminDashboard = () => {
     const [roleStats, setRoleStats] = useState([]);
     const [last10Predictions, setLast10Predictions] = useState([]);
     const [holidays, setHolidays] = useState([]);
+    const [flights, setFlights] = useState([]);
     const [delayDistribution, setDelayDistribution] = useState({
         labels: [],
         values: []
@@ -75,6 +83,10 @@ const AdminDashboard = () => {
                 // Fetch upcoming holidays
                 const holidaysRes = await getUpcomingHolidays();
                 setHolidays(holidaysRes.data.holidays);
+
+                // Fetch upcoming holidays
+                const flightsRes = await getUpcomingFlights();
+                setFlights(flightsRes.data.flights);
 
                 // Fetch delay distribution
                 const delayDistRes = await getAdminDashboard();
@@ -266,16 +278,18 @@ const AdminDashboard = () => {
                                 marginBottom: "20px"
                             }} >Predicted Delay Distribution on {month + " - " + year}</Typography>
                             {delayDistribution.labels.length > 0 ? (
-                                <BarChart width={400} height={300} data={delayDistribution.labels.map((label, idx) => ({
-                                    delay: label,
-                                    count: delayDistribution.values[idx] || 0
-                                }))}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="delay" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Bar dataKey="count" fill="rgb(0, 151, 189)" />
-                                </BarChart>
+                                <Card sx={{ marginLeft: 10 }}>
+                                    <BarChart width={400} height={300} data={delayDistribution.labels.map((label, idx) => ({
+                                        delay: label,
+                                        count: delayDistribution.values[idx] || 0
+                                    }))}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="delay" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Bar dataKey="count" fill="rgb(0, 151, 189)" />
+                                    </BarChart>
+                                </Card>
                             ) : (
                                 <Typography>No data available</Typography>
                             )}
@@ -283,11 +297,9 @@ const AdminDashboard = () => {
                     </Card>
                 </Grid>
             </Grid>
-
-            {/* Last 10 Predictions Table */}
             <Grid container spacing={4} marginTop={4}>
-                <Grid size={{ xs: 12, sm: 6, md: 8 }} >
-                    <Card>
+                <Grid size={{ xs: 12, sm: 6, md: 6 }} >
+                    <Card sx={{ minHeight: 618 }}>
                         <CardContent>
                             <Typography variant="h6" style={{
                                 border: "none",
@@ -295,26 +307,30 @@ const AdminDashboard = () => {
                                 fontWeight: 'bold',
                                 color: theme.palette.text.main,
                                 marginBottom: "20px"
-                            }} >Last 10 Predictions</Typography>
+                            }} >Upcoming Flights on {formattedTomorrow}</Typography>
                             <TableContainer component={Paper}>
                                 <Table size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Email</TableCell>
-                                            <TableCell>Route</TableCell>
-                                            <TableCell>Probability</TableCell>
-                                            <TableCell>Risk Level</TableCell>
-                                            <TableCell>Date</TableCell>
+                                            <TableCell>Origin</TableCell>
+                                            <TableCell>Destiation</TableCell>
+                                            <TableCell>Scheduled Departure</TableCell>
+                                            <TableCell>scheduled Arrival</TableCell>
+                                            <TableCell>Airline</TableCell>
+                                            <TableCell>Status</TableCell>
+                                            {/* <TableCell>Aircraft</TableCell> */}
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {last10Predictions.map((p, idx) => (
+                                        {flights.map((p, idx) => (
                                             <TableRow key={idx}>
-                                                <TableCell>{p.user_email}</TableCell>
-                                                <TableCell>{p.route}</TableCell>
-                                                <TableCell>{(p.probability * 100).toFixed(2)}%</TableCell>
-                                                <TableCell>{p.risk_level}</TableCell>
-                                                <TableCell>{new Date(p.created_at).toLocaleString()}</TableCell>
+                                                <TableCell>{p.departure_airport}</TableCell>
+                                                <TableCell>{p.arrival_airport}</TableCell>
+                                                <TableCell>{p.scheduled_departure}</TableCell>
+                                                <TableCell>{p.scheduled_arrival}</TableCell>
+                                                <TableCell>{p.airline}</TableCell>
+                                                <TableCell>{p.status}</TableCell>
+                                                {/* <TableCell>{p.aircraft}</TableCell> */}
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -323,39 +339,78 @@ const AdminDashboard = () => {
                         </CardContent>
                     </Card>
                 </Grid>
-
-                <Grid size={{ xs: 12, sm: 6, md: 4 }} >
-                    <Card>
-                        <CardContent>
-                            <Typography variant="h6" style={{
-                                border: "none",
-                                fontSize: "0.95rem",
-                                fontWeight: 'bold',
-                                color: theme.palette.text.main,
-                                marginBottom: "20px"
-                            }} >Upcoming Holidays on {month + " - " + year}</Typography>
-                            <TableContainer component={Paper}>
-                                <Table size="small">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>Date</TableCell>
-                                            <TableCell>Type</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {holidays.map((h, idx) => (
-                                            <TableRow key={idx}>
-                                                <TableCell>{h.name}</TableCell>
-                                                <TableCell>{new Date(h.date).toLocaleDateString()}</TableCell>
-                                                <TableCell>{h.type}</TableCell>
+                <Grid size={{ xs: 12, sm: 6, md: 6 }} container direction="column" spacing={4}>
+                    <Grid >
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h6" style={{
+                                    border: "none",
+                                    fontSize: "0.95rem",
+                                    fontWeight: 'bold',
+                                    color: theme.palette.text.main,
+                                    marginBottom: "20px"
+                                }} >Last 10 Predictions</Typography>
+                                <TableContainer component={Paper}>
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Email</TableCell>
+                                                <TableCell>Route</TableCell>
+                                                <TableCell>Probability</TableCell>
+                                                <TableCell>Risk Level</TableCell>
+                                                <TableCell>Date</TableCell>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </CardContent>
-                    </Card>
+                                        </TableHead>
+                                        <TableBody>
+                                            {last10Predictions.map((p, idx) => (
+                                                <TableRow key={idx}>
+                                                    <TableCell>{p.user_email}</TableCell>
+                                                    <TableCell>{p.route}</TableCell>
+                                                    <TableCell>{(p.probability * 100).toFixed(2)}%</TableCell>
+                                                    <TableCell>{p.risk_level}</TableCell>
+                                                    <TableCell>{new Date(p.created_at).toLocaleString()}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                    <Grid >
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h6" style={{
+                                    border: "none",
+                                    fontSize: "0.95rem",
+                                    fontWeight: 'bold',
+                                    color: theme.palette.text.main,
+                                    marginBottom: "20px"
+                                }} >Holidays on {month + " - " + year}</Typography>
+                                <TableContainer component={Paper}>
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Name</TableCell>
+                                                <TableCell>Date</TableCell>
+                                                <TableCell>Type</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {holidays.map((h, idx) => (
+                                                <TableRow key={idx}>
+                                                    <TableCell>{h.name}</TableCell>
+                                                    <TableCell>{new Date(h.date).toLocaleDateString()}</TableCell>
+                                                    <TableCell>{h.type}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </CardContent>
+                        </Card>
+                    </Grid>
                 </Grid>
             </Grid>
         </Box>

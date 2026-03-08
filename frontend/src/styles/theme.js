@@ -18,7 +18,7 @@ export const getTheme = (mode) =>
       text: {
         primary: mode === "dark" ? "#dadadaff" : "#000000ff",
         secondary: mode === "dark" ? "#ffffffff" : "#6e6e6eff",
-        main: mode === "dark" ? "rgba(0, 84, 180, 0.81)" : "#001431d8",
+        main: mode === "dark" ? "rgba(0, 104, 223, 0.81)" : "#001431d8",
       },
       info: { main: "#38BDF8", contrastText: "#082F49" },
       success: { main: "#22C55E", contrastText: "#052E16" },

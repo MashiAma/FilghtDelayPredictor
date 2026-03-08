@@ -15,6 +15,7 @@ from services.basic_service import (
     get_current_month_holidays_service
 )
 
+from services.basic_service import get_tomorrow_flights_service
 router = APIRouter()
 
 
@@ -41,3 +42,10 @@ def last_10_predictions(db: Session = Depends(get_db)):
 @router.get("/holidays", response_model=HolidayResponse)
 def current_month_holidays(db: Session = Depends(get_db)):
     return get_current_month_holidays_service(db)
+
+@router.get("/tomorrow-flights")
+def get_tomorrow_flights(db: Session = Depends(get_db)):
+    """
+    Return all flights scheduled for tomorrow.
+    """
+    return get_tomorrow_flights_service(db)

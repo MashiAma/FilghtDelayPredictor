@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, JSON
 from sqlalchemy.orm import relationship
 from database.connection import Base
 from datetime import datetime
@@ -12,5 +12,6 @@ class AirportRiskInsight(Base):
     generated_date=  Column(DateTime, nullable=False)
     risk_category = Column(String(50), nullable=False)
     risk_level = Column(String(50), nullable=False)
+    traveler_advisories = Column(JSON)
     short_summary = Column(String, nullable=False)
     

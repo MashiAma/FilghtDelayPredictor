@@ -11,7 +11,8 @@ def test_add_flight(db):
         scheduled_arrival=datetime.now() + timedelta(days=5, hours=2),
         airline="UnitAir",
         status="Scheduled",
-        aircraft="A320"
+        aircraft="A320",
+        created_at="2026-03-07T08:30:00"
     )
     flight = add_flight(db, flight_in)
     assert flight.id is not None

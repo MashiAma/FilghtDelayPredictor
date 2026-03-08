@@ -9,11 +9,13 @@ from datetime import datetime, timedelta , date
 REQUIRED_COLUMNS = {"holiday_date", "holiday_name", "holiday_type"}
 
 # --- Helper to calculate flags ---
-def calculate_holiday_flags(holiday_date, holiday_type, db: Session):
+def calculate_holiday_flags(holiday_date, holiday_name, holiday_type, db: Session):
+    holiday_name_lower = holiday_name.lower()
+    festival_months = [4, 5, 6, 7, 8, 12]
     flags = {
         "is_sri_lankan_public_holiday": holiday_type.lower() == "public",
-        "is_festival_period": holiday_type.lower() == "festival",
-        "is_poya_day": False,  # can check against Poya calendar if needed
+        "is_festival_period": holiday_date.month in festival_months,
+        "is_poya_day": any(keyword in holiday_name_lower for keyword in ["poya", "full moon", "moon"]),
         "is_post_holiday": False,
         "is_long_weekend": False,
     }
@@ -26,7 +28,7 @@ def calculate_holiday_flags(holiday_date, holiday_type, db: Session):
 
     # Long weekend: Friday (4) or Monday (0)
     weekday = holiday_date.weekday()
-    if weekday in [1, 5]:
+    if weekday == 4 or weekday == 0:  # Friday or Monday
         flags["is_long_weekend"] = True
 
     return flags
@@ -37,7 +39,7 @@ def add_holiday(db: Session, holiday_in: HolidayCreate):
     if existing:
         return existing
 
-    flags = calculate_holiday_flags(holiday_in.holiday_date, holiday_in.holiday_type, db)
+    flags = calculate_holiday_flags(holiday_in.holiday_date, holiday_in.holiday_name, holiday_in.holiday_type, db)
 
     holiday = Holiday(
         holiday_date=holiday_in.holiday_date,
@@ -111,6 +113,7 @@ def add_holidays_from_csv(db: Session, file):
         try:
             flags = calculate_holiday_flags(
                 holiday_date,
+                row["holiday_name"],
                 row["holiday_type"],
                 db
             )
@@ -152,7 +155,7 @@ def update_holiday(db: Session, holiday_id: int, holiday_in: HolidayUpdate):
 
     # Recalculate flags if holiday_type changed
     if "holiday_type" in holiday_in.model_dump(exclude_unset=True):
-        flags = calculate_holiday_flags(holiday.holiday_date, holiday.holiday_type, db)
+        flags = calculate_holiday_flags(holiday.holiday_date, holiday.holiday_name, holiday.holiday_type, db)
         for key, val in flags.items():
             setattr(holiday, key, val)
 

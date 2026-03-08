@@ -51,7 +51,8 @@ def test_flight(db):
         scheduled_arrival=datetime.now() + timedelta(days=1, hours=2),
         airline="TestAir",
         status="Scheduled",
-        aircraft="B737"
+        aircraft="B737",
+        created_at="2026-03-07T08:30:00"
     )
     db.add(flight)
     db.commit()

@@ -7,6 +7,7 @@ class InsightGet(BaseModel):
     airport_code: str
     risk_category: str
     risk_level: str
+    traveler_advisories: str
     short_summary: str
     
 

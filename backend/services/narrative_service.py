@@ -125,7 +125,9 @@ def generate_narrative(
     raw = chain.invoke(prompt_vars)
 
     try:
-        return json.loads(raw)
+        parsed = json.loads(raw)
+        parsed["top_features"] = top_features
+        return parsed
     except json.JSONDecodeError:
         match = re.search(r'\{.*\}', raw, re.DOTALL)
         if match:

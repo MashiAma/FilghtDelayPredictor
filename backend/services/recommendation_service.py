@@ -6,9 +6,9 @@ from datetime import date
 from typing import Dict, Any, List
 
 HOUR_LABELS = {
-    (0, 5): "Late Night",
-    (6, 8): "Early Morning",
-    (9, 11): "Morning",
+    (22, 24): "Late Night",
+    (0, 6): "Early Morning",
+    (6, 11): "Morning",
     (12, 14): "Early Afternoon",
     (15, 17): "Afternoon",
     (18, 20): "Evening",

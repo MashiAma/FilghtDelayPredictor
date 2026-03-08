@@ -190,66 +190,66 @@ def predict_and_save(payload: PredictionRequest, db: Session = Depends(get_db)):
             "narrative": f"Narrative generation unavailable: {str(e)}",
             "reason_breakdown": {},
             "confidence_explanation": "",
-            # "top_features":""
+            "top_features":""
         }
 
-    # # Passenger Impact
-    # impact_result = {}
-    # try:
-    #     impact_result = analyze_passenger_impact(
-    #         features=model_features,
-    #         dep_probability=dep_probability,
-    #         delay_class_dep=delay_class_dep,
-    #     )
-    # except Exception:
-    #     impact_result = {
-    #         "primary_impact": "Impact analysis unavailable.",
-    #         "all_impacts": [],
-    #         "inconvenience_score": 0,
-    #         "inconvenience_label": "Unknown",
-    #         "affected_segments": []
-    #     }
+    # Passenger Impact
+    impact_result = {}
+    try:
+        impact_result = analyze_passenger_impact(
+            features=model_features,
+            dep_probability=dep_probability,
+            delay_class_dep=delay_class_dep,
+        )
+    except Exception:
+        impact_result = {
+            "primary_impact": "Impact analysis unavailable.",
+            "all_impacts": [],
+            "inconvenience_score": 0,
+            "inconvenience_label": "Unknown",
+            "affected_segments": []
+        }
 
-    # # Recommendation
-    # recommendation_result = {}
-    # try:
-    #     recommendation_result = build_recommendations(
-    #         db=db,
-    #         origin=flight.departure_airport,
-    #         destination=flight.arrival_airport,
-    #         airline=flight.airline,
-    #     )
-    # except Exception:
-    #     recommendation_result = {
-    #         "best_departure_hour": None,
-    #         "best_departure_label": "Unavailable",
-    #         "best_day_of_week": "Unavailable",
-    #         "best_airline": None,
-    #         "time_slots": [],
-    #         "summary": "Recommendation data unavailable."
-    #     }
+    # Recommendation
+    recommendation_result = {}
+    try:
+        recommendation_result = build_recommendations(
+            db=db,
+            origin=flight.departure_airport,
+            destination=flight.arrival_airport,
+            airline=flight.airline,
+        )
+    except Exception:
+        recommendation_result = {
+            "best_departure_hour": None,
+            "best_departure_label": "Unavailable",
+            "best_day_of_week": "Unavailable",
+            "best_airline": None,
+            "time_slots": [],
+            "summary": "Recommendation data unavailable."
+        }
 
-    # # Counterfactual (auto: tries 3 hours earlier as default what-if) ────
-    # counterfactual_result = {}
-    # try:
-    #     original_hour = model_features.get("scheduled_departure_hour", 12)
-    #     suggested_hour = max(0, original_hour - 3)  # suggest 3 hours earlier
-    #     counterfactual_result = run_counterfactual(
-    #         baseline_features=model_features,
-    #         new_departure_hour=suggested_hour,
-    #     )
-    # except Exception:
-    #     counterfactual_result = {
-    #         "baseline_delay_probability": dep_probability,
-    #         "counterfactual_delay_probability": None,
-    #         "risk_change": None,
-    #         "risk_change_pct": None,
-    #         "interpretation": "Counterfactual simulation unavailable.",
-    #         "recommendation": "",
-    #         "changes_applied": {},
-    #         "baseline_class": delay_class_dep,
-    #         "counterfactual_class": None,
-    #     }
+    # Counterfactual (auto: tries 3 hours earlier as default what-if) ────
+    counterfactual_result = {}
+    try:
+        original_hour = model_features.get("scheduled_departure_hour", 12)
+        suggested_hour = max(0, original_hour - 3)  # suggest 3 hours earlier
+        counterfactual_result = run_counterfactual(
+            baseline_features=model_features,
+            new_departure_hour=suggested_hour,
+        )
+    except Exception:
+        counterfactual_result = {
+            "baseline_delay_probability": dep_probability,
+            "counterfactual_delay_probability": None,
+            "risk_change": None,
+            "risk_change_pct": None,
+            "interpretation": "Counterfactual simulation unavailable.",
+            "recommendation": "",
+            "changes_applied": {},
+            "baseline_class": delay_class_dep,
+            "counterfactual_class": None,
+        }
 
     
 
@@ -263,23 +263,23 @@ def predict_and_save(payload: PredictionRequest, db: Session = Depends(get_db)):
         "confidence_explanation": narrative_result.get("confidence_explanation", ""),
         "top_features": narrative_result.get("top_features", ""),
 
-        # # Passenger Impact
-        # "passenger_impact":    impact_result.get("primary_impact", ""),
-        # "all_impacts":         impact_result.get("all_impacts", []),
-        # "inconvenience_score": impact_result.get("inconvenience_score", 0),
-        # "inconvenience_label": impact_result.get("inconvenience_label", ""),
-        # "affected_segments":   impact_result.get("affected_segments", []),
+        # Passenger Impact
+        "passenger_impact":    impact_result.get("primary_impact", ""),
+        "all_impacts":         impact_result.get("all_impacts", []),
+        "inconvenience_score": impact_result.get("inconvenience_score", 0),
+        "inconvenience_label": impact_result.get("inconvenience_label", ""),
+        "affected_segments":   impact_result.get("affected_segments", []),
 
-        # # Recommendation
-        # "recommendation_summary":  recommendation_result.get("summary", ""),
-        # "best_departure_hour":     recommendation_result.get("best_departure_hour"),
-        # "best_departure_label":    recommendation_result.get("best_departure_label", ""),
-        # "best_day_of_week":        recommendation_result.get("best_day_of_week", ""),
-        # "best_airline":            recommendation_result.get("best_airline"),
-        # "time_slots":              recommendation_result.get("time_slots", []),
+        # Recommendation
+        "recommendation_summary":  recommendation_result.get("summary", ""),
+        "best_departure_hour":     recommendation_result.get("best_departure_hour"),
+        "best_departure_label":    recommendation_result.get("best_departure_label", ""),
+        "best_day_of_week":        recommendation_result.get("best_day_of_week", ""),
+        "best_airline":            recommendation_result.get("best_airline"),
+        "time_slots":              recommendation_result.get("time_slots", []),
 
-        # # Counterfactual (auto what-if: 3 hours earlier)
-        # "counterfactual": counterfactual_result,
+        # Counterfactual (auto what-if: 3 hours earlier)
+        "counterfactual": counterfactual_result,
         
         "dep_probability": dep_probability,
         "delay_class_dep": delay_class_dep,

@@ -13,7 +13,6 @@ class MockBooster:
 @pytest.fixture(autouse=True)
 def mock_models(monkeypatch):
     monkeypatch.setattr(service, "model_dep", MockBooster())
-    monkeypatch.setattr(service, "model_arr", MockBooster())
     monkeypatch.setattr(service, "model_columns", ["feature1"])
     monkeypatch.setattr(service, "label_encoders", {})
 

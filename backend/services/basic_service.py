@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func, extract
-from datetime import datetime
+from datetime import datetime,timedelta
 from models_sql.user import User
 from models_sql.prediction import Prediction
 from models_sql.flight import Flight
@@ -172,4 +172,33 @@ def get_current_month_holidays_service(db: Session):
             }
             for h in holidays
         ]
+    }
+
+def get_tomorrow_flights_service(db: Session):
+    # Calculate tomorrow's date (UTC)
+    today = datetime.utcnow().date()
+    tomorrow = today + timedelta(days=1)
+
+    # Filter flights where scheduled_departure is on tomorrow's date
+    flights = db.query(Flight).filter(
+        func.date(Flight.scheduled_departure) == tomorrow
+    ).all()
+
+    results = []
+    for f in flights:
+        results.append({
+            "flight_number": f.flight_number,
+            "departure_airport": f.departure_airport,
+            "arrival_airport": f.arrival_airport,
+            "scheduled_departure": f.scheduled_departure,
+            "scheduled_arrival": f.scheduled_arrival,
+            "airline": f.airline,
+            "status": f.status,
+            "aircraft": f.aircraft
+        })
+
+    return {
+        "date": tomorrow,
+        "total_flights": len(results),
+        "flights": results
     }

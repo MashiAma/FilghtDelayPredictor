@@ -9,7 +9,8 @@ def test_create_flight(client):
         "scheduled_arrival": (datetime.now() + timedelta(days=2, hours=3)).isoformat(),
         "airline": "RouteAir",
         "status": "Scheduled",
-        "aircraft": "B737"
+        "aircraft": "B737",
+        "created_at":"2026-03-07T08:30:00"
     }
     response = client.post("/flights/add-flight", json=flight_in)
     assert response.status_code == 200

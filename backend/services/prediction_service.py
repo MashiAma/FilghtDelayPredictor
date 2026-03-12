@@ -55,7 +55,7 @@ def classify(prob: float) -> str:
 #     contributions = dict(zip(model_columns, shap_values.values[0]))
 #     sorted_features = sorted(contributions.items(), key=lambda x: abs(x[1]), reverse=True)
 #     return [{"feature": f, "impact": float(v)} for f, v in sorted_features[:top_n]]
-def get_top_features(explainer, X, top_n=5):
+def get_top_features(explainer, X, top_n=10):
     shap_values = explainer.shap_values(X)
     contributions = dict(zip(model_columns, shap_values[0]))
     sorted_features = sorted(contributions.items(), key=lambda x: abs(x[1]), reverse=True)

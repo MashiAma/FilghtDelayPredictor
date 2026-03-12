@@ -6,13 +6,13 @@ from datetime import date
 from typing import Dict, Any, List
 
 HOUR_LABELS = {
-    (22, 24): "Late Night",
-    (0, 6): "Early Morning",
+    (22, 23): "Late Night",
+    (0, 5): "Early Morning",
     (6, 11): "Morning",
     (12, 14): "Early Afternoon",
     (15, 17): "Afternoon",
     (18, 20): "Evening",
-    (21, 23): "Night",
+    (21, 21): "Night",
 }
 
 
@@ -47,7 +47,7 @@ def get_time_slot_recommendations(
     slots = []
     for row in results:
         hour = int(row.hour)
-        risk = float(row.avg_risk) if row.avg_risk else 0.5
+        risk = float(row.avg_risk) if row.avg_risk is not None else None
         label = get_hour_label(hour)
         recommendation = (
             "Low risk — good time to depart" if risk < 0.3
@@ -118,7 +118,8 @@ def build_recommendations(
     slots = get_time_slot_recommendations(db, origin, destination)
     best_day = get_best_day_of_week(db, origin, destination)
     best_airline = get_best_airline(db, origin, destination)
-    best_slot = min(slots, key=lambda x: x["estimated_delay_risk"]) if slots else None
+    valid_slots = [s for s in slots if s["estimated_delay_risk"] is not None]
+    best_slot = min(valid_slots, key=lambda x: x["estimated_delay_risk"]) if valid_slots else None
 
     summary_parts = []
     if best_slot:

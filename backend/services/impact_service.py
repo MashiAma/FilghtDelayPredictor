@@ -3,57 +3,60 @@ from typing import Dict, Any, List
 IMPACT_RULES = [
     {
         "condition": lambda f: (
-            f.get("scheduled_late_night_departure") and
-            f.get("is_short_haul") and
-            f.get("delay_class_arr") == "Major"
+            bool(f.get("scheduled_late_night_departure")) and
+            bool(f.get("is_short_haul")) and
+            f.get("delay_class_dep") == "Delayed"
         ),
-        "impact": "Short-haul passengers on late-night departures face the highest inconvenience — few or no rebooking options at this hour.",
+        "impact": "Short-haul passengers on late-night departures face the highest inconvenience due to limited rebooking options at night.",
         "severity": "critical"
     },
     {
         "condition": lambda f: (
-            f.get("is_long_weekend") and
-            f.get("delay_class_dep") in ["Minor", "Major"]
+            bool(f.get("is_long_weekend")) and
+            f.get("delay_class_dep") == "Delayed"
         ),
-        "impact": "Long weekend travelers are disproportionately affected — high passenger volumes reduce rebooking flexibility.",
+        "impact": "Long-weekend travelers experience greater disruption because peak travel demand reduces seat availability for rebooking.",
         "severity": "high"
     },
     {
         "condition": lambda f: (
-            f.get("is_post_holiday") and
+            bool(f.get("is_post_holiday")) and
             float(f.get("route_delay_rate", 0)) > 0.4
         ),
-        "impact": "Post-holiday congestion on this route suggests returning travelers will experience above-average delays.",
+        "impact": "Post-holiday return travel combined with historically high route delay rates increases disruption risk for passengers.",
         "severity": "medium"
     },
     {
         "condition": lambda f: (
-            f.get("scheduled_early_morning_departure") and
-            f.get("dep_has_thunderstorm")
+            bool(f.get("scheduled_early_morning_departure")) and
+            float(f.get("dep_precipitation", 0)) > 0
         ),
-        "impact": "Early morning thunderstorm conditions create cascading delays affecting the full day schedule.",
+        "impact": "Early-morning precipitation can trigger operational delays that cascade through the rest of the day's flight schedule.",
         "severity": "high"
     },
     {
         "condition": lambda f: (
-            f.get("dep_is_monsoon_season") and
+            bool(f.get("dep_is_monsoon_season")) and
             float(f.get("dep_probability", 0)) > 0.5
         ),
-        "impact": "Monsoon season conditions disproportionately affect connecting flight passengers with tight layover windows.",
-        "severity": "medium"
-    },
-    {
-        "condition": lambda f: (
-            f.get("is_poya_day") and
-            f.get("delay_class_dep") in ["Minor", "Major"]
-        ),
-        "impact": "Poya day travel surge increases airport congestion, impacting leisure and religious travelers.",
+        "impact": "Monsoon season conditions significantly increase disruption risk, particularly for passengers with connecting flights.",
         "severity": "medium"
     },
 ]
 
-SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
-SEVERITY_SCORE = {"critical": 10, "high": 7, "medium": 4, "low": 2}
+SEVERITY_ORDER = {
+    "critical": 0,
+    "high": 1,
+    "medium": 2,
+    "low": 3
+}
+
+SEVERITY_SCORE = {
+    "critical": 10,
+    "high": 7,
+    "medium": 4,
+    "low": 2
+}
 
 
 def analyze_passenger_impact(
@@ -62,16 +65,20 @@ def analyze_passenger_impact(
     delay_class_dep: str,
 ) -> Dict[str, Any]:
     """
-    Determines which passenger segments are most impacted and why.
-    Rule-based, deterministic — no LLM, no API cost.
+    Evaluates which passenger groups are most affected by a predicted delay.
+
+    Uses deterministic rule-based logic (no LLM) to identify
+    passenger segments likely to experience greater inconvenience.
     """
+
     enriched = {
         **features,
         "dep_probability": dep_probability,
         "delay_class_dep": delay_class_dep,
     }
 
-    triggered = []
+    triggered: List[Dict[str, str]] = []
+
     for rule in IMPACT_RULES:
         try:
             if rule["condition"](enriched):
@@ -90,7 +97,8 @@ def analyze_passenger_impact(
     )
 
     primary = (
-        triggered[0]["impact"] if triggered
+        triggered[0]["impact"]
+        if triggered
         else "No specific passenger group is disproportionately impacted by this delay."
     )
 
@@ -109,17 +117,28 @@ def analyze_passenger_impact(
 
 
 def _get_affected_segments(features: Dict[str, Any]) -> List[str]:
-    segments = []
+    """
+    Identifies passenger segments affected based on contextual features.
+    """
+
+    segments: List[str] = []
+
     if features.get("is_short_haul"):
-        segments.append("Short-haul passengers")
+        segments.append("Short-Haul Passengers")
+
+    if features.get("scheduled_early_morning_departure"):
+        segments.append("Early-Morning Travelers")
+
     if features.get("scheduled_late_night_departure"):
-        segments.append("Late-night travelers")
+        segments.append("Late-Night Travelers")
+
     if features.get("is_long_weekend"):
-        segments.append("Long weekend travelers")
+        segments.append("Long-Weekend Travelers")
+
     if features.get("is_festival_period"):
-        segments.append("Festival travelers")
-    if features.get("is_poya_day"):
-        segments.append("Poya day travelers")
+        segments.append("Festival Travelers")
+
     if features.get("scheduled_is_weekend"):
-        segments.append("Weekend leisure travelers")
-    return segments if segments else ["General passengers"]
+        segments.append("Weekend Leisure Travelers")
+
+    return segments if segments else ["General Passengers"]

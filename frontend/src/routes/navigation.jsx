@@ -27,57 +27,57 @@ const navigation = [
   {
     name: 'Flights',
     icon: <ContactPageIcon />,
-    roles: ['admin', 'normal'],
+    roles: ['admin'],
     items: [
       {
         name: 'Add New',
         to: '/flight-details',
         icon: <AddIcon />,
-        roles: ['admin', 'normal'],
+        roles: ['admin'],
       },
       {
         name: 'View Details',
         to: '/flight-view',
         icon: <EditIcon />,
-        roles: ['admin', 'normal'],
+        roles: ['admin'],
       },
       {
         name: 'History',
         to: '/flight-history',
         icon: < EditIcon />,
-        roles: ['admin', 'normal'],
+        roles: ['admin'],
       },
     ],
   },
   {
     name: 'Holidays',
     icon: <EditIcon />,
-    roles: ['admin', 'normal'],
+    roles: ['admin'],
     items: [
       {
         name: 'Add New',
         to: '/holiday-details',
         icon: <EditIcon />,
-        roles: ['admin', 'normal'],
+        roles: ['admin'],
       },
       {
         name: 'View Details',
         to: '/holiday-view',
         icon: <EditIcon />,
-        roles: ['admin', 'normal'],
+        roles: ['admin'],
       },
       {
         name: 'History',
         to: '/holiday-history',
         icon: < EditIcon />,
-        roles: ['admin', 'normal'],
+        roles: ['admin'],
       },
     ]
   },
   {
     name: 'Reports',
     icon: <EditIcon />,
-    roles: ['admin'],
+    roles: ['admin', 'normal'],
     items: [
       {
         name: 'User Predictions',

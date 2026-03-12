@@ -209,7 +209,7 @@ const ViewFlights = () => {
             <TableBody>
               {paginated.length > 0 ? (
                 paginated.map((f) => (
-                  <TableRow key={f.flight_number}>
+                  <TableRow key={f.id}>
                     <TableCell sx={{ py: 0.5 }}>{f.flight_number}</TableCell>
                     <TableCell sx={{ py: 0.5 }}>{formatDateTime(f.scheduled_departure)}</TableCell>
                     <TableCell sx={{ py: 0.5 }}>{formatDateTime(f.scheduled_arrival)}</TableCell>

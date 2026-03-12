@@ -24,6 +24,7 @@ const Register = () => {
   const isAdmin = user?.role === "admin";
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -41,7 +42,43 @@ const Register = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+
+    if (!formData.fullName) {
+      toast.error("Please enter your full name.");
+      return;
+    }
+
+    if (!formData.email) {
+      toast.error("Please enter your email.");
+      return;
+    }
+
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (!formData.phone) {
+      toast.error("Please enter your phone number.");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(formData.phone)) {
+      toast.error("Phone number must be 10 digits.");
+      return;
+    }
+
+    if (!formData.password) {
+      toast.error("Please enter your password.");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
     setLoading(true)
 
     try {
@@ -179,6 +216,7 @@ const Register = () => {
 
                 <form onSubmit={handleSubmit}>
                   <TextField
+                    name="fullName"
                     label="Full Name"
                     type="text"
                     fullWidth
@@ -204,13 +242,18 @@ const Register = () => {
                     }}
                   />
                   <TextField
+                    name="phone"
                     label="Phone Number"
-                    type="text"
+                    type="tel" // allows numeric input on mobile too
                     fullWidth
                     value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="Enter Phone Number"
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, ""); // remove non-numeric characters
+                      setFormData((prev) => ({ ...prev, phone: value }));
+                    }}
+                    placeholder="Enter Phone Number - (0700000000)"
                     margin="normal"
+                    inputProps={{ maxLength: 10 }}
                     required
                     InputProps={{
                       sx: {
@@ -247,6 +290,7 @@ const Register = () => {
 
                   {/* Email */}
                   <TextField
+                    name="email"
                     label="Email"
                     type="email"
                     fullWidth
@@ -267,6 +311,7 @@ const Register = () => {
 
                   {/* Password */}
                   <TextField
+                    name="password"
                     label="Password"
                     type="password"
                     fullWidth

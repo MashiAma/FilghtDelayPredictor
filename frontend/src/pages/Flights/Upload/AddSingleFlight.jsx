@@ -36,7 +36,7 @@ const arrivalAirports = [{ code: 'BOM', name: 'Mumbai Chhatrapati Shivaji Mahara
     // Bhutan
     // { code: 'PBH', name: 'Paro International Airport' },
 ];
-const airlines = ['SriLankan Airlines', 'Air India', 'IndiGo', 'Emirates', 'fitsAir', 'flydubai', 'Gulf Air'];
+const airlines = ['SriLankan Airlines', 'Air India', 'IndiGo', 'Emirates', 'FitsAir', 'flydubai', 'Gulf Air'];
 
 const aircrafts = ["A20N", "A21N", "A320", "A321", "A332", "A333", "B38M", "B39M", "B738", "B77W"]
 

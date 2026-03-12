@@ -71,7 +71,7 @@ const AdminPredictionReport = () => {
     }, [filters]);
 
     const arrival_options = ['BOM', 'DEL', 'BLR', 'MAA', 'HYD', 'KHI', 'LHE', 'DAC', 'KTM', 'MLE'];
-    const airlines_options = ['SriLankan Airlines', 'Air India', 'IndiGo', 'Emirates', 'fitsAir', 'flydubai', 'Gulf Air'];
+    const airlines_options = ['SriLankan Airlines', 'Air India', 'IndiGo', 'Emirates', 'FitsAir', 'flydubai', 'Gulf Air'];
     const aircrafts_options = ["A20N", "A21N", "A320", "A321", "A332", "A333", "B38M", "B39M", "B738", "B77W"]
 
     const handlePrint = () => {

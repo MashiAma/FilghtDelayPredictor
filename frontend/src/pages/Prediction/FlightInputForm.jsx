@@ -56,7 +56,7 @@ const ARRIVAL_AIRPORTS = [
     // { code: 'PBH', name: 'Paro International Airport' },
 ];
 
-const AIRLINES = ['SriLankan Airlines', 'Air India', 'IndiGo', 'Emirates', 'fitsAir', 'flydubai', 'Gulf Air'];
+const AIRLINES = ['SriLankan Airlines', 'Air India', 'IndiGo', 'Emirates', 'FitsAir', 'flydubai', 'Gulf Air'];
 const featureLabelMap = {
     destination_code: "Destination Airport",
     scheduled_month: "Seasonal Travel Patterns",

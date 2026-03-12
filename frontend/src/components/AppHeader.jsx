@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -19,6 +19,7 @@ import { AuthContext } from '../context/AuthContext';
 import AppHeaderDropdown from './AppHeaderDropdown'; // import the dropdown
 import logo from "./../assets/images/logo.png"; // replace with your logo
 
+
 const AppHeader = ({ mode, toggleTheme }) => {
   const { user } = useContext(AuthContext);
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -28,6 +29,7 @@ const AppHeader = ({ mode, toggleTheme }) => {
   const [anchorElHolidays, setAnchorElHolidays] = useState(null);
   const navigate = useNavigate();
   const userRole = user?.role;
+  const location = useLocation();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -108,7 +110,14 @@ const AppHeader = ({ mode, toggleTheme }) => {
           </Box>
 
           {/* Desktop Menu */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: 'none', md: 'flex' },
+              justifyContent: 'center',
+              marginLeft: -10,
+            }}
+          >
             {navigation.map((route) => {
               // role check
               if (route.roles && !route.roles.includes(userRole)) return null;
@@ -116,7 +125,16 @@ const AppHeader = ({ mode, toggleTheme }) => {
               if (route.name === 'Users' && route.items) {
                 return (
                   <div key={route.name}>
-                    <Button onClick={handleOpenUsersMenu} sx={{ color: 'white', mx: 1 }}>
+                    <Button
+                      onClick={handleOpenUsersMenu}
+                      sx={{
+                        color: 'white',
+                        mx: 1,
+                        borderBottom: route.items.some(i => location.pathname.startsWith(i.to))
+                          ? '2px solid white'
+                          : 'none'
+                      }}
+                    >
                       {route.name}
                     </Button>
                     <Menu
@@ -142,11 +160,20 @@ const AppHeader = ({ mode, toggleTheme }) => {
                 );
               }
 
-              // ✅ REPORTS submenu (NEW — SAME AS USERS)
+              // REPORTS submenu (NEW — SAME AS USERS)
               if (route.name === 'Reports' && route.items) {
                 return (
                   <div key={route.name}>
-                    <Button onClick={handleOpenReportsMenu} sx={{ color: 'white', mx: 1 }}>
+                    <Button
+                      onClick={handleOpenReportsMenu}
+                      sx={{
+                        color: 'white',
+                        mx: 1,
+                        borderBottom: route.items.some(i => location.pathname.startsWith(i.to))
+                          ? '2px solid white'
+                          : 'none'
+                      }}
+                    >
                       {route.name}
                     </Button>
                     <Menu
@@ -174,7 +201,16 @@ const AppHeader = ({ mode, toggleTheme }) => {
               if (route.name === 'Flights' && route.items) {
                 return (
                   <div key={route.name}>
-                    <Button onClick={handleOpenFlightsMenu} sx={{ color: 'white', mx: 1 }}>
+                    <Button
+                      onClick={handleOpenFlightsMenu}
+                      sx={{
+                        color: 'white',
+                        mx: 1,
+                        borderBottom: route.items.some(i => location.pathname.startsWith(i.to))
+                          ? '2px solid white'
+                          : 'none'
+                      }}
+                    >
                       {route.name}
                     </Button>
                     <Menu
@@ -202,7 +238,16 @@ const AppHeader = ({ mode, toggleTheme }) => {
               if (route.name === 'Holidays' && route.items) {
                 return (
                   <div key={route.name}>
-                    <Button onClick={handleOpenHolidaysMenu} sx={{ color: 'white', mx: 1 }}>
+                    <Button
+                      onClick={handleOpenHolidaysMenu}
+                      sx={{
+                        color: 'white',
+                        mx: 1,
+                        borderBottom: route.items?.some(i => location.pathname.startsWith(i.to))
+                          ? '2px solid white'
+                          : 'none'
+                      }}
+                    >
                       {route.name}
                     </Button>
                     <Menu

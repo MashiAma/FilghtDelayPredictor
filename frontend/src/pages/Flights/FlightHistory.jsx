@@ -43,7 +43,7 @@ const isPast = (dateTimeStr) => {
     const date = toDateObj(dateTimeStr)
     date.setHours(0, 0, 0, 0)
 
-    return date <= today
+    return date < today
 }
 /* ---------------------------------- */
 

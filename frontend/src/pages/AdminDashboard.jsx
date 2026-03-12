@@ -35,6 +35,12 @@ import {
     getUpcomingHolidays,
     getUpcomingFlights
 } from "../services/authService";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const COLORS = ["rgb(0, 175, 152)", "rgb(63, 146, 172)", "#00c49fff", "#ffbb28ff"];
 const now = new Date();
@@ -299,7 +305,7 @@ const AdminDashboard = () => {
             </Grid>
             <Grid container spacing={4} marginTop={4}>
                 <Grid size={{ xs: 12, sm: 6, md: 6 }} >
-                    <Card sx={{ minHeight: 618 }}>
+                    <Card sx={{ minHeight: 550, maxHeight: 620, overflow: "auto" }}>
                         <CardContent>
                             <Typography variant="h6" style={{
                                 border: "none",
@@ -315,7 +321,7 @@ const AdminDashboard = () => {
                                             <TableCell>Origin</TableCell>
                                             <TableCell>Destiation</TableCell>
                                             <TableCell>Scheduled Departure</TableCell>
-                                            <TableCell>scheduled Arrival</TableCell>
+                                            <TableCell>Scheduled Arrival</TableCell>
                                             <TableCell>Airline</TableCell>
                                             <TableCell>Status</TableCell>
                                             {/* <TableCell>Aircraft</TableCell> */}
@@ -326,8 +332,8 @@ const AdminDashboard = () => {
                                             <TableRow key={idx}>
                                                 <TableCell>{p.departure_airport}</TableCell>
                                                 <TableCell>{p.arrival_airport}</TableCell>
-                                                <TableCell>{p.scheduled_departure}</TableCell>
-                                                <TableCell>{p.scheduled_arrival}</TableCell>
+                                                <TableCell>{dayjs(p.scheduled_departure).format("YYYY-MM-DD HH:mm")}</TableCell>
+                                                <TableCell>{dayjs(p.scheduled_arrival).format("YYYY-MM-DD HH:mm")}</TableCell>
                                                 <TableCell>{p.airline}</TableCell>
                                                 <TableCell>{p.status}</TableCell>
                                                 {/* <TableCell>{p.aircraft}</TableCell> */}
@@ -368,7 +374,9 @@ const AdminDashboard = () => {
                                                     <TableCell>{p.route}</TableCell>
                                                     <TableCell>{(p.probability * 100).toFixed(2)}%</TableCell>
                                                     <TableCell>{p.risk_level}</TableCell>
-                                                    <TableCell>{new Date(p.created_at).toLocaleString()}</TableCell>
+                                                    <TableCell> {dayjs.utc(p.created_at)     // treat input as UTC
+                                                        .tz("Asia/Colombo")    // convert to Sri Lanka time
+                                                        .format("YYYY-MM-DD HH:mm")}</TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>

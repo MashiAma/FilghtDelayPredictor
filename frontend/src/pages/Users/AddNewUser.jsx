@@ -190,7 +190,10 @@ const AddNewUser = () => {
                 size="small"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                type="tel"
                 placeholder="Enter Phone Number..."
+                margin="normal"
+                inputProps={{ maxLength: 10 }}
                 sx={{
                   mt: 1,
                   borderRadius: "15px",

@@ -32,8 +32,8 @@ const FlightPredictionReport = () => {
     const [loading, setLoading] = useState(false);
     const printRef = useRef(null)
     const theme = useTheme();
-    const [fromDate, setFromDate] = useState("");
-    const [toDate, setToDate] = useState("");
+    const [fromDate, setFromDate] = useState(null);
+    const [toDate, setToDate] = useState(null);
     const [canPrint, setCanPrint] = useState(false);
     const [trend, setTrend] = useState([]);
     const { user } = useContext(AuthContext);
@@ -198,7 +198,7 @@ const FlightPredictionReport = () => {
                     Apply Filters
                 </Button>
                 <Button
-                    sx={{ mt: 2, ml: 2 }}
+                    sx={{ mt: 2, ml: 2, color: theme.palette.text.main, }}
                     variant="outlined"
                     color="primary"
                     onClick={handleResetFilters}
@@ -258,8 +258,8 @@ const FlightPredictionReport = () => {
                                     <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Destination</TableCell>
                                     <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Scheduled Departure</TableCell>
                                     <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Scheduled Arrival</TableCell>
-                                    <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Depature Delay Class</TableCell>
-                                    <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Depature Probability</TableCell>
+                                    <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Departure Delay Class</TableCell>
+                                    <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Departure Probability</TableCell>
                                     <TableCell sx={{ fontSize: "12px", fontWeight: "bold", py: 1.5, textAlign: "center" }}>Prediction Date</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -345,8 +345,8 @@ const FlightPredictionReport = () => {
                                 <th>Destination</th>
                                 <th>Scheduled Departure</th>
                                 <th>Scheduled Arrival</th>
-                                <th>Depature Delay Class</th>
-                                <th>Depature Probability</th>
+                                <th>Departure Delay Class</th>
+                                <th>Departure Probability</th>
                                 <th>Prediction Date</th>
                             </tr>
                         </thead>

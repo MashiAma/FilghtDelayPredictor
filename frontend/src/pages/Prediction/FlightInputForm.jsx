@@ -59,10 +59,41 @@ const ARRIVAL_AIRPORTS = [
 const AIRLINES = ['SriLankan Airlines', 'Air India', 'IndiGo', 'Emirates', 'FitsAir', 'flydubai', 'Gulf Air'];
 const featureLabelMap = {
     destination_code: "Destination Airport",
-    scheduled_month: "Seasonal Travel Patterns",
-    route_avg_delay: "Historical delay trend for the route",
+    scheduled_month: "Scheduled Month",
+    route_avg_delay: "Average Route Delay",
     dep_wind_speed_10m: "Wind conditions at departure airport",
-    aircraft_type: "Aircraft Model"
+    aircraft_type: "Aircraft Model",
+    scheduled_departure_time: "Scheduled Departure",
+    airline: "Airline",
+    route_delay_rate: "Route Delay Rate (%)",
+    airline_avg_delay: "Average Airline Delay (min)",
+    airline_delay_rate: "Airline Delay Rate (%)",
+    aircraft_avg_delay: "Average Aircraft Delay (min)",
+    scheduled_arrival_time: "Scheduled Arrival",
+    scheduled_departure_hour: "Scheduled Departure Hour",
+    scheduled_departure_day_of_week: "Day of Week (Departure)",
+    scheduled_arrival_day_of_week: "Day of Week (Arrival)",
+    scheduled_is_weekend: "Weekend Departure",
+    scheduled_is_peak_hour: "Peak Hour Departure",
+    scheduled_early_morning_departure: "Early-Morning Departure",
+    scheduled_late_night_departure: "Late-Night Departure",
+    scheduled_flight_duration_min: "Scheduled Flight Duration",
+    is_short_haul: "Short-Haul Flight",
+
+    // Weather Features (Departure)
+    dep_is_monsoon_season: "Monsoon Season at Departure",
+    dep_wind_speed_10m: "Wind Speed at Departure",
+    dep_cloud_cover: "Cloud Cover at Departure",
+    dep_visibility: "Visibility at Departure",
+    dep_precipitation: "Precipitation at Departure",
+    dep_weather_code: "Weather Code at Departure",
+
+    // Weather Features (Arrival)
+    arr_wind_speed_10m: "Wind Speed at Arrival",
+    arr_cloud_cover: "Cloud Cover at Arrival",
+    arr_visibility: "Visibility at Arrival",
+    arr_precipitation: "Precipitation at Arrival",
+    arr_weather_code: "Weather Code at Arrival",
 };
 
 // Custom Gauge Component using CSS
@@ -255,10 +286,11 @@ const FlightInputForm = () => {
                                         slotProps={{
                                             textField: {
                                                 sx: {
+                                                    width: "100%",
                                                     '& .MuiOutlinedInput-root': {
                                                         fontSize: "11px",
                                                     },
-                                                    width: "440px"
+
                                                 },
                                             },
                                         }}
@@ -335,7 +367,7 @@ const FlightInputForm = () => {
                                                 <Box marginLeft={0}>
                                                     {result.top_features?.length > 0 && (
                                                         <Box mt={2}>
-                                                            <Typography variant="subtitle2" fontWeight="bold" color="#ffcc00">Top Prediction Insights</Typography>
+                                                            <Typography variant="subtitle2" fontWeight="bold" color="#ffcc00">Top Prediction Contributors</Typography>
                                                             <Stack spacing={0.5} mt={0}>
                                                                 {result.top_features.map(([feature], index) => (
                                                                     <Typography key={index} variant="body1">
@@ -372,7 +404,7 @@ const FlightInputForm = () => {
 
                                     {/* Delay Factors */}
                                     <Grid size={{ xs: 12, md: 6 }}>
-                                        <Card sx={{ ...glassStyle, p: 3 }}>
+                                        <Card sx={{ ...glassStyle, p: 3, minHeight: 295 }}>
 
                                             <Box display="flex" alignItems="center" gap={1} mb={2}>
                                                 <InsightsIcon sx={{ color: "#00e6ac" }} />
@@ -475,16 +507,16 @@ const FlightInputForm = () => {
                                     </Grid>
 
                                     <Grid size={{ xs: 12, md: 6 }}>
-                                        <Card sx={{ ...glassStyle, p: 3 }}>
+                                        <Card sx={{ ...glassStyle, p: 3, minHeight: 350 }}>
                                             <Box display="flex" alignItems="center" gap={1} mb={2}>
-                                                <AccessTimeIcon sx={{ color: "#7d38ff" }} />
+                                                <AccessTimeIcon sx={{ color: "#9358ff" }} />
                                                 <Typography fontWeight="bold" fontSize="1.1rem">
                                                     Recommendations & Optimal Travel Times
                                                 </Typography>
                                             </Box>
 
                                             {/* Recommendation Summary */}
-                                            <Typography variant="subtitle2" mb={2} color="#7d38ff">
+                                            <Typography variant="subtitle2" mb={2} color="#9055ff">
                                                 {result.recommendation_summary}
                                             </Typography>
 
@@ -536,7 +568,7 @@ const FlightInputForm = () => {
                                     </Grid>
 
                                     <Grid size={{ xs: 12, md: 6 }}>
-                                        <Card sx={{ ...glassStyle, p: 3, minHeight: 275 }}>
+                                        <Card sx={{ ...glassStyle, p: 3, minHeight: 350 }}>
                                             <Box display="flex" alignItems="center" gap={1} mb={2}>
                                                 <CompareArrowsIcon sx={{ color: "#ff6e40" }} />
                                                 <Typography fontWeight="bold" fontSize="1.1rem">
@@ -654,7 +686,7 @@ const FlightInputForm = () => {
                                                         </Box>
                                                     ))}
                                                 </Box>
-
+                                                <Typography align='center' mt={2}>AI can make mistakes. Check important info.</Typography>
                                             </Card>
                                         </Grid>
                                     )}
@@ -663,6 +695,7 @@ const FlightInputForm = () => {
                             </>
                         )}
                     </Box>
+
                 </Card >
             </Box >
         </>

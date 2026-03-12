@@ -18,15 +18,15 @@ FLIGHT FACTS:
 - Is Short Haul: {is_short_haul}
 
 WEATHER CONDITIONS:
-- Departure Wind :{dep_wind_speed_10m}
-- Departure Cloud Cover: {dep_cloud_cover}
-- Departure Visibility: {dep_visibility}
-- Departure Precipitation: {dep_precipitation}
+- Departure Wind: {dep_wind_speed_10m} m/s
+- Departure Cloud Cover: {dep_cloud_cover} %
+- Departure Visibility: {dep_visibility} meters
+- Departure Precipitation: {dep_precipitation} mm
 - Departure Weather Code: {dep_weather_code}
-- Arrival Wind :{arr_wind_speed_10m}
-- Arrival Cloud Cover: {arr_cloud_cover}
-- Arrival Visibility: {arr_visibility}
-- Arrival Precipitation: {arr_precipitation}
+- Arrival Wind: {arr_wind_speed_10m} m/s
+- Arrival Cloud Cover: {arr_cloud_cover} %
+- Arrival Visibility: {arr_visibility} meters
+- Arrival Precipitation: {arr_precipitation} mm
 - Arrival Weather Code: {arr_weather_code}
 - Monsoon Season: {dep_is_monsoon_season}
 

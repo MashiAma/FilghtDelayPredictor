@@ -18,11 +18,11 @@ def run_counterfactual(
     Only changes what you specify — everything else stays identical.
     """
 
-    # ── Baseline ───────────────────────────────────────────────────────────────
+    # ── Baseline 
     baseline_result = save_prediction(baseline_features)
     baseline_prob   = baseline_result["dep_probability"]
 
-    # ── Build counterfactual features ──────────────────────────────────────────
+    # ── Build counterfactual features
     cf_features    = copy.deepcopy(baseline_features)
     changes_applied = {}
 
@@ -43,9 +43,7 @@ def run_counterfactual(
             "to": new_departure_hour
         }
 
-    # ─────────────────────────────────────────
     # Day shift change
-    # ─────────────────────────────────────────
     if new_departure_day_offset is not None:
 
         original_dow = int(cf_features.get("scheduled_departure_day_of_week", 0))
@@ -71,9 +69,7 @@ def run_counterfactual(
             "to": new_airline
         }
 
-    # ─────────────────────────────────────────
     # Route change
-    # ─────────────────────────────────────────
     if new_route is not None:
 
         parts = new_route.split("_")
@@ -89,7 +85,6 @@ def run_counterfactual(
                 "to": new_route
             }
 
-    # ─────────────────────────────────────────
     # Counterfactual prediction
     try:
 
@@ -107,7 +102,7 @@ def run_counterfactual(
             "changes_applied": changes_applied
         }
 
-    # ─────────────────────────────────────────
+
     # Risk comparison
     risk_change = round(cf_prob - baseline_prob,4)
 
@@ -120,9 +115,8 @@ def run_counterfactual(
     direction = "reduces" if risk_change < 0 else "increases"
     abs_pct = abs(risk_change_pct)
 
-    # ─────────────────────────────────────────
+
     # Human readable explanation
-    # ─────────────────────────────────────────
     explanation_parts = []
 
     if "departure_hour" in changes_applied:
@@ -170,9 +164,7 @@ def run_counterfactual(
 
         interpretation = "No changes were applied. Counterfactual equals baseline."
 
-    # ─────────────────────────────────────────
     # Recommendation logic
-    # ─────────────────────────────────────────
     if risk_change < -0.05:
 
         recommendation = "Recommended adjustment — this configuration significantly reduces delay risk."
@@ -193,9 +185,8 @@ def run_counterfactual(
 
         recommendation = "Minimal impact — the modification has negligible effect on delay probability."
 
-    # ─────────────────────────────────────────
+
     # Final response
-    # ─────────────────────────────────────────
     return {
         "baseline_delay_probability":        round(baseline_prob, 4),
         "counterfactual_delay_probability":  round(cf_prob, 4),
